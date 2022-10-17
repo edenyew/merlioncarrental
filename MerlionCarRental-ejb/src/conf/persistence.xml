@@ -5,6 +5,8 @@
     <class>entity.PartnerEntity</class>
     <class>entity.EmployeeEntity</class>
     <class>entity.OutletEntity</class>
+    <class>entity.Category</class>
+    <class>entity.Model</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
