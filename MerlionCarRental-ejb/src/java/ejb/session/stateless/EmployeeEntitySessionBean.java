@@ -9,6 +9,8 @@ import entity.EmployeeEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -17,9 +19,28 @@ import javax.persistence.EntityManager;
 @Stateless
 public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemote, EmployeeEntitySessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
+    private EntityManager em;
     
+    @Override
+    public Long createNewEmployee(EmployeeEntity employeeEntity)
+    {
+        em.persist(employeeEntity);
+        em.flush();
+        
+        return employeeEntity.getId();
+    }
+    
+    @Override
+    public List<EmployeeEntity> retrieveAllEmployee() 
+    {
+        Query query = em.createQuery("Select em FROM EmployeeEntity em");
+        
+        return query.getResultList();
+    }
+    
+    
+    @Override
     public EmployeeEntity employeeLogin(String username, String password) 
     {
         List<EmployeeEntity> employeeEntities = retrieveAllEmployee();
@@ -28,13 +49,26 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
         {
             if (employeeEntity.getUsername().equals(username) && employeeEntity.getPassword().equals(password)) 
             {
-                return employeeEntity;
+                return employeeEntity.login();
             }
         }
         
         throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
         
     }
+    
+    @Override
+    public EmployeeEntity employeeLogout(EmployeeEntity employee) {
+        if (employee.isLogged_in() == true) 
+        {
+            return employee.logout();
+        }
+        
+        throw new InvalidLoginCredentialException("User is not logged in!");
+    }
+
+   // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
     
     
 }

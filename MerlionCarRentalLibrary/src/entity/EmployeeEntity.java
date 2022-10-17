@@ -28,6 +28,7 @@ public class EmployeeEntity implements Serializable {
     private AccessRightEnum accessRightEnum;
     private String username;
     private String password;
+    private boolean logged_in;
     
 
     public EmployeeEntity() {
@@ -49,9 +50,27 @@ public class EmployeeEntity implements Serializable {
         this.username = username;
         this.password = password;
     }
-    
-    
 
+    public EmployeeEntity(Long id, String name, String contactNumber, AccessRightEnum accessRightEnum, String username, String password, boolean logged_in) {
+        this.id = id;
+        this.name = name;
+        this.contactNumber = contactNumber;
+        this.accessRightEnum = accessRightEnum;
+        this.username = username;
+        this.password = password;
+        this.logged_in = logged_in;
+    }
+    
+    public EmployeeEntity login() {
+        this.setLogged_in(true);
+        return this;
+    }
+
+    public EmployeeEntity logout() {
+        this.setLogged_in(false);
+        return this;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -153,6 +172,20 @@ public class EmployeeEntity implements Serializable {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return the logged_in
+     */
+    public boolean isLogged_in() {
+        return logged_in;
+    }
+
+    /**
+     * @param logged_in the logged_in to set
+     */
+    public void setLogged_in(boolean logged_in) {
+        this.logged_in = logged_in;
     }
     
 }
