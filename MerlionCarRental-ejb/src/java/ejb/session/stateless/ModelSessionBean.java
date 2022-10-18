@@ -44,7 +44,12 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
        
        return query.getResultList();
    }
-
+   
+  @Override
+    public void updateModel(Model model)
+    {
+        em.merge(model);
+    }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     

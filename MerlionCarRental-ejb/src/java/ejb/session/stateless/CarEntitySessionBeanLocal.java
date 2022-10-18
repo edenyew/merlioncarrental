@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.CarEntity;
 import entity.Model;
 import java.util.List;
 import javax.ejb.Local;
@@ -14,12 +15,14 @@ import javax.ejb.Local;
  * @author jonta
  */
 @Local
-public interface ModelSessionBeanLocal {
+public interface CarEntitySessionBeanLocal {
 
-    public Long createNewModel(Model model, Long categoryId);
+    public Long createNewCar(CarEntity car, Long modelId);
 
-    public List<Model> retrieveAllModels();
+    public List<CarEntity> retrieveAllCars();
 
-    public void updateModel(Model model);
+    public CarEntity retrieveCarByPlateNumber(String carPlateNumber);
+
+    public void updateCarEntity(CarEntity carEntity);
     
 }

@@ -6,12 +6,15 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -20,25 +23,39 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Model implements Serializable {
 
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long modelId;
+    @Column(nullable = false)
     private String modelName;
+    @Column(nullable = false)
+    private String makeName;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Category category;
+    
+    @OneToMany(mappedBy = "cars")
+    private List<CarEntity> cars;
 
     public Model() {
     }
 
-    public Model(String modelName) {
+    public Model(String modelName, String makeName) {
         this.modelName = modelName;
+        this.makeName = makeName;
     }
-    
-    
+
+   
+    public List<CarEntity> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<CarEntity> cars) {
+        this.cars = cars;
+    }
+
     /**
      * @return the category
      */
@@ -60,16 +77,18 @@ public class Model implements Serializable {
         this.modelId = modelId;
     }
 
-     /**
-     * @return the modelName
-     */
+      public String getMakeName() {
+        return makeName;
+    }
+
+    public void setMakeName(String makeName) {
+        this.makeName = makeName;
+    }
+
     public String getModelName() {
         return modelName;
     }
 
-    /**
-     * @param modelName the modelName to set
-     */
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
