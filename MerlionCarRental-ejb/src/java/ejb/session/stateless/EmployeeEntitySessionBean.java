@@ -6,9 +6,13 @@
 package ejb.session.stateless;
 
 import entity.EmployeeEntity;
+import exception.EmployeeNotFoundException;
+import exception.InvalidLoginCredentialException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -21,6 +25,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
 
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
+    
     
     @Override
     public Long createNewEmployee(EmployeeEntity employeeEntity)
@@ -39,26 +44,46 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
         return query.getResultList();
     }
     
+    public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException
+    {
+        Query query = em.createQuery("SELECT em FROM EmployeeEntity em WHERE em.username = :inUsername");
+        query.setParameter("inUsername", username);
+        
+        try
+        {
+            return (EmployeeEntity)query.getSingleResult();
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new EmployeeNotFoundException("Staff Username " + username + " does not exist!");
+        }
+    }
+      
     
     @Override
-    public EmployeeEntity employeeLogin(String username, String password) 
+    public EmployeeEntity employeeLogin(String username, String password) throws InvalidLoginCredentialException
     {
-        List<EmployeeEntity> employeeEntities = retrieveAllEmployee();
-        
-        for (EmployeeEntity employeeEntity:employeeEntities) 
+        try 
         {
-            if (employeeEntity.getUsername().equals(username) && employeeEntity.getPassword().equals(password)) 
+            EmployeeEntity employeeEntity = retrieveEmployeeByUsername(username);
+            
+            if (employeeEntity.getPassword().equals(password))
             {
                 return employeeEntity.login();
             }
+            else 
+            {
+                throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+            }
         }
-        
-        throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
-        
+        catch(EmployeeNotFoundException ex) 
+        {
+            throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+        }
     }
     
     @Override
-    public EmployeeEntity employeeLogout(EmployeeEntity employee) {
+    public EmployeeEntity employeeLogout(EmployeeEntity employee) throws InvalidLoginCredentialException {
         if (employee.isLogged_in() == true) 
         {
             return employee.logout();
@@ -69,6 +94,4 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
 
    // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    
-    
 }
