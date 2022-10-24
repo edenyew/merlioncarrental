@@ -83,7 +83,8 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
     }
     
     @Override
-    public EmployeeEntity employeeLogout(EmployeeEntity employee) throws InvalidLoginCredentialException {
+    public EmployeeEntity employeeLogout(EmployeeEntity employee) throws InvalidLoginCredentialException 
+    {
         if (employee.isLogged_in() == true) 
         {
             return employee.logout();
