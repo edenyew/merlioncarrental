@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.OutletEntity;
+import exception.OutletNotFoundException;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface OutletEntitySessionBeanLocal {
+
+    public OutletEntity retrieveOutletById(Long outletId) throws OutletNotFoundException;
+
+    public Long createNewOutlet(OutletEntity outletEntity);
     
 }

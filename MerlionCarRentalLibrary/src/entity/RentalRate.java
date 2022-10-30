@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -27,6 +28,7 @@ public class RentalRate implements Serializable {
     @Column(nullable = false, length = 32)
     private String name;
     @Column(nullable = false)
+    @OneToOne
     private Category category;
     @Column(precision = 11, scale = 2)
     private BigDecimal ratePerDay;
@@ -36,6 +38,7 @@ public class RentalRate implements Serializable {
     private Boolean inUse;
     @Column(nullable = false)
     private Boolean disabled;
+    
 
     public RentalRate() {
     }

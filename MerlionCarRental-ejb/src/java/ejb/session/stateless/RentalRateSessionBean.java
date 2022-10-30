@@ -28,6 +28,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
+    @Override
     public Long createRentalRate(RentalRate rentalRate)
     {
         em.persist(rentalRate);
@@ -37,6 +38,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         
     }
     
+    @Override
     public List<RentalRate> retrieveAllRentalRate()
     {
         Query query = em.createQuery("Select r FROM RentalRate r ORDER BY r.category ASC, r.validityPeriod ASC");
@@ -44,6 +46,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         return query.getResultList();
     }
     
+    @Override
     public List<RentalRate> viewAllRentalRates()
     {
         List<RentalRate> allRentalRates =  retrieveAllRentalRate();
@@ -51,6 +54,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         return allRentalRates;
     }
     
+    @Override
     public RentalRate retrieveRentalRateByRentalRateId(Long rentalRateId) throws RentalRateNotFoundException
     {
         RentalRate rentalRate = em.find(RentalRate.class, rentalRateId);
@@ -65,6 +69,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         }
     }
     
+    @Override
     public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException
     {
         if (rentalRate != null && rentalRate.getId() != null)
@@ -85,6 +90,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         }
     }
     
+    @Override
     public void deleteRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, DeleteRentalRateException
     {
         RentalRate rentalRateToDelete = retrieveRentalRateByRentalRateId(rentalRate.getId());

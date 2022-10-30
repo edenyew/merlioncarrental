@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.OutletEntity;
+import exception.OutletNotFoundException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,6 +24,7 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
+    @Override
     public Long createNewOutlet(OutletEntity outletEntity)
     {
         em.persist(outletEntity);
@@ -30,6 +32,17 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
         
         return outletEntity.getId();
         
+    }
+    
+    @Override
+    public OutletEntity retrieveOutletById(Long outletId) throws OutletNotFoundException
+    {
+        OutletEntity outlet = em.find(OutletEntity.class, outletId);
+        if (outlet != null ){
+            return outlet;
+        } else {
+            throw new OutletNotFoundException("Outlet does not exist!");
+        }
     }
     
     

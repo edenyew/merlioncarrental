@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -27,7 +29,11 @@ public class OutletEntity implements Serializable {
     private String address;
     @Column(nullable = false, length = 32)
     private String openingHours;
-
+    @OneToMany(mappedBy = "outletEntity")
+    private List<CarEntity> carEntities;
+    @OneToMany(mappedBy = "returnOutlet")
+    private TransitDriverDispatchRecord transitDriverDispatchRecord;
+    
     public OutletEntity() {
     }
 
@@ -96,5 +102,23 @@ public class OutletEntity implements Serializable {
     public void setOpeningHours(String openingHours) {
         this.openingHours = openingHours;
     }
+    
+     public List<CarEntity> getCarEntities() {
+        return carEntities;
+    }
+
+    public void setCarEntities(List<CarEntity> carEntities) {
+        this.carEntities = carEntities;
+    }
+    
+    
+    public TransitDriverDispatchRecord getTransitDriverDispatchRecord() {
+        return transitDriverDispatchRecord;
+    }
+
+    public void setTransitDriverDispatchRecord(TransitDriverDispatchRecord transitDriverDispatchRecord) {
+        this.transitDriverDispatchRecord = transitDriverDispatchRecord;
+    }
+
     
 }

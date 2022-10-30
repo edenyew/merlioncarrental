@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import entity.Category;
 import entity.Model;
+import exception.DeleteModelException;
+import exception.ModelNotFoundException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -45,12 +47,55 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
        return query.getResultList();
    }
    
-  @Override
-    public void updateModel(Model model)
+    @Override
+   public Model retrieveModelById(Long modelId) throws ModelNotFoundException
     {
-        em.merge(model);
+        Model model = em.find(Model.class, modelId);
+        
+            return model;
     }
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+   
+  @Override
+    public void updateModel(Model model) throws ModelNotFoundException
+    {
+         if (model != null && model.getId() != null)
+        {
+            Model modelToUpdate = retrieveModelById(model.getId());
+            
+            modelToUpdate.setCategory(model.getCategory());
+            modelToUpdate.setDisabled(model.getDisabled());
+            modelToUpdate.setInUse(model.getInUse());
+            modelToUpdate.setMakeName(model.getMakeName());
+            modelToUpdate.setModelName(model.getModelName());
+
+        }
+        else 
+        {
+            throw new ModelNotFoundException("Model does not exist!");
+        }
+    }
+   
+    @Override
+    public void deleteModel(Model model)throws ModelNotFoundException, DeleteModelException
+    {
+        
+        Model modelToDelete = retrieveModelById(model.getModelId());
+        if (modelToDelete != null) {
+            
+            if (modelToDelete.getInUse() == true)
+                {
+                    modelToDelete.setDisabled(true);
+                    throw new DeleteModelException("Model is in use and cannot be deleted");
+                }
+            else if (modelToDelete.getInUse() == false) 
+                {
+                    em.remove(modelToDelete);
+                }
+        } else {
+            throw new ModelNotFoundException("Model does not exist!");
+        }
+    }
     
+
 }
+

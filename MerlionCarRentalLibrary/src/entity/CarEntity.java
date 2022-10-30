@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -21,7 +23,15 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class CarEntity implements Serializable {
-  
+
+    public List<TransitDriverDispatchRecord> getTransitDriverDispatchRecords() {
+        return transitDriverDispatchRecords;
+    }
+
+    public void setTransitDriverDispatchRecords(List<TransitDriverDispatchRecord> transitDriverDispatchRecords) {
+        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
+    }
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +41,10 @@ public class CarEntity implements Serializable {
     @Column(nullable = false)
     private String colour;
     private String location;
+    @Column(nullable = false)
+    private Boolean inUse;
+    @Column(nullable = false)
+    private Boolean disabled;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -38,14 +52,28 @@ public class CarEntity implements Serializable {
     
     @ManyToOne (optional = false)
     private Category category;
+    
+    @OneToOne
+    private RentalRate rentalRate;
+    
+    @ManyToOne 
+    private OutletEntity outletEntity;
+    @OneToMany(mappedBy = "car")
+    private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
 
     public CarEntity() {
     }
 
-    public CarEntity(String carPlateNumber, String colour, String location) {
+    public CarEntity(String carPlateNumber, String colour, String location, Boolean inUse, Boolean disabled, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity) {
         this.carPlateNumber = carPlateNumber;
         this.colour = colour;
         this.location = location;
+        this.inUse = inUse;
+        this.disabled = disabled;
+        this.model = model;
+        this.category = category;
+        this.rentalRate = rentalRate;
+        this.outletEntity = outletEntity;
     }
     
     
@@ -55,6 +83,22 @@ public class CarEntity implements Serializable {
 
     public void setCarId(Long carId) {
         this.carId = carId;
+    }
+    
+    public RentalRate getRentalRate() {
+        return rentalRate;
+    }
+
+    public void setRentalRate(RentalRate rentalRate) {
+        this.rentalRate = rentalRate;
+    }
+
+    public OutletEntity getOutletEntity() {
+        return outletEntity;
+    }
+
+    public void setOutletEntity(OutletEntity outletEntity) {
+        this.outletEntity = outletEntity;
     }
     
       public String getLocation() {
@@ -96,6 +140,22 @@ public class CarEntity implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+    
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean getInUse() {
+        return inUse;
+    }
+
+    public void setInUse(Boolean inUse) {
+        this.inUse = inUse;
     }
 
     @Override
