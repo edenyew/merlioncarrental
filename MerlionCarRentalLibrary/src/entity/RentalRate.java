@@ -31,6 +31,7 @@ public class RentalRate implements Serializable {
     private String name;
     
     @Column(nullable = false)
+    @OneToOne
     private Category category;
     
     @Column(precision = 11, scale = 2)

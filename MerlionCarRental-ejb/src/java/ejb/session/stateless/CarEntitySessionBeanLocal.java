@@ -7,6 +7,10 @@ package ejb.session.stateless;
 
 import entity.CarEntity;
 import entity.Model;
+import exception.CarNotFoundException;
+import exception.ModelNotFoundException;
+import exception.OutletNotFoundException;
+import exception.RentalRateNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -17,12 +21,16 @@ import javax.ejb.Local;
 @Local
 public interface CarEntitySessionBeanLocal {
 
-    public Long createNewCar(CarEntity car, Long modelId);
+    public Long createNewCar(CarEntity car, Long modelId, Long outletId, Long rentalRateId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException;
 
     public List<CarEntity> retrieveAllCars();
 
-    public CarEntity retrieveCarByPlateNumber(String carPlateNumber);
+    public CarEntity retrieveCarByPlateNumber(String carPlateNumber) throws CarNotFoundException;
 
-    public void updateCarEntity(CarEntity carEntity);
+    public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException;
+
+    public void deleteCarEntity(CarEntity car) throws CarNotFoundException;
+
+    public CarEntity retrieveCarById(Long carId) throws CarNotFoundException;
     
 }

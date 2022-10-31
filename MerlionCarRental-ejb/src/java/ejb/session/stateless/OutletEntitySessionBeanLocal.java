@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.OutletEntity;
+import exception.OutletNotFoundException;
 import javax.ejb.Local;
 
 /**
@@ -15,10 +16,10 @@ import javax.ejb.Local;
 @Local
 public interface OutletEntitySessionBeanLocal {
 
-    public OutletEntity retrieveOutletById(Long outletId);
-
+    public OutletEntity retrieveOutletById(Long outletId) throws OutletNotFoundException;
+    
     public void updateOutletEntity(OutletEntity outlet);
 
-    public Long createNewOutlet(OutletEntity outletEntity);
+    public Long createNewOutlet(OutletEntity outletEntity);   
     
 }

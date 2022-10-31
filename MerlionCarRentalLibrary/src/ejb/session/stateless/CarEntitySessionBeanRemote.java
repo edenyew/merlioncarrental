@@ -6,6 +6,10 @@
 package ejb.session.stateless;
 
 import entity.CarEntity;
+import exception.CarNotFoundException;
+import exception.ModelNotFoundException;
+import exception.OutletNotFoundException;
+import exception.RentalRateNotFoundException;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -16,12 +20,16 @@ import javax.ejb.Remote;
 @Remote
 public interface CarEntitySessionBeanRemote {
     
-    public Long createNewCar(CarEntity car, Long modelId);
+    public Long createNewCar(CarEntity car, Long modelId,  Long outletId, Long rentalRateId) throws ModelNotFoundException,  OutletNotFoundException, RentalRateNotFoundException;
     
     public List<CarEntity> retrieveAllCars();
     
-    public CarEntity retrieveCarByPlateNumber(String carPlateNumber);
+    public CarEntity retrieveCarByPlateNumber(String carPlateNumber) throws CarNotFoundException;
     
-     public void updateCarEntity(CarEntity carEntity);
+    public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException;
+     
+    public void deleteCarEntity(CarEntity car) throws CarNotFoundException;
+
+    public CarEntity retrieveCarById(Long carId)throws CarNotFoundException;
     
 }

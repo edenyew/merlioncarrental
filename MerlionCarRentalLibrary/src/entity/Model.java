@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 @Entity
 public class Model implements Serializable {
 
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,10 @@ public class Model implements Serializable {
     private String modelName;
     @Column(nullable = false)
     private String makeName;
+    @Column(nullable = false)
+    private Boolean inUse;
+    @Column(nullable = false)
+    private Boolean disabled;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -93,6 +98,22 @@ public class Model implements Serializable {
         this.modelName = modelName;
     }
 
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean getInUse() {
+        return inUse;
+    }
+
+    public void setInUse(Boolean inUse) {
+        this.inUse = inUse;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -116,6 +137,10 @@ public class Model implements Serializable {
     @Override
     public String toString() {
         return "entity.Model[ id=" + modelId + " ]";
+    }
+
+    public Long getId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

@@ -7,6 +7,9 @@
     <class>entity.OutletEntity</class>
     <class>entity.Category</class>
     <class>entity.Model</class>
+    <class>entity.CarEntity</class>
+    <class>entity.RentalRate</class>
+    <class>entity.TransitDriverDispatchRecord</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

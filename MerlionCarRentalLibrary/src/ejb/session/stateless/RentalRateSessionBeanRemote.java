@@ -5,6 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.RentalRate;
+import exception.DeleteRentalRateException;
+import exception.RentalRateNotFoundException;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +17,18 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface RentalRateSessionBeanRemote {
+    
+    public RentalRate retrieveRentalRateByRentalRateId(Long rentalRateId) throws RentalRateNotFoundException;
+
+    public List<RentalRate> retrieveAllRentalRate();
+
+    public List<RentalRate> viewAllRentalRates();
+
+    public Long createRentalRate(RentalRate rentalRate);
+
+    public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException;
+
+    public void deleteRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, DeleteRentalRateException;
+    
     
 }

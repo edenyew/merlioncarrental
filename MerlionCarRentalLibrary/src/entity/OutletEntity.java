@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+
 
 /**
  *
@@ -32,12 +34,16 @@ public class OutletEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String openingHours;
     
-    @OneToMany (mappedBy = "outlet")
-    private List<CarEntity> cars;
-    
     @OneToMany(mappedBy = "outlet")
     private List<Reservation> reservations;
+    
+    @OneToMany(mappedBy = "outletEntity")
+    private List<CarEntity> cars;
+    
+    @OneToMany(mappedBy = "returnOutlet")
+    private TransitDriverDispatchRecord transitDriverDispatchRecord;
 
+    
     public OutletEntity() {
     }
 
@@ -136,6 +142,15 @@ public class OutletEntity implements Serializable {
      */
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    } 
+    
+    public TransitDriverDispatchRecord getTransitDriverDispatchRecord() {
+        return transitDriverDispatchRecord;
     }
+
+    public void setTransitDriverDispatchRecord(TransitDriverDispatchRecord transitDriverDispatchRecord) {
+        this.transitDriverDispatchRecord = transitDriverDispatchRecord;
+    }
+
     
 }
