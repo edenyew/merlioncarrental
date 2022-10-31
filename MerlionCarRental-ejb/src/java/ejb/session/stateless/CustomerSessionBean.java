@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import entity.OutletEntity;
+import entity.Customer;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,37 +16,34 @@ import javax.persistence.Query;
  * @author edenyew
  */
 @Stateless
-public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, OutletEntitySessionBeanLocal {
+public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerSessionBeanLocal {
 
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
+    
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
-    public Long createNewOutlet(OutletEntity outletEntity)
+    public Long createCustomer(Customer customer)
     {
-        em.persist(outletEntity);
+        em.persist(customer);
         em.flush();
         
-        return outletEntity.getId();
-        
+        return customer.getId();
     }
     
-    
-    public OutletEntity retrieveOutletById(Long outletId)
+    public Customer retrieveCustomerWithPassportNumber(String passportNum)
     {
-        Query query = em.createQuery("Select o From OutletEntity o Where o.id =: idNum");
-        query.setParameter("idNum", outletId);
+        Query query = em.createQuery("Select c From Customer c Where c.passportNumber = :passportNumber");
+        query.setParameter("passportNumber", passportNum);
         
-        return (OutletEntity) query.getSingleResult(); // add exception here
+        return (Customer) query.getSingleResult(); // add exception
     }
     
-    
-    public void updateOutletEntity(OutletEntity outlet)
+    public void updateCustomer(Customer customer)
     {
-        em.merge(outlet);
+        em.merge(customer);
     }
-    
     
 }

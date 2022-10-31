@@ -43,14 +43,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         
         return query.getResultList();
     }
-    
-    public List<RentalRate> viewAllRentalRates()
-    {
-        List<RentalRate> allRentalRates =  retrieveAllRentalRate();
-        
-        return allRentalRates;
-    }
-    
+       
     public RentalRate retrieveRentalRateByRentalRateId(Long rentalRateId) throws RentalRateNotFoundException
     {
         RentalRate rentalRate = em.find(RentalRate.class, rentalRateId);
@@ -67,8 +60,11 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     
     public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException
     {
-        if (rentalRate != null && rentalRate.getId() != null)
+        if (rentalRate != null)
         {
+            em.merge(rentalRate);
+            
+/*
             RentalRate rentalRateToUpdate = retrieveRentalRateByRentalRateId(rentalRate.getId());
             viewRentalRateDetails(rentalRateToUpdate);
             
@@ -78,6 +74,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
             rentalRateToUpdate.setName(rentalRate.getName());
             rentalRateToUpdate.setRatePerDay(rentalRate.getRatePerDay());
             rentalRateToUpdate.setValidityPeriod(rentalRate.getValidityPeriod());
+*/
         }
         else 
         {
@@ -129,8 +126,6 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
             throw new RentalRateNotFoundException("Rental Rate Record does not exist!");
         }
         
-    }
-    
-    
+    } 
 }
 

@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import entity.OutletEntity;
+import entity.Customer;
 import javax.ejb.Remote;
 
 /**
@@ -13,12 +13,12 @@ import javax.ejb.Remote;
  * @author edenyew
  */
 @Remote
-public interface OutletEntitySessionBeanRemote {
+public interface CustomerSessionBeanRemote {
     
-    public OutletEntity retrieveOutletById(Long outletId);
+    public void updateCustomer(Customer customer);
 
-    public void updateOutletEntity(OutletEntity outlet);
+    public Customer retrieveCustomerWithPassportNumber(String passportNum);
 
-    public Long createNewOutlet(OutletEntity outletEntity);
+    public Long createCustomer(Customer customer);
     
 }

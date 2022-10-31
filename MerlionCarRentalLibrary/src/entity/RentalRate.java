@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -24,39 +26,43 @@ public class RentalRate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @Column(nullable = false, length = 32)
     private String name;
+    
     @Column(nullable = false)
     private Category category;
+    
     @Column(precision = 11, scale = 2)
     private BigDecimal ratePerDay;
+    
     @Column(nullable = false, length = 32)
     private String validityPeriod;
+    
     @Column(nullable = false)
     private Boolean inUse;
+    
     @Column(nullable = false)
     private Boolean disabled;
+    
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "CardId", nullable = false)
+    private CarEntity car;
+    
 
     public RentalRate() {
     }
 
-    public RentalRate(String name, Category category, BigDecimal ratePerDay, String validityPeriod, Boolean disabled) {
-        this.name = name;
-        this.category = category;
-        this.ratePerDay = ratePerDay;
-        this.validityPeriod = validityPeriod;
-        this.disabled = disabled;
-    }
-
-    public RentalRate(String name, Category category, BigDecimal ratePerDay, String validityPeriod, Boolean inUse, Boolean disabled) {
+    public RentalRate(String name, Category category, BigDecimal ratePerDay, String validityPeriod, Boolean inUse, Boolean disabled, CarEntity car) {
         this.name = name;
         this.category = category;
         this.ratePerDay = ratePerDay;
         this.validityPeriod = validityPeriod;
         this.inUse = inUse;
         this.disabled = disabled;
+        this.car = car;
     }
-       
+
 
     public Long getId() {
         return id;
@@ -173,6 +179,20 @@ public class RentalRate implements Serializable {
      */
     public void setInUse(Boolean inUse) {
         this.inUse = inUse;
+    }
+
+    /**
+     * @return the car
+     */
+    public CarEntity getCar() {
+        return car;
+    }
+
+    /**
+     * @param car the car to set
+     */
+    public void setCar(CarEntity car) {
+        this.car = car;
     }
     
 }

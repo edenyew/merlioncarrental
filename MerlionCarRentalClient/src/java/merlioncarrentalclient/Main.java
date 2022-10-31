@@ -5,7 +5,11 @@
  */
 package merlioncarrentalclient;
 
+import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.PartnerEntitySessionBeanRemote;
+import ejb.session.stateless.RentalRateSessionBeanRemote;
 import entity.PartnerEntity;
 import java.util.List;
 import javax.ejb.EJB;
@@ -17,7 +21,14 @@ import javax.ejb.EJB;
 public class Main {
 
     @EJB
-    private static PartnerEntitySessionBeanRemote partnerEntitySessionBeanRemote;
+    private static RentalRateSessionBeanRemote rentalRateSessionBean;
+    @EJB
+    private static CustomerSessionBeanRemote customerSessionBean;
+    @EJB
+    private static OutletEntitySessionBeanRemote outletEntitySessionBean;
+    @EJB
+    private static CarEntitySessionBeanRemote carEntitySessionBean;
+    
 
     
            
@@ -27,13 +38,7 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         
-      List<PartnerEntity> partnerRecords = partnerEntitySessionBeanRemote.retrieveAllPartnerRecord();
-      
-      for (PartnerEntity partnerEntity: partnerRecords)
-      {
-          System.out.println("Partner Entity:" + partnerEntity.getPartnerId() + partnerEntity.getContactNumber() + partnerEntity.getName() + partnerEntity.getEmail() + partnerEntity.getPassportNumber());
-               
-      }
+
 
     }
     

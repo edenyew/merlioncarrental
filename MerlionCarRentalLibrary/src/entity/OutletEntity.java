@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 /**
  *
@@ -23,19 +25,30 @@ public class OutletEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 32)
+    
+    @Column(nullable = false, length = 32, unique = true)
     private String address;
+    
     @Column(nullable = false, length = 32)
     private String openingHours;
+    
+    @OneToMany (mappedBy = "outlet")
+    private List<CarEntity> cars;
+    
+    @OneToMany(mappedBy = "outlet")
+    private List<Reservation> reservations;
 
     public OutletEntity() {
     }
 
-    public OutletEntity(String address, String openingHours) {
+    public OutletEntity(String address, String openingHours, List<CarEntity> cars, List<Reservation> reservations) {
         this.address = address;
         this.openingHours = openingHours;
+        this.cars = cars;
+        this.reservations = reservations;
     }
-    
+
+
     public Long getId() {
         return id;
     }
@@ -95,6 +108,34 @@ public class OutletEntity implements Serializable {
      */
     public void setOpeningHours(String openingHours) {
         this.openingHours = openingHours;
+    }
+
+    /**
+     * @return the cars
+     */
+    public List<CarEntity> getCars() {
+        return cars;
+    }
+
+    /**
+     * @param cars the cars to set
+     */
+    public void setCars(List<CarEntity> cars) {
+        this.cars = cars;
+    }
+
+    /**
+     * @return the reservations
+     */
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
     
 }
