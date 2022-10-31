@@ -38,7 +38,9 @@ public class Reservation implements Serializable {
     @Column(precision = 11, scale = 2)
     private double totalCost;
     
-    // creditCard entity
+    @OneToOne(optional = false)
+    @JoinColumn(name="CreditCardId", nullable = false)
+    private CreditCard creditCard;
     
     @OneToOne (optional = false)
     @JoinColumn(name = "CarId", nullable = false)

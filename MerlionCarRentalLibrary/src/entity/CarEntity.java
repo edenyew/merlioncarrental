@@ -53,14 +53,20 @@ public class CarEntity implements Serializable {
     @ManyToOne (optional = false)
     private Category category;
     
-    @OneToOne
+    @OneToMany
     private RentalRate rentalRate;
     
     @ManyToOne 
     private OutletEntity outletEntity;
+    
     @OneToMany(mappedBy = "car")
     private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
-
+    
+    @OneToOne
+    @JoinColumn(name = "ReservationId", nullable = true)
+    private Reservation reservation;
+    
+    
     public CarEntity() {
     }
 

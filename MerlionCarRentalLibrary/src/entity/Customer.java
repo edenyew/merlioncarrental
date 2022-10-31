@@ -44,6 +44,8 @@ public class Customer implements Serializable {
     @OneToOne(optional = false)
     @JoinColumn(nullable = false, name = "ReservationId")
     private Reservation reservation;
+    
+    // add creditCard relationship here
 
     public Customer() {
     }
