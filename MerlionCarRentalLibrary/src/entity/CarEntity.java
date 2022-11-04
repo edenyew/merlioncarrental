@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import util.enumeration.CarStatusEnum;
 
 /**
  *
@@ -24,14 +25,6 @@ import javax.persistence.OneToOne;
 @Entity
 public class CarEntity implements Serializable {
 
-    public List<TransitDriverDispatchRecord> getTransitDriverDispatchRecords() {
-        return transitDriverDispatchRecords;
-    }
-
-    public void setTransitDriverDispatchRecords(List<TransitDriverDispatchRecord> transitDriverDispatchRecords) {
-        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
-    }
-    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,9 +35,8 @@ public class CarEntity implements Serializable {
     private String colour;
     private String location;
     @Column(nullable = false)
-    private Boolean inUse;
-    @Column(nullable = false)
     private Boolean disabled;
+    private CarStatusEnum currentStatus;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -70,18 +62,19 @@ public class CarEntity implements Serializable {
     public CarEntity() {
     }
 
-    public CarEntity(String carPlateNumber, String colour, String location, Boolean inUse, Boolean disabled, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity) {
+    public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, Reservation reservation) {
         this.carPlateNumber = carPlateNumber;
         this.colour = colour;
         this.location = location;
-        this.inUse = inUse;
         this.disabled = disabled;
+        this.currentStatus = currentStatus;
         this.model = model;
         this.category = category;
         this.rentalRate = rentalRate;
         this.outletEntity = outletEntity;
+        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
+        this.reservation = reservation;
     }
-    
     
     public Long getCarId() {
         return carId;
@@ -89,6 +82,22 @@ public class CarEntity implements Serializable {
 
     public void setCarId(Long carId) {
         this.carId = carId;
+    }
+    
+        public CarStatusEnum getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(CarStatusEnum currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+    
+     public List<TransitDriverDispatchRecord> getTransitDriverDispatchRecords() {
+        return transitDriverDispatchRecords;
+    }
+
+    public void setTransitDriverDispatchRecords(List<TransitDriverDispatchRecord> transitDriverDispatchRecords) {
+        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
     }
     
     public RentalRate getRentalRate() {
@@ -154,14 +163,6 @@ public class CarEntity implements Serializable {
 
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
-    }
-
-    public Boolean getInUse() {
-        return inUse;
-    }
-
-    public void setInUse(Boolean inUse) {
-        this.inUse = inUse;
     }
 
     @Override

@@ -10,3 +10,7 @@
 /MerlionCarRentalLibrary/build/
 /MerlionCarRentalClient/dist/
 /MerlionCarRentalClient/build/
+MerlionCarRental-ejb/nbproject/project.properties
+MerlionCarRental-ejb/src/java/ejb/session/stateless/TransitDriverDispatchRecordSessionBean.java
+MerlionCarRentalClient/nbproject/project.properties
+nbproject/project.properties

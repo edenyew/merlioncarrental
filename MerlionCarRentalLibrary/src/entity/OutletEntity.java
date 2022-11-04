@@ -26,7 +26,7 @@ public class OutletEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long outletId;
     
     @Column(nullable = false, length = 32, unique = true)
     private String address;
@@ -55,18 +55,18 @@ public class OutletEntity implements Serializable {
     }
 
 
-    public Long getId() {
-        return id;
+    public Long getOutletId() {
+        return outletId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOutletId(Long outletId) {
+        this.outletId = outletId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (outletId != null ? outletId.hashCode() : 0);
         return hash;
     }
 
@@ -77,7 +77,7 @@ public class OutletEntity implements Serializable {
             return false;
         }
         OutletEntity other = (OutletEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.outletId == null && other.outletId != null) || (this.outletId != null && !this.outletId.equals(other.outletId))) {
             return false;
         }
         return true;
@@ -85,7 +85,7 @@ public class OutletEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.OutletEntity[ id=" + id + " ]";
+        return "entity.OutletEntity[ id=" + outletId + " ]";
     }
 
     /**

@@ -25,6 +25,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
+    @Override
     public Long createCustomer(Customer customer)
     {
         em.persist(customer);
@@ -33,6 +34,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         return customer.getId();
     }
     
+    @Override
     public Customer retrieveCustomerWithPassportNumber(String passportNum)
     {
         Query query = em.createQuery("Select c From Customer c Where c.passportNumber = :passportNumber");
@@ -41,6 +43,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         return (Customer) query.getSingleResult(); // add exception
     }
     
+    @Override
     public void updateCustomer(Customer customer)
     {
         em.merge(customer);

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import util.enumeration.TransitStatusEnum;
 
 /**
  *
@@ -22,12 +23,14 @@ import javax.persistence.Temporal;
 @Entity
 public class TransitDriverDispatchRecord implements Serializable {
 
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transitDriverDispatchId;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfTransit;
+    private TransitStatusEnum transitStatus;
     @OneToOne
     private EmployeeEntity transitDriver;
     @ManyToOne
@@ -36,8 +39,19 @@ public class TransitDriverDispatchRecord implements Serializable {
     private OutletEntity pickUpOutlet;
     @OneToOne
     private OutletEntity returnOutlet;
-    
 
+    public TransitDriverDispatchRecord() {
+    }
+
+    public TransitDriverDispatchRecord(Date dateOfTransit, TransitStatusEnum transitStatus, EmployeeEntity transitDriver, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet) {
+        this.dateOfTransit = dateOfTransit;
+        this.transitStatus = transitStatus;
+        this.transitDriver = transitDriver;
+        this.car = car;
+        this.pickUpOutlet = pickUpOutlet;
+        this.returnOutlet = returnOutlet;
+    }
+    
     public Long getTransitDriverDispatchId() {
         return transitDriverDispatchId;
     }
@@ -84,6 +98,14 @@ public class TransitDriverDispatchRecord implements Serializable {
 
     public void setDateOfTransit(Date dateOfTransit) {
         this.dateOfTransit = dateOfTransit;
+    }
+    
+     public TransitStatusEnum getTransitStatus() {
+        return transitStatus;
+    }
+
+    public void setTransitStatus(TransitStatusEnum transitStatus) {
+        this.transitStatus = transitStatus;
     }
 
     @Override

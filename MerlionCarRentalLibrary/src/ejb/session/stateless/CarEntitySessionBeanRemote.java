@@ -32,4 +32,6 @@ public interface CarEntitySessionBeanRemote {
 
     public CarEntity retrieveCarById(Long carId)throws CarNotFoundException;
     
+    public void viewCarDetails(CarEntity car) throws CarNotFoundException;
+    
 }

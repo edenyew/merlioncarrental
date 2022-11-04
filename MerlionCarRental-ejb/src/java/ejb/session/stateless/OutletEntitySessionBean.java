@@ -5,8 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.CarEntity;
 import entity.OutletEntity;
+import exception.CarNotFoundException;
+import exception.CarNotInOutletException;
 import exception.OutletNotFoundException;
+import java.util.Objects;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +27,8 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
+     @EJB
+    private CarEntitySessionBeanLocal carSessionBeanLocal;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
@@ -31,7 +38,7 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
         em.persist(outletEntity);
         em.flush();
         
-        return outletEntity.getId();
+        return outletEntity.getOutletId();
         
     }
     
@@ -46,7 +53,29 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
         }
     }
     
-    
+    @Override
+    public boolean findCarInOutlet(Long outletId, Long carId) throws CarNotFoundException, OutletNotFoundException{
+        CarEntity carToFind = carSessionBeanLocal.retrieveCarById(carId);
+        OutletEntity outlet = retrieveOutletById(outletId);
+        if (carToFind == null ){
+            throw new CarNotFoundException();
+        } 
+        if (outlet == null){
+            throw new OutletNotFoundException();
+        }
+        
+        boolean carIsInOutlet = false;
+        
+        for(CarEntity car : outlet.getCars()){
+            if (Objects.equals(carToFind.getCarId(), car.getCarId())){
+                carIsInOutlet = true;
+                break;
+            } 
+        }
+        
+        return carIsInOutlet;
+        
+    }
     public void updateOutletEntity(OutletEntity outlet)
     {
         em.merge(outlet);

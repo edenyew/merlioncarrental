@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.OutletEntity;
+import exception.CarNotFoundException;
+import exception.CarNotInOutletException;
 import exception.OutletNotFoundException;
 import javax.ejb.Local;
 
@@ -21,5 +23,7 @@ public interface OutletEntitySessionBeanLocal {
     public void updateOutletEntity(OutletEntity outlet);
 
     public Long createNewOutlet(OutletEntity outletEntity);   
+
+    public boolean findCarInOutlet(Long outletId, Long carId) throws CarNotFoundException, OutletNotFoundException;
     
 }

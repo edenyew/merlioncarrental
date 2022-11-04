@@ -32,5 +32,7 @@ public interface CarEntitySessionBeanLocal {
     public void deleteCarEntity(CarEntity car) throws CarNotFoundException;
 
     public CarEntity retrieveCarById(Long carId) throws CarNotFoundException;
+
+    public void viewCarDetails(CarEntity car) throws CarNotFoundException;
     
 }

@@ -10,7 +10,9 @@ import entity.Category;
 import entity.Model;
 import entity.OutletEntity;
 import entity.RentalRate;
+import exception.CarAlreadyInOutletException;
 import exception.CarNotFoundException;
+import exception.CarNotInOutletException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
@@ -20,6 +22,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CarStatusEnum;
 
 /**
  *
@@ -95,32 +98,30 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     @Override
     public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException
     {
-        if (carEntity != null && carEntity.getCarId() != null)
-        {
             CarEntity carToUpdate = retrieveCarById(carEntity.getCarId());
             
+            if (carToUpdate != null) {
             carToUpdate.setCategory(carEntity.getCategory());
-            carToUpdate.setDisabled(carEntity.getDisabled());
-            carToUpdate.setInUse(carEntity.getInUse());
-            carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber());
-            carToUpdate.setColour(carEntity.getColour());
-            carToUpdate.setLocation(carEntity.getLocation());
-            carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-            carToUpdate.setRentalRate(carEntity.getRentalRate());
-            
-
-        }
-        else 
-        {
-            throw new CarNotFoundException("Model does not exist!");
-        }
+                carToUpdate.setDisabled(carEntity.getDisabled());
+                carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
+                carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber());
+                carToUpdate.setColour(carEntity.getColour());
+                carToUpdate.setLocation(carEntity.getLocation());
+                carToUpdate.setOutletEntity(carEntity.getOutletEntity());
+                carToUpdate.setRentalRate(carEntity.getRentalRate());
+                carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
+            } else {
+                throw new CarNotFoundException();
+            }
+        
+    
     }
     
     @Override
     public void deleteCarEntity(CarEntity car)throws CarNotFoundException{
         
         CarEntity carToDelete = retrieveCarById(car.getCarId());
-        if (carToDelete.getInUse() == true)
+        if (carToDelete.getCurrentStatus().equals(CarStatusEnum.IN_USE))
             {
                 carToDelete.setDisabled(true);
             }
@@ -130,5 +131,46 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             }
     }
     
+    public void viewCarDetails(CarEntity car) throws CarNotFoundException{
+        CarEntity carToView = retrieveCarById(car.getCarId());
+        if (carToView != null)
+        {
+            System.out.println("*** View Car Details: ***\n");
+            System.out.println("Car plate Number: " + carToView.getCarPlateNumber());
+            System.out.println("Car Color: " + carToView.getColour());
+            System.out.println("Car Model: " + carToView.getModel());      
+            System.out.println("Car Category " + carToView.getCategory());
+            System.out.println("Car Rental Rate: " + carToView.getRentalRate());
+            System.out.println("Car Current Outlet " + carToView.getOutletEntity());
+                 
+        }
+        else 
+        {
+            throw new CarNotFoundException("Car does not exist!");
+        }
+    }
+    
+    public void pickUpCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarNotInOutletException {
+        OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
+        CarEntity car = retrieveCarById(carEntity.getCarId());
+        if (outletSessionBeanLocal.findCarInOutlet(outlet.getOutletId(), car.getCarId())) {
+            car.setCurrentStatus(CarStatusEnum.IN_USE);
+            outlet.getCars().remove(car);
+        } else {
+            throw new CarNotInOutletException("Car Not Found In Outlet!");
+        }
+    }
+    
+      public void returnCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException {
+        OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
+        CarEntity car = retrieveCarById(carEntity.getCarId());
+        if (outletSessionBeanLocal.findCarInOutlet(outlet.getOutletId(), car.getCarId())) {
+            car.setCurrentStatus(CarStatusEnum.NOT_IN_USE);
+            car.setLocation(outlet.getAddress());
+            outlet.getCars().add(car);
+        } else {
+            throw new CarAlreadyInOutletException("Car Is Already At That Outlet!");
+        }
+    }
     
 }
