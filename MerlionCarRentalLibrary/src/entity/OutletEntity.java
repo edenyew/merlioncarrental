@@ -34,14 +34,14 @@ public class OutletEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String openingHours;
     
-    @OneToMany(mappedBy = "returnOutletId")
+    @OneToMany(mappedBy = "returnOutlet")
     private List<Reservation> reservations;
     
     @OneToMany(mappedBy = "outletEntity")
     private List<CarEntity> cars;
     
     @OneToMany(mappedBy = "returnOutlet")
-    private TransitDriverDispatchRecord transitDriverDispatchRecord;
+    private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
 
     
     public OutletEntity() {
@@ -61,6 +61,14 @@ public class OutletEntity implements Serializable {
 
     public void setOutletId(Long outletId) {
         this.outletId = outletId;
+    }
+
+    public List<TransitDriverDispatchRecord> getTransitDriverDispatchRecords() {
+        return transitDriverDispatchRecords;
+    }
+
+    public void setTransitDriverDispatchRecords(List<TransitDriverDispatchRecord> transitDriverDispatchRecords) {
+        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
     }
 
     @Override
@@ -144,13 +152,8 @@ public class OutletEntity implements Serializable {
         this.reservations = reservations;
     } 
     
-    public TransitDriverDispatchRecord getTransitDriverDispatchRecord() {
-        return transitDriverDispatchRecord;
-    }
-
-    public void setTransitDriverDispatchRecord(TransitDriverDispatchRecord transitDriverDispatchRecord) {
-        this.transitDriverDispatchRecord = transitDriverDispatchRecord;
-    }
+   
+    
 
     
 }

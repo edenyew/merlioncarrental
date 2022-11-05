@@ -53,9 +53,9 @@ public class Reservation implements Serializable {
     @JoinColumn(name = "returnOutletId", nullable = false)
     private OutletEntity returnOutlet;
     
-    @OneToOne
-    @JoinColumn(name = "customerId")
-    private Customer customer;
+    @OneToOne (mappedBy = "reservation")
+//    //@JoinColumn(name = "customerId")
+     private Customer customer;
 
     
     public Reservation() {

@@ -56,7 +56,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         }
         
     }
-    
+   @Override 
     public Customer retrieveCustomerById(Long customerId) throws CustomerNotFoundException
     {
         Customer customer = em.find(Customer.class, customerId);
@@ -122,9 +122,9 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     public void viewAllReservations(Customer customer) throws CustomerNotFoundException
     {
         Customer customerToView= retrieveCustomerById(customer.getCustomerId());
-        Reservation reservation = customerToView.getReservation();
+        //Reservation reservation = customerToView.getReservation();
         
-        System.out.println(reservation.getId());
+        //System.out.println(reservation.getId());
     }
     
 //    public void reserveCar(Reservation reservation, Customer customer, CarEntity car){

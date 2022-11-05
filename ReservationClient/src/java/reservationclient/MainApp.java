@@ -247,22 +247,33 @@ public class MainApp {
         String contactNumber = "";
         String passportNumber = "";
         String password = "";
+        Customer newCustomer = new Customer();
         
         System.out.println("*** Reservation Client :: Register ***\n");
         System.out.print("Enter first name> ");
         firstName = scanner.nextLine().trim();
+        newCustomer.setFirstName(firstName);
+        
         System.out.print("Enter last name> ");
         lastName = scanner.nextLine().trim();
+        newCustomer.setLastName(lastName);
+        
          System.out.print("Enter email> ");
         email = scanner.nextLine().trim();
+        newCustomer.setEmail(email);
+        
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
+        newCustomer.setPassword(password);
+        
          System.out.print("Enter contactNumber> ");
         contactNumber = scanner.nextLine().trim();
+        newCustomer.setContactNumber(contactNumber);
+        
         System.out.print("Enter passportNumber> ");
         passportNumber = scanner.nextLine().trim();
+        newCustomer.setPassportNumber(passportNumber);
         
-        Customer newCustomer = new Customer(firstName, lastName, email, passportNumber, contactNumber, password, false, null);
         Long newCustomerId = customerSessionBeanRemote.createCustomer(newCustomer);
         System.out.println("New student created successfully!: " + newCustomerId + "\n");
     }

@@ -45,9 +45,9 @@ public class Customer implements Serializable {
     
     private boolean loggedIn;
     
-    @OneToOne(optional = false)
-    @JoinColumn(nullable = false, name = "ReservationId")
-    private Reservation reservation;
+     @OneToOne(optional = true)
+//    //@JoinColumn(name = "ReservationId")
+   private Reservation reservation;
     
     // add creditCard relationship here
 
@@ -62,7 +62,7 @@ public class Customer implements Serializable {
         this.contactNumber = contactNumber;
         this.password = password;
         this.loggedIn = loggedIn;
-        this.reservation = reservation;
+        //this.reservation = reservation;
     }
 
     public boolean isLoggedIn() {
@@ -197,5 +197,5 @@ public class Customer implements Serializable {
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
     }
-    
+//    
 }

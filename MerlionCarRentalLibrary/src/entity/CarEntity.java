@@ -46,8 +46,8 @@ public class CarEntity implements Serializable {
     @ManyToOne (optional = false)
     private Category category;
     
-    @OneToMany
-    private RentalRate rentalRate;
+    @OneToMany(mappedBy="car")
+    private List<RentalRate> rentalRates;
     
     @ManyToOne 
     private OutletEntity outletEntity;
@@ -62,7 +62,7 @@ public class CarEntity implements Serializable {
     public CarEntity() {
     }
 
-    public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, List<Reservation> reservations) {
+    public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, List<RentalRate> rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, List<Reservation> reservations) {
         this.carPlateNumber = carPlateNumber;
         this.colour = colour;
         this.location = location;
@@ -70,11 +70,13 @@ public class CarEntity implements Serializable {
         this.currentStatus = currentStatus;
         this.model = model;
         this.category = category;
-        this.rentalRate = rentalRate;
+        this.rentalRates = rentalRate;
         this.outletEntity = outletEntity;
         this.transitDriverDispatchRecords = transitDriverDispatchRecords;
         this.reservations = reservations;
     }
+
+   
 
     
       public List<Reservation> getReservations() {
@@ -111,13 +113,7 @@ public class CarEntity implements Serializable {
         this.transitDriverDispatchRecords = transitDriverDispatchRecords;
     }
     
-    public RentalRate getRentalRate() {
-        return rentalRate;
-    }
-
-    public void setRentalRate(RentalRate rentalRate) {
-        this.rentalRate = rentalRate;
-    }
+    
 
     public OutletEntity getOutletEntity() {
         return outletEntity;
@@ -141,6 +137,14 @@ public class CarEntity implements Serializable {
 
     public void setColour(String colour) {
         this.colour = colour;
+    }
+
+    public List<RentalRate> getRentalRates() {
+        return rentalRates;
+    }
+
+    public void setRentalRates(List<RentalRate> rentalRates) {
+        this.rentalRates = rentalRates;
     }
 
    

@@ -58,7 +58,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
        car.setModel(model);
        car.setCategory(category);
        car.setOutletEntity(outlet);
-       car.setRentalRate(rentalRate);
+       car.getRentalRates().add(rentalRate);
        
        em.flush();
        return car.getCarId();
@@ -110,7 +110,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
                 carToUpdate.setColour(carEntity.getColour());
                 carToUpdate.setLocation(carEntity.getLocation());
                 carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-                carToUpdate.setRentalRate(carEntity.getRentalRate());
+                carToUpdate.setRentalRates(carEntity.getRentalRates());
                 carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
             } else {
                 throw new CarNotFoundException();
@@ -143,7 +143,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             System.out.println("Car Color: " + carToView.getColour());
             System.out.println("Car Model: " + carToView.getModel());      
             System.out.println("Car Category " + carToView.getCategory());
-            System.out.println("Car Rental Rate: " + carToView.getRentalRate());
+            System.out.println("Car Rental Rates: " + carToView.getRentalRates());
             System.out.println("Car Current Outlet " + carToView.getOutletEntity());
                  
         }

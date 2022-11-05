@@ -44,7 +44,7 @@ public class RentalRate implements Serializable {
     private Boolean disabled;
     
     @OneToOne (optional = false)
-    @Column(nullable = false, name = "CategoryId")
+    @JoinColumn(nullable = false, name = "CategoryId")
     private Category category;
     
     @ManyToOne (optional = false)

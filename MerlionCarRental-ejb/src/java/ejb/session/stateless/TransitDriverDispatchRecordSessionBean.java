@@ -46,7 +46,7 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
        
        em.persist(transitRecord);
       
-       returnOutlet.setTransitDriverDispatchRecord(transitRecord);
+       returnOutlet.getTransitDriverDispatchRecords().add(transitRecord);
        car.getTransitDriverDispatchRecords().add(transitRecord);
        transitRecord.setTransitDriver(employee);
        transitRecord.setPickUpOutlet(pickupOutlet);

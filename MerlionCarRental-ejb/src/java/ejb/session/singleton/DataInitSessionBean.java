@@ -5,6 +5,7 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.OutletEntitySessionBeanLocal;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
 import entity.PartnerEntity;
 import javax.annotation.PostConstruct;
@@ -27,6 +28,8 @@ public class DataInitSessionBean {
 
     @EJB
     private PartnerEntitySessionBeanLocal partnerEntitySessionBeanLocal;
+    @EJB
+    private OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
 
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
