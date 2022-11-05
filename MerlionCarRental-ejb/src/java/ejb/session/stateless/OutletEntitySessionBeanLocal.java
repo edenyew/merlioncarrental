@@ -9,6 +9,7 @@ import entity.OutletEntity;
 import exception.CarNotFoundException;
 import exception.CarNotInOutletException;
 import exception.OutletNotFoundException;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -24,6 +25,8 @@ public interface OutletEntitySessionBeanLocal {
 
     public Long createNewOutlet(OutletEntity outletEntity);   
 
+    public List<OutletEntity> retrieveAllOutlets();
+    
     public boolean findCarInOutlet(Long outletId, Long carId) throws CarNotFoundException, OutletNotFoundException;
     
 }

@@ -25,6 +25,7 @@ import util.enumeration.CarStatusEnum;
 @Entity
 public class CarEntity implements Serializable {
 
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,15 +55,14 @@ public class CarEntity implements Serializable {
     @OneToMany(mappedBy = "car")
     private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
     
-    @OneToOne
-    @JoinColumn(name = "ReservationId", nullable = true)
-    private Reservation reservation;
+    @OneToMany(mappedBy = "car")
+    private List<Reservation> reservations;
     
     
     public CarEntity() {
     }
 
-    public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, Reservation reservation) {
+    public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, List<Reservation> reservations) {
         this.carPlateNumber = carPlateNumber;
         this.colour = colour;
         this.location = location;
@@ -73,8 +73,18 @@ public class CarEntity implements Serializable {
         this.rentalRate = rentalRate;
         this.outletEntity = outletEntity;
         this.transitDriverDispatchRecords = transitDriverDispatchRecords;
-        this.reservation = reservation;
+        this.reservations = reservations;
     }
+
+    
+      public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+    
     
     public Long getCarId() {
         return carId;
@@ -84,7 +94,8 @@ public class CarEntity implements Serializable {
         this.carId = carId;
     }
     
-        public CarStatusEnum getCurrentStatus() {
+
+     public CarStatusEnum getCurrentStatus() {
         return currentStatus;
     }
 

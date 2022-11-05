@@ -34,7 +34,7 @@ public class OutletEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String openingHours;
     
-    @OneToMany(mappedBy = "outlet")
+    @OneToMany(mappedBy = "returnOutletId")
     private List<Reservation> reservations;
     
     @OneToMany(mappedBy = "outletEntity")

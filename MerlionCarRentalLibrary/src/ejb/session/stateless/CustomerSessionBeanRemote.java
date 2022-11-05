@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import entity.Customer;
+import exception.AlreadyLoggedInException;
+import exception.CustomerNotFoundException;
+import exception.InvalidLoginCredentialException;
 import javax.ejb.Remote;
 
 /**
@@ -17,8 +20,16 @@ public interface CustomerSessionBeanRemote {
     
     public void updateCustomer(Customer customer);
 
-    public Customer retrieveCustomerWithPassportNumber(String passportNum);
+    public Customer retrieveCustomerWithPassportNumber(String passportNum) throws CustomerNotFoundException;
 
     public Long createCustomer(Customer customer);
+    
+    public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
+    
+     public Customer customerLogin(String email, String password) throws CustomerNotFoundException, InvalidLoginCredentialException, AlreadyLoggedInException;
+
+    public Customer customerLogout(Customer customer) throws CustomerNotFoundException, InvalidLoginCredentialException;
+
+    public void viewAllReservations(Customer customer) throws CustomerNotFoundException;
     
 }

@@ -29,5 +29,7 @@ public interface RentalRateSessionBeanLocal {
     public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException;
 
     public void deleteRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, DeleteRentalRateException;
+
+    public void viewRentalRateDetails(RentalRate rentalRate) throws RentalRateNotFoundException;
     
 }

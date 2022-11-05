@@ -10,12 +10,14 @@ import entity.Category;
 import entity.Model;
 import entity.OutletEntity;
 import entity.RentalRate;
+import entity.Reservation;
 import exception.CarAlreadyInOutletException;
 import exception.CarNotFoundException;
 import exception.CarNotInOutletException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -104,7 +106,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             carToUpdate.setCategory(carEntity.getCategory());
                 carToUpdate.setDisabled(carEntity.getDisabled());
                 carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
-                carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber());
+                carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber()); 
                 carToUpdate.setColour(carEntity.getColour());
                 carToUpdate.setLocation(carEntity.getLocation());
                 carToUpdate.setOutletEntity(carEntity.getOutletEntity());
@@ -131,6 +133,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             }
     }
     
+    @Override
     public void viewCarDetails(CarEntity car) throws CarNotFoundException{
         CarEntity carToView = retrieveCarById(car.getCarId());
         if (carToView != null)
@@ -148,6 +151,29 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         {
             throw new CarNotFoundException("Car does not exist!");
         }
+    }
+    
+   
+    @Override
+    public List<CarEntity> findListOfCars(Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate) throws OutletNotFoundException{
+        
+        OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
+        OutletEntity pickUpOutlet = outletSessionBeanLocal.retrieveOutletById(pickUpOutletId);
+        Query query;
+        query = em.createQuery("SELECT c FROM CarEntity c WHERE c.outletEntity = :pickUpOutlet AND c.currentStatus = :notInUse");
+        query.setParameter("pickUpOutlet", pickUpOutlet).setParameter("notInUse", CarStatusEnum.NOT_IN_USE);
+        
+        List<CarEntity> listOfCarsAtPickUpOutlet = query.getResultList();
+        for (CarEntity car : listOfCarsAtPickUpOutlet){
+            List<Reservation> reservations = car.getReservations();
+            for (Reservation reservation: reservations){
+                if (reservation.getPickUpDate().compareTo(pickUpDate) < 0 || reservation.getReturnDate().compareTo(returnDate) > 0){
+                    listOfCarsAtPickUpOutlet.remove(car);
+            }
+            }
+        }
+        
+        return listOfCarsAtPickUpOutlet;
     }
     
     public void pickUpCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarNotInOutletException {

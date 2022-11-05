@@ -42,13 +42,16 @@ public class Reservation implements Serializable {
     @JoinColumn(name="CreditCardId", nullable = false)
     private CreditCard creditCard;
     
-    @OneToOne (optional = false)
+    @ManyToOne (optional = false)
     @JoinColumn(name = "CarId", nullable = false)
     private CarEntity car;
     
-    @ManyToOne (optional = false)
-    @JoinColumn(name = "OutletId", nullable = false)
-    private OutletEntity outlet;
+    @OneToOne (optional = false)
+    @JoinColumn(name = "pickUpOutletId", nullable = false)
+    private OutletEntity pickUpOutlet;
+    @OneToOne (optional = false)
+    @JoinColumn(name = "returnOutletId", nullable = false)
+    private OutletEntity returnOutlet;
     
     @OneToOne
     @JoinColumn(name = "customerId")
@@ -56,6 +59,38 @@ public class Reservation implements Serializable {
 
     
     public Reservation() {
+    }
+
+    public Date getPickUpDate() {
+        return pickUpDate;
+    }
+
+    public void setPickUpDate(Date pickUpDate) {
+        this.pickUpDate = pickUpDate;
+    }
+
+    public Date getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(Date returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public CreditCard getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(CreditCard creditCard) {
+        this.creditCard = creditCard;
     }
     
 
@@ -110,15 +145,23 @@ public class Reservation implements Serializable {
     /**
      * @return the outlet
      */
-    public OutletEntity getOutlet() {
-        return outlet;
+    public OutletEntity getPickUpOutlet() {
+        return pickUpOutlet;
     }
 
     /**
      * @param outlet the outlet to set
      */
-    public void setOutlet(OutletEntity outlet) {
-        this.outlet = outlet;
+    public void setPickUpOutlet(OutletEntity outlet) {
+        this.pickUpOutlet = outlet;
+    }
+
+    public OutletEntity getReturnOutlet() {
+        return returnOutlet;
+    }
+
+    public void setReturnOutlet(OutletEntity returnOutlet) {
+        this.returnOutlet = returnOutlet;
     }
 
     /**

@@ -10,6 +10,7 @@ import exception.CarNotFoundException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -33,5 +34,7 @@ public interface CarEntitySessionBeanRemote {
     public CarEntity retrieveCarById(Long carId)throws CarNotFoundException;
     
     public void viewCarDetails(CarEntity car) throws CarNotFoundException;
+
+    public List<CarEntity> findListOfCars(Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate) throws OutletNotFoundException;
     
 }

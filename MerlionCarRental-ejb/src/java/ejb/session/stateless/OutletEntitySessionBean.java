@@ -10,6 +10,7 @@ import entity.OutletEntity;
 import exception.CarNotFoundException;
 import exception.CarNotInOutletException;
 import exception.OutletNotFoundException;
+import java.util.List;
 import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -42,6 +43,12 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
         
     }
     
+    public List<OutletEntity> retrieveAllOutlets() {
+         Query query;
+        query = em.createQuery("SELECT o FROM OutletEntity o");
+       
+       return query.getResultList();
+    }
     @Override
     public OutletEntity retrieveOutletById(Long outletId) throws OutletNotFoundException
     {

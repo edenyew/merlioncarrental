@@ -24,7 +24,7 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long customerId;
     
     @Column(nullable = false, length = 32)
     private String firstName;
@@ -41,6 +41,10 @@ public class Customer implements Serializable {
     @Column(nullable = false, length = 8)
     private String contactNumber;
     
+    private String password;
+    
+    private boolean loggedIn;
+    
     @OneToOne(optional = false)
     @JoinColumn(nullable = false, name = "ReservationId")
     private Reservation reservation;
@@ -50,29 +54,45 @@ public class Customer implements Serializable {
     public Customer() {
     }
 
-    public Customer(String firstName, String lastName, String email, String passportNumber, String contactNumber, Reservation reservation) {
+    public Customer(String firstName, String lastName, String email, String passportNumber, String contactNumber, String password, boolean loggedIn, Reservation reservation) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.passportNumber = passportNumber;
         this.contactNumber = contactNumber;
+        this.password = password;
+        this.loggedIn = loggedIn;
         this.reservation = reservation;
     }
-    
 
-
-    public Long getId() {
-        return id;
+    public boolean isLoggedIn() {
+        return loggedIn;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (customerId != null ? customerId.hashCode() : 0);
         return hash;
     }
 
@@ -83,7 +103,7 @@ public class Customer implements Serializable {
             return false;
         }
         Customer other = (Customer) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.customerId == null && other.customerId != null) || (this.customerId != null && !this.customerId.equals(other.customerId))) {
             return false;
         }
         return true;
@@ -91,7 +111,7 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Customer[ id=" + id + " ]";
+        return "entity.Customer[ id=" + customerId + " ]";
     }
 
     /**
