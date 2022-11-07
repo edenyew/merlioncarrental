@@ -21,6 +21,7 @@ import entity.RentalRate;
 import entity.TransitDriverDispatchRecord;
 import exception.CarNotFoundException;
 import exception.DeleteModelException;
+import exception.DeleteRentalRateException;
 import exception.EmployeeNotFoundException;
 import exception.InvalidAccessRightException;
 import exception.ModelNotFoundException;
@@ -157,7 +158,14 @@ public class SalesManagementModule {
                 }
                 else if(response == 5)
                 {
-//                    deleteRentalRate();
+                    try
+                    {
+                        deleteRentalRate();
+                    }
+                    catch (DeleteRentalRateException | RentalRateNotFoundException ex)
+                    {
+                        System.out.println("An error has occurred: " + ex.getMessage() + "\n");
+                    }
                 }
                 else if (response == 6)
                 {
@@ -301,14 +309,23 @@ public class SalesManagementModule {
         
     }
     
-/*
-    public void deleteRentalRate() throws CarNotFoundException, RentalRateNotFoundException 
+    public void deleteRentalRate() throws DeleteRentalRateException, RentalRateNotFoundException 
     {
         Scanner scanner = new Scanner(System.in);
+        List<RentalRate> allRentalRate = rentalRateSessionBeanRemote.retrieveAllRentalRate();
+        Long response;
         
         System.out.println("*** Merlion Car Rental System :: Sales Management :: Delete Rental Rate ***\n");
+        System.out.println("Enter Rental Rate ID> ");
+        for (RentalRate rentalRate : allRentalRate)
+        {
+            System.out.println(rentalRate.getId() + ": " + rentalRate.getName() + ", " + rentalRate.getCategory().getName());
+        }
+        
+        response = scanner.nextLong();
+        RentalRate rentalRateToDelete = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(response);
+        rentalRateSessionBeanRemote.deleteRentalRate(rentalRateToDelete);
     }
-*/
     
     
     
