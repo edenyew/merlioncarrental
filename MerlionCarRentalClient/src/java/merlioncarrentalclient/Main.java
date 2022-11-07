@@ -6,10 +6,14 @@
 package merlioncarrentalclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.PartnerEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import entity.PartnerEntity;
 import java.util.List;
 import javax.ejb.EJB;
@@ -21,6 +25,14 @@ import javax.ejb.EJB;
 public class Main {
 
     @EJB
+    private static TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBean;
+    @EJB
+    private static ModelSessionBeanRemote modelSessionBean;
+    @EJB
+    private static CategorySessionBeanRemote categorySessionBean;
+    @EJB
+    private static EmployeeEntitySessionBeanRemote employeeEntitySessionBean;
+    @EJB
     private static RentalRateSessionBeanRemote rentalRateSessionBean;
     @EJB
     private static CustomerSessionBeanRemote customerSessionBean;
@@ -29,8 +41,6 @@ public class Main {
     @EJB
     private static CarEntitySessionBeanRemote carEntitySessionBean;
     
-
-    
            
     /**
      * @param args the command line arguments
@@ -38,8 +48,9 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         
-
-
+        MainApp mainApp = new MainApp(employeeEntitySessionBean, carEntitySessionBean, customerSessionBean, categorySessionBean, rentalRateSessionBean, modelSessionBean, outletEntitySessionBean, transitDriverDispatchRecordSessionBean);
+        mainApp.runApp();
+        
     }
     
 }

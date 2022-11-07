@@ -71,6 +71,7 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
         }
     }
     
+    @Override
     public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord()
     {
         Query query = em.createQuery("Select tdr From TransitDriverDispatchRecord tdr");
@@ -102,6 +103,7 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
         
     }
     
+    @Override
     public TransitDriverDispatchRecord retrieveTransitRecordByEmployee(EmployeeEntity employee)
     {
         Query query = em.createQuery("Select t From TransitDriverDispatchRecord r Where r.transitDriver := driver");

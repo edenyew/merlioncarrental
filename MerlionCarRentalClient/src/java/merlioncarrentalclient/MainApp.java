@@ -6,11 +6,17 @@
 package merlioncarrentalclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
+import ejb.session.stateless.OutletEntitySessionBeanRemote;
+import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import exception.InvalidLoginCredentialException;
 import java.util.Scanner;
 import entity.EmployeeEntity;
+import exception.CarNotFoundException;
 import exception.InvalidAccessRightException;
 
 /**
@@ -23,6 +29,12 @@ public class MainApp {
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
     private CustomerSessionBeanRemote customerSessionBeanRemote;
+    private CategorySessionBeanRemote categorySessionBeanRemote;
+    private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    private ModelSessionBeanRemote modelSessionBeanRemote;
+    private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
+    private TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote;
+    
     
     private SalesManagementModule salesManagementModule;
     private CustomerServiceModule customerServiceModule;
@@ -32,9 +44,17 @@ public class MainApp {
     
     public MainApp() {
     }
-    
-    
-    // add MainApp constructor with parameters
+
+    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote) {
+        this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
+        this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
+        this.customerSessionBeanRemote = customerSessionBeanRemote;
+        this.categorySessionBeanRemote = categorySessionBeanRemote;
+        this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
+        this.modelSessionBeanRemote = modelSessionBeanRemote;
+        this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
+        this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
+    }
     
     
     public void runApp() 
@@ -61,7 +81,8 @@ public class MainApp {
                     {
                         doLogin();
                         System.out.println("Login successful!\n");
-                        // salesManagementModule = new ...... ----> Add sales management constructor here
+                        
+                        salesManagementModule = new SalesManagementModule(categorySessionBeanRemote, carEntitySessionBeanRemote, rentalRateSessionBeanRemote, modelSessionBeanRemote, outletEntitySessionBeanRemote, employeeEntitySessionBeanRemote, transitDriverDispatchRecordSessionBeanRemote);
                         customerServiceModule = new CustomerServiceModule(carEntitySessionBeanRemote, customerSessionBeanRemote, currentEmployeeEntity);
                     
                         menuMain();
@@ -136,7 +157,7 @@ public class MainApp {
                     {
                         salesManagementModule.menuSalesManagement();
                     }
-                    catch (InvalidAccessRightException ex)
+                    catch (InvalidAccessRightException | CarNotFoundException ex)
                     {
                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
                     }

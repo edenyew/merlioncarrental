@@ -56,7 +56,17 @@ public class SalesManagementModule {
     public SalesManagementModule() {
     }
     
-    // add constructor with parameters
+
+    public SalesManagementModule(CategorySessionBeanRemote categorySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote)
+    {
+        this.categorySessionBeanRemote = categorySessionBeanRemote;
+        this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
+        this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
+        this.modelSessionBeanRemote = modelSessionBeanRemote;
+        this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
+        this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
+        this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
+    }
     
     public void menuSalesManagement() throws InvalidAccessRightException, CarNotFoundException
     {
