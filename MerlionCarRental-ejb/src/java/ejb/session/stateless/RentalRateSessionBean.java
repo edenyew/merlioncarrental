@@ -47,13 +47,14 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     }
     
     
-    @Override
+/*    @Override
     public List<RentalRate> viewAllRentalRates()
     {
         List<RentalRate> allRentalRates =  retrieveAllRentalRate();
         
         return allRentalRates;
     }
+*/
     
     @Override
     public RentalRate retrieveRentalRateByRentalRateId(Long rentalRateId) throws RentalRateNotFoundException
@@ -74,20 +75,20 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException
     {
         if (rentalRate != null)
-        {
-            em.merge(rentalRate);
+        {            
             
-/*
             RentalRate rentalRateToUpdate = retrieveRentalRateByRentalRateId(rentalRate.getId());
             viewRentalRateDetails(rentalRateToUpdate);
             
-            rentalRateToUpdate.setCategory(rentalRate.getCategory());
-            rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
-            rentalRateToUpdate.setInUse(rentalRate.getInUse());
             rentalRateToUpdate.setName(rentalRate.getName());
             rentalRateToUpdate.setRatePerDay(rentalRate.getRatePerDay());
             rentalRateToUpdate.setValidityPeriod(rentalRate.getValidityPeriod());
-*/
+            rentalRateToUpdate.setInUse(rentalRate.getInUse());
+            rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
+            rentalRateToUpdate.setCategory(rentalRate.getCategory());
+            rentalRateToUpdate.setCar(rentalRate.getCar());
+            
+            em.merge(rentalRate);
         }
         else 
         {
@@ -120,20 +121,15 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         }   
     }
     
+    @Override
     public void viewRentalRateDetails(RentalRate rentalRate) throws RentalRateNotFoundException
     {
         RentalRate rentalRateToView = retrieveRentalRateByRentalRateId(rentalRate.getId());
         
         if (rentalRateToView != null)
         {
-            System.out.println("*** View Rental Rate Details: ***\n");
-            System.out.println("Rental Rate record Id: " + rentalRateToView.getId());
-            System.out.println("Rental Rate record name: " + rentalRateToView.getName());
-            System.out.println("Rental Rate record category: " + rentalRateToView.getCategory());
-            System.out.println("Rental Rate record rate per day: " + rentalRateToView.getRatePerDay());
-            System.out.println("Rental Rate record validity period: " + rentalRateToView.getValidityPeriod());
-            System.out.println("Rental Rate record is in use: " + rentalRateToView.getInUse());
-            System.out.println("Rental Rate record is disabled: " + rentalRateToView.getDisabled());           
+            System.out.println("Name, CarCategory, RatePerDay, StartDateTime, EndDateTime");
+            System.out.println(rentalRateToView.getName() + ", " + rentalRateToView.getCategory().getName() + ", " + rentalRateToView.getRatePerDay() + ", " + rentalRateToView.getValidityPeriod());
         }
         else 
         {

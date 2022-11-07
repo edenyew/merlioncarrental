@@ -139,13 +139,8 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         if (carToView != null)
         {
             System.out.println("*** View Car Details: ***\n");
-            System.out.println("Car plate Number: " + carToView.getCarPlateNumber());
-            System.out.println("Car Color: " + carToView.getColour());
-            System.out.println("Car Model: " + carToView.getModel());      
-            System.out.println("Car Category " + carToView.getCategory());
-            System.out.println("Car Rental Rate: " + carToView.getRentalRate());
-            System.out.println("Car Current Outlet " + carToView.getOutletEntity());
-                 
+            System.out.println("LicensePlateNumber, Make, Model, Status, Outlet");
+            System.out.println(carToView.getCarPlateNumber() + ", " + carToView.getModel().getMakeName() + ", " + carToView.getModel().getModelName() + ", " + carToView.getCurrentStatus() + ", " + carToView.getOutletEntity().getAddress());
         }
         else 
         {

@@ -50,6 +50,7 @@ public class Reservation implements Serializable {
     @JoinColumn(name = "pickUpOutletId", nullable = false)
     private OutletEntity pickUpOutlet;
     @OneToOne (optional = false)
+    
     @JoinColumn(name = "returnOutletId", nullable = false)
     private OutletEntity returnOutlet;
     

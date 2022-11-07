@@ -26,7 +26,7 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
     private EntityManager em;
 
     @Override
-   public Long createNewModel(Model model, Long categoryId){
+    public Long createNewModel(Model model, Long categoryId){
        
        Category category = em.find(Category.class, categoryId);
        em.persist(model);
@@ -40,7 +40,7 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
    }
    
     @Override
-   public List<Model> retrieveAllModels() {
+    public List<Model> retrieveAllModels() {
        
        Query query = em.createQuery("SELECT m FROM Model m");
        
@@ -48,25 +48,27 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
    }
    
     @Override
-   public Model retrieveModelById(Long modelId) throws ModelNotFoundException
+    public Model retrieveModelById(Long modelId) throws ModelNotFoundException
     {
         Model model = em.find(Model.class, modelId);
         
             return model;
     }
    
-  @Override
+    @Override
     public void updateModel(Model model) throws ModelNotFoundException
     {
-         if (model != null && model.getId() != null)
+         if (model != null && model.getModelId()!= null)
         {
-            Model modelToUpdate = retrieveModelById(model.getId());
+            Model modelToUpdate = retrieveModelById(model.getModelId());
             
             modelToUpdate.setCategory(model.getCategory());
             modelToUpdate.setDisabled(model.getDisabled());
             modelToUpdate.setInUse(model.getInUse());
             modelToUpdate.setMakeName(model.getMakeName());
             modelToUpdate.setModelName(model.getModelName());
+            
+            em.merge(modelToUpdate);
 
         }
         else 

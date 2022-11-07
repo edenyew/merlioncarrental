@@ -34,6 +34,9 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     OutletEntitySessionBeanLocal outletSessionBeanLocal;
     @EJB
     CarEntitySessionBeanLocal carEntitySessionBeanLocal;
+    @EJB
+    private EmployeeEntitySessionBeanLocal employeeEntitySessionBean;
+    
     
     @Override
     public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long employeeId, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException  
@@ -68,6 +71,12 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
         }
     }
     
+    public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord()
+    {
+        Query query = em.createQuery("Select tdr From TransitDriverDispatchRecord tdr");
+        return query.getResultList();
+    }
+    
     @Override
     public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException{
         
@@ -93,6 +102,14 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
         
     }
     
+    public TransitDriverDispatchRecord retrieveTransitRecordByEmployee(EmployeeEntity employee)
+    {
+        Query query = em.createQuery("Select t From TransitDriverDispatchRecord r Where r.transitDriver := driver");
+        query.setParameter("driver", employee);
+        
+        return (TransitDriverDispatchRecord) query.getSingleResult();
+    }
+    
 //    @Override
 //    public List<CarEntity> retrieveCurrentDayRecords(OutletEntity returnOutlet, Date currentDay) {
 //       
@@ -101,4 +118,21 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
 //       
 //       return query.getResultList();
 //   }
+    
+    @Override
+    public void assignTransitDriver(TransitDriverDispatchRecord transitRecord, Long employeeId)
+    {
+        EmployeeEntity employee = employeeEntitySessionBean.retrieveEmployeeById(employeeId);
+        transitRecord.setTransitDriver(employee);
+        employee.setTransitDriverDistpachRecord(transitRecord);
+        
+        updateTransitDriverRecord(transitRecord);
+        employeeEntitySessionBean.updateEmployee(employee);
+    }
+    
+    @Override
+    public void updateTransitDriverRecord(TransitDriverDispatchRecord transitRecord)
+    {
+        em.merge(transitRecord);
+    }
 }

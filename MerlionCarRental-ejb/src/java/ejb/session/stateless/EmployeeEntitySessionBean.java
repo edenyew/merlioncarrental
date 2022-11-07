@@ -44,6 +44,20 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
         return query.getResultList();
     }
     
+    @Override
+    public void updateEmployee(EmployeeEntity employee)
+    {
+        em.merge(employee);
+    }
+    
+    @Override
+    public EmployeeEntity retrieveEmployeeById(Long employeeId)
+    {
+        EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
+        return employee;
+    }
+    
+    @Override
     public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException
     {
         Query query = em.createQuery("SELECT em FROM EmployeeEntity em WHERE em.username = :inUsername");

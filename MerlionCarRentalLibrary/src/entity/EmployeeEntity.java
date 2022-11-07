@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import util.enumeration.AccessRightEnum;
 
 /**
@@ -38,6 +40,10 @@ public class EmployeeEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
     private boolean logged_in;
+    
+    @OneToOne(optional = true)
+    @JoinColumn(name = "transitDriverRecordId", nullable = true)
+    private TransitDriverDispatchRecord  transitDriverDistpachRecord;
     
 
     public EmployeeEntity() {
@@ -195,6 +201,20 @@ public class EmployeeEntity implements Serializable {
      */
     public void setLogged_in(boolean logged_in) {
         this.logged_in = logged_in;
+    }
+
+    /**
+     * @return the transitDriverDistpachRecord
+     */
+    public TransitDriverDispatchRecord getTransitDriverDistpachRecord() {
+        return transitDriverDistpachRecord;
+    }
+
+    /**
+     * @param transitDriverDistpachRecord the transitDriverDistpachRecord to set
+     */
+    public void setTransitDriverDistpachRecord(TransitDriverDispatchRecord transitDriverDistpachRecord) {
+        this.transitDriverDistpachRecord = transitDriverDistpachRecord;
     }
     
 }

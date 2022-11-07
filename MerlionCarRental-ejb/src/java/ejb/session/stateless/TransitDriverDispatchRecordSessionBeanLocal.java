@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.EmployeeEntity;
 import entity.TransitDriverDispatchRecord;
 import exception.CarNotFoundException;
 import exception.OutletNotFoundException;
@@ -27,5 +28,13 @@ public interface TransitDriverDispatchRecordSessionBeanLocal {
     public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException;
 
     public void updateTransitAsComplete(TransitDriverDispatchRecord transitRecord) throws TransitRecordNotFoundException;
+
+    public TransitDriverDispatchRecord retrieveTransitRecordByEmployee(EmployeeEntity employee);
+
+    public void updateTransitDriverRecord(TransitDriverDispatchRecord transitRecord);
+
+    public void assignTransitDriver(TransitDriverDispatchRecord transitRecord, Long employeeId);
+
+    public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord();
     
 }

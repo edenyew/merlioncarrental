@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class CarEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long carId;
-    @Column(length = 8, nullable = false)
+    @Column(length = 8, nullable = false, unique = true)
     private String carPlateNumber;
     @Column(nullable = false)
     private String colour;
@@ -60,6 +61,8 @@ public class CarEntity implements Serializable {
     
     
     public CarEntity() {
+        this.transitDriverDispatchRecords = new ArrayList<>();
+        this.reservations = new ArrayList<>();
     }
 
     public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, RentalRate rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, List<Reservation> reservations) {

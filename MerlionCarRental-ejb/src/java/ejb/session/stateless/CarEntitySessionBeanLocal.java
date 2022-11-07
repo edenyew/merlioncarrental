@@ -7,7 +7,9 @@ package ejb.session.stateless;
 
 import entity.CarEntity;
 import entity.Model;
+import exception.CarAlreadyInOutletException;
 import exception.CarNotFoundException;
+import exception.CarNotInOutletException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
@@ -37,5 +39,9 @@ public interface CarEntitySessionBeanLocal {
     public void viewCarDetails(CarEntity car) throws CarNotFoundException;
     
     public List<CarEntity> findListOfCars(Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate) throws OutletNotFoundException;
+
+    public void pickUpCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarNotInOutletException;
+
+    public void returnCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException;
     
 }

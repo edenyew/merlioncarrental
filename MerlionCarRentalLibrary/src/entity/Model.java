@@ -138,9 +138,5 @@ public class Model implements Serializable {
     public String toString() {
         return "entity.Model[ id=" + modelId + " ]";
     }
-
-    public Long getId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
 }

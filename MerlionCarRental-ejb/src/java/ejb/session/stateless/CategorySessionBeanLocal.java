@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,11 @@ import javax.ejb.Local;
  */
 @Local
 public interface CategorySessionBeanLocal {
+
+    public Long createNewCategory(Category category);
+
+    public List<Category> retrieveAllCategory();
+    
+    public Category retrieveCategoyrById(Long categoryId);
     
 }

@@ -22,8 +22,6 @@ public interface RentalRateSessionBeanLocal {
 
     public List<RentalRate> retrieveAllRentalRate();
 
-    public List<RentalRate> viewAllRentalRates();
-
     public Long createRentalRate(RentalRate rentalRate);
 
     public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException;
