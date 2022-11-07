@@ -31,5 +31,7 @@ public interface CustomerSessionBeanRemote {
     public Customer customerLogout(Customer customer) throws CustomerNotFoundException, InvalidLoginCredentialException;
 
     public void viewAllReservations(Customer customer) throws CustomerNotFoundException;
+
+    public Customer retrieveCustomerById(Long customerId) throws CustomerNotFoundException;
     
 }

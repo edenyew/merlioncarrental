@@ -5,15 +5,24 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
 import entity.RentalRate;
 import exception.DeleteRentalRateException;
 import exception.RentalRateNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.RentalRateTypeEnum;
 
 /**
  *
@@ -25,17 +34,24 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
+    @EJB
+    CategorySessionBeanLocal categorySessionBeanLocal;
+    
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
     @Override
-    public Long createRentalRate(RentalRate rentalRate)
+    public Long createRentalRate(RentalRate rentalRate, Long categoryId)
     {
+        Category category = categorySessionBeanLocal.retrieveCategoryById(categoryId);
         em.persist(rentalRate);
+        
+        rentalRate.setCategory(category);
+        category.getRentalRates().add(rentalRate);
+        
         em.flush();
         
         return rentalRate.getId();
-        
     }
     
     @Override
@@ -137,5 +153,44 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         }
         
     } 
+    @Override
+    public Long calculateTotalCost(Date pickUpDate, Date returnDate, List<RentalRate> rentalRates) {
+       Date currentDate = pickUpDate;
+       List<RentalRate> listOfFinalRatesEachDay = new ArrayList<>();
+       
+        while(pickUpDate.before(returnDate)){
+            HashMap<RentalRateTypeEnum, RentalRate> mapOfEligibleRates = new HashMap<>();
+            for(RentalRate rentalRate : rentalRates){
+                if (currentDate.compareTo(rentalRate.getStartDate())>0 && currentDate.compareTo(rentalRate.getEndDate())<0){
+                    if(mapOfEligibleRates.containsKey(rentalRate.getRentalRateType()) && mapOfEligibleRates.get(rentalRate.getRentalRateType()).getRatePerDay() - (rentalRate.getRatePerDay()) >0)
+                   mapOfEligibleRates.replace(rentalRate.getRentalRateType(), rentalRate);
+                } else {
+                    mapOfEligibleRates.put(rentalRate.getRentalRateType(), rentalRate);
+                }
+            }
+            RentalRateTypeEnum rentalRateTypeToChoose = RentalRateTypeEnum.DEFAULT;
+            if (mapOfEligibleRates.containsKey(RentalRateTypeEnum.PEAK) && mapOfEligibleRates.containsKey(RentalRateTypeEnum.PROMOTION)){
+                rentalRateTypeToChoose = RentalRateTypeEnum.PROMOTION;
+            } else if (mapOfEligibleRates.containsKey(RentalRateTypeEnum.PEAK) ){
+                rentalRateTypeToChoose = RentalRateTypeEnum.PEAK;
+            }else if (mapOfEligibleRates.containsKey(RentalRateTypeEnum.PROMOTION) ){
+                rentalRateTypeToChoose = RentalRateTypeEnum.PROMOTION;
+            } 
+            
+           listOfFinalRatesEachDay.add(mapOfEligibleRates.get(rentalRateTypeToChoose));
+            
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.DATE, 1);
+            currentDate = calendar.getTime();
+        }
+        
+        long totalSum =0;
+        for(RentalRate rentalRate : listOfFinalRatesEachDay){
+            totalSum += rentalRate.getRatePerDay();
+        }
+        return totalSum;
+    }
+    
 }
 

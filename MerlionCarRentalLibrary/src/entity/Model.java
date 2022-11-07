@@ -41,7 +41,7 @@ public class Model implements Serializable {
     @JoinColumn(nullable = false)
     private Category category;
     
-    @OneToMany(mappedBy = "cars")
+    @OneToMany(mappedBy = "model")
     private List<CarEntity> cars;
 
     public Model() {

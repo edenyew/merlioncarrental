@@ -31,8 +31,11 @@ public class Category implements Serializable {
     @Column(nullable = false)
     private String name;
     
-    @OneToMany(mappedBy = "model")
+    @OneToMany(mappedBy = "category")
     private List<Model> models;
+    
+    @OneToMany (mappedBy = "category")
+    private List<RentalRate> rentalRates;
 
     public Category() {
         this.models = new ArrayList<>();
@@ -50,6 +53,14 @@ public class Category implements Serializable {
      */
     public void setModels(List<Model> models) {
         this.models = models;
+    }
+
+    public List<RentalRate> getRentalRates() {
+        return rentalRates;
+    }
+
+    public void setRentalRates(List<RentalRate> rentalRates) {
+        this.rentalRates = rentalRates;
     }
 
     public Long getCategoryId() {

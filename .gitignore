@@ -15,3 +15,8 @@ MerlionCarRental-ejb/src/java/ejb/session/stateless/TransitDriverDispatchRecordS
 MerlionCarRentalClient/nbproject/project.properties
 nbproject/project.properties
 /ReservationClient/nbproject/private/
+/ReservationClient/dist/
+*.xml
+*.xml
+MerlionCarRentalClient/build.xml
+*.xml

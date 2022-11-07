@@ -30,29 +30,35 @@ public class OutletEntity implements Serializable {
     
     @Column(nullable = false, length = 32, unique = true)
     private String address;
+       
+    @Column(nullable = true,length = 4)
+    private String openingTime;
     
-    @Column(nullable = false, length = 32)
-    private String openingHours;
+    @Column(nullable = true, length = 4)
+    private String closingTime;
     
-    @OneToMany(mappedBy = "returnOutletId")
+    @OneToMany(mappedBy = "returnOutlet")
     private List<Reservation> reservations;
     
     @OneToMany(mappedBy = "outletEntity")
     private List<CarEntity> cars;
     
     @OneToMany(mappedBy = "returnOutlet")
-    private TransitDriverDispatchRecord transitDriverDispatchRecord;
+    private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
 
     
     public OutletEntity() {
     }
 
-    public OutletEntity(String address, String openingHours, List<CarEntity> cars, List<Reservation> reservations) {
+    public OutletEntity(String address, String openingTime, String closingTime, List<Reservation> reservations, List<CarEntity> cars, List<TransitDriverDispatchRecord> transitDriverDispatchRecords) {
         this.address = address;
-        this.openingHours = openingHours;
-        this.cars = cars;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
         this.reservations = reservations;
+        this.cars = cars;
+        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
     }
+   
 
 
     public Long getOutletId() {
@@ -61,6 +67,14 @@ public class OutletEntity implements Serializable {
 
     public void setOutletId(Long outletId) {
         this.outletId = outletId;
+    }
+
+    public List<TransitDriverDispatchRecord> getTransitDriverDispatchRecords() {
+        return transitDriverDispatchRecords;
+    }
+
+    public void setTransitDriverDispatchRecords(List<TransitDriverDispatchRecord> transitDriverDispatchRecords) {
+        this.transitDriverDispatchRecords = transitDriverDispatchRecords;
     }
 
     @Override
@@ -100,20 +114,23 @@ public class OutletEntity implements Serializable {
      */
     public void setAddress(String address) {
         this.address = address;
+    
     }
 
-    /**
-     * @return the openingHours
-     */
-    public String getOpeningHours() {
-        return openingHours;
+    public String getOpeningTime() {
+        return openingTime;
     }
 
-    /**
-     * @param openingHours the openingHours to set
-     */
-    public void setOpeningHours(String openingHours) {
-        this.openingHours = openingHours;
+    public void setOpeningTime(String openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(String closingTime) {
+        this.closingTime = closingTime;
     }
 
     /**
@@ -144,13 +161,8 @@ public class OutletEntity implements Serializable {
         this.reservations = reservations;
     } 
     
-    public TransitDriverDispatchRecord getTransitDriverDispatchRecord() {
-        return transitDriverDispatchRecord;
-    }
-
-    public void setTransitDriverDispatchRecord(TransitDriverDispatchRecord transitDriverDispatchRecord) {
-        this.transitDriverDispatchRecord = transitDriverDispatchRecord;
-    }
+   
+    
 
     
 }

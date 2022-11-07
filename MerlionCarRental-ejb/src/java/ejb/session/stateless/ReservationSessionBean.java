@@ -7,9 +7,11 @@ package ejb.session.stateless;
 
 import entity.CarEntity;
 import entity.OutletEntity;
+import entity.RentalRate;
 import entity.Reservation;
 import exception.CarNotFoundException;
 import exception.OutletNotFoundException;
+import exception.RentalRateNotFoundException;
 import exception.ReservationNotFoundException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -30,15 +32,18 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @EJB
     private CarEntitySessionBeanLocal carSessionBeanLocal;
 
-    public Long creatNewReservation(Reservation reservation, Long carId, Long returnOutletId) throws CarNotFoundException, OutletNotFoundException 
+    @Override
+    public Long creatNewReservation(Reservation reservation, Long carId, Long returnOutletId, Long pickUpOutletId) throws CarNotFoundException, OutletNotFoundException, RentalRateNotFoundException 
     {
         CarEntity car = carSessionBeanLocal.retrieveCarById(carId);
         OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
+        OutletEntity pickUpOutlet = outletSessionBeanLocal.retrieveOutletById(pickUpOutletId);
         
         em.persist(reservation);
         
         reservation.setCar(car);
         reservation.setReturnOutlet(returnOutlet);
+         reservation.setPickUpOutlet(pickUpOutlet);
         car.getReservations().add(reservation);
         returnOutlet.getReservations().add(reservation);
         
@@ -47,6 +52,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return reservation.getId();
     }
     
+    @Override
     public Reservation retrieveReservationById(Long reservationId) throws ReservationNotFoundException
     {
         Reservation reservation = em.find(Reservation.class, reservationId);

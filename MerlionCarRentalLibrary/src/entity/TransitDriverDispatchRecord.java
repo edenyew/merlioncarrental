@@ -35,9 +35,9 @@ public class TransitDriverDispatchRecord implements Serializable {
     private EmployeeEntity transitDriver;
     @ManyToOne
     private CarEntity car;
-    @OneToOne
+    @ManyToOne
     private OutletEntity pickUpOutlet;
-    @OneToOne
+    @ManyToOne
     private OutletEntity returnOutlet;
 
     public TransitDriverDispatchRecord() {
