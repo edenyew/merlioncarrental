@@ -43,12 +43,14 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
         
     }
     
+    @Override
     public List<OutletEntity> retrieveAllOutlets() {
          Query query;
         query = em.createQuery("SELECT o FROM OutletEntity o");
        
        return query.getResultList();
     }
+    
     @Override
     public OutletEntity retrieveOutletById(Long outletId) throws OutletNotFoundException
     {

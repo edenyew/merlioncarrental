@@ -28,4 +28,5 @@ public interface OutletEntitySessionBeanRemote {
 
     public List<OutletEntity> retrieveAllOutlets();
     
+    
 }

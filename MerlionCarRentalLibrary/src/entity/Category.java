@@ -40,6 +40,12 @@ public class Category implements Serializable {
     public Category() {
         this.models = new ArrayList<>();
     }
+
+    public Category(String name, List<Model> models, List<RentalRate> rentalRates) {
+        this.name = name;
+        this.models = models;
+        this.rentalRates = rentalRates;
+    }
     
         /**
      * @return the models

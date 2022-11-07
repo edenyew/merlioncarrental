@@ -31,10 +31,10 @@ public class OutletEntity implements Serializable {
     @Column(nullable = false, length = 32, unique = true)
     private String address;
        
-    @Column(nullable = true,length = 4)
+    @Column(nullable = true)
     private String openingTime;
     
-    @Column(nullable = true, length = 4)
+    @Column(nullable = true)
     private String closingTime;
     
     @OneToMany(mappedBy = "returnOutlet")

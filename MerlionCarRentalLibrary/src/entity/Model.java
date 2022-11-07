@@ -47,9 +47,20 @@ public class Model implements Serializable {
     public Model() {
     }
 
-    public Model(String modelName, String makeName) {
+    public Model(String modelName, String makeName, Boolean inUse, Boolean disabled, Category category, List<CarEntity> cars) {
         this.modelName = modelName;
         this.makeName = makeName;
+        this.inUse = inUse;
+        this.disabled = disabled;
+        this.category = category;
+        this.cars = cars;
+    }
+
+    public Model(String modelName, String makeName, Boolean inUse, Boolean disabled) {
+        this.modelName = modelName;
+        this.makeName = makeName;
+        this.inUse = inUse;
+        this.disabled = disabled;
     }
 
    

@@ -37,21 +37,23 @@ import javax.ejb.EJB;
  */
 public class MainApp {
     @EJB
-     CustomerSessionBeanRemote customerSessionBeanRemote;
+     private CustomerSessionBeanRemote customerSessionBeanRemote;
     @EJB 
-    ReservationSessionBeanRemote reservationSessionBeanRemote;
+    private ReservationSessionBeanRemote reservationSessionBeanRemote;
     @EJB 
-    CarEntitySessionBeanRemote carSessionBeanRemote;
+    private CarEntitySessionBeanRemote carSessionBeanRemote;
     @EJB 
-    OutletEntitySessionBeanRemote outletSessionBeanRemote;
+    private OutletEntitySessionBeanRemote outletSessionBeanRemote;
     @EJB
-    RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    
     private Customer currentCustomer;
 
     public MainApp() {
     }
 
     public MainApp(CustomerSessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote) {
+        this();
         this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
         this.carSessionBeanRemote = carSessionBeanRemote;
@@ -163,7 +165,7 @@ public class MainApp {
             System.out.print("Choose pickup outlet by typing in its outlet id: \n");
             List<OutletEntity> listOfOutlets = outletSessionBeanRemote.retrieveAllOutlets();
             for (OutletEntity outlet : listOfOutlets){
-                 System.out.println("OutletId:" + outlet.getOutletId() + "Outlet Address: " + outlet.getAddress());
+                 System.out.println("OutletId:" + outlet.getOutletId() + "Outlet Name: " + outlet.getAddress());
             }
             Long pickUpOutletId = scanner.nextLong();
             

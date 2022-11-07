@@ -61,16 +61,17 @@ public class RentalRate implements Serializable {
     public RentalRate() {
     }
 
-    public RentalRate(String name, Category category, Long ratePerDay, String validityPeriod, Boolean inUse, Boolean disabled, CarEntity car) {
+    public RentalRate(String name, Long ratePerDay, String validityPeriod, Date startDate, Date endDate, Boolean inUse, Boolean disabled, Category category) {
         this.name = name;
-        this.category = category;
         this.ratePerDay = ratePerDay;
         this.validityPeriod = validityPeriod;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.inUse = inUse;
         this.disabled = disabled;
+        this.category = category;
     }
-        
-
+       
 
     public Long getId() {
         return id;
