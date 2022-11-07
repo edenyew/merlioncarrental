@@ -102,7 +102,6 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
             rentalRateToUpdate.setInUse(rentalRate.getInUse());
             rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
             rentalRateToUpdate.setCategory(rentalRate.getCategory());
-            rentalRateToUpdate.setCar(rentalRate.getCar());
             
             em.merge(rentalRate);
         }
@@ -153,6 +152,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         }
         
     } 
+    
     @Override
     public Long calculateTotalCost(Date pickUpDate, Date returnDate, List<RentalRate> rentalRates) {
        Date currentDate = pickUpDate;

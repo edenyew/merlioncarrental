@@ -176,7 +176,7 @@ public class SalesManagementModule {
         System.out.print("Enter Name> ");
         newRentalRate.setName(scanner.nextLine().trim());
         System.out.print("Enter Rate Per Day> ");
-        newRentalRate.setRatePerDay(scanner.nextBigDecimal());
+        newRentalRate.setRatePerDay(scanner.nextLong());
         System.out.print("Enter Validity Period> ");
         newRentalRate.setValidityPeriod(scanner.nextLine().trim());
         
@@ -212,11 +212,9 @@ public class SalesManagementModule {
         newRentalRate.setCategory(category.get(categoryResponse - 1));
         
         System.out.print("Enter Car Plate Number To Add Car> ");
+     
         
-        car = carEntitySessionBeanRemote.retrieveCarByPlateNumber(scanner.nextLine().trim()); 
-        newRentalRate.setCar(car);
-        
-        rentalRateSessionBeanRemote.createRentalRate(newRentalRate); 
+        rentalRateSessionBeanRemote.createRentalRate(newRentalRate, new Long(categoryResponse)); 
     }
     
     private void viewAllRentalRates() throws RentalRateNotFoundException
@@ -236,13 +234,18 @@ public class SalesManagementModule {
     private void viewRentalRateDetails() throws CarNotFoundException, RentalRateNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
-        CarEntity car = new CarEntity();
+        RentalRate rentalRate = new RentalRate();
         
         System.out.println("*** Merlion Car Rental System :: Sales Management :: View Details of Car Rental Rate ***\n");
-        System.out.print("Enter Car Plate Number To View Rental Rate Details> ");
+        for (RentalRate currentRates : rentalRateSessionBeanRemote.retrieveAllRentalRate()) {
+            System.out.println("Rental Rate ID:> " + currentRates.getId());
+            System.out.println("Rental Rate Name:> " + currentRates.getName());
+            System.out.println("Rental Rate Rate per day:> " + currentRates.getRatePerDay());
+        }
+        System.out.print("Enter Rental Rate ID:> ");
         
-        car = carEntitySessionBeanRemote.retrieveCarByPlateNumber(scanner.nextLine().trim()); 
-        rentalRateSessionBeanRemote.viewRentalRateDetails(car.getRentalRate());
+        rentalRate = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(scanner.nextLong()); 
+        rentalRateSessionBeanRemote.viewRentalRateDetails(rentalRate);
     }
     
     public void updateRentalRate() throws ParseException, CarNotFoundException, RentalRateNotFoundException
@@ -269,7 +272,7 @@ public class SalesManagementModule {
             System.out.println(category.getCategoryId() + ": " + category.getName());
         }
         response = scanner.nextLong();
-        rentalRateToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoyrById(response));
+        rentalRateToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
         
         System.out.print("Enter StartDate (DD/MM/YYYY) To Update> ");
         startDate = scanner.nextLine().trim();
@@ -542,7 +545,7 @@ public class SalesManagementModule {
             System.out.println(category.getCategoryId() + ": " + category.getName());
         }
         response = scanner.nextLong();
-        modelToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoyrById(response));
+        modelToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
         modelSessionBeanRemote.updateModel(modelToUpdate);
         
         System.out.println("Model successfully updated!");
@@ -613,17 +616,7 @@ public class SalesManagementModule {
             System.out.println(category.getCategoryId()+ ": " + category.getName());
         }
         
-        Long categoryId = scanner.nextLong();
-        
-        List<RentalRate> allRentalRate = rentalRateSessionBeanRemote.retrieveAllRentalRate();
-        
-        for (RentalRate rentalRate : allRentalRate) 
-        {
-            System.out.println(rentalRate.getId()+ ": " + rentalRate.getName() + ", " + rentalRate.getRatePerDay());
-        }
-        
-        Long rentalRateId = scanner.nextLong();
-        
+        Long categoryId = scanner.nextLong();        
         
         List<OutletEntity> allOutlets = outletEntitySessionBeanRemote.retrieveAllOutlets();
         
@@ -634,7 +627,7 @@ public class SalesManagementModule {
         
         Long outletId = scanner.nextLong();
         
-        carEntitySessionBeanRemote.createNewCar(newCar, modelId, outletId, rentalRateId);
+        carEntitySessionBeanRemote.createNewCar(newCar, modelId, outletId);
         
     }
     

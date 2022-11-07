@@ -20,6 +20,6 @@ public interface CategorySessionBeanLocal {
 
     public List<Category> retrieveAllCategory();
     
-    public Category retrieveCategoyrById(Long categoryId);
+    public Category retrieveCategoryById(Long categoryId);
     
 }

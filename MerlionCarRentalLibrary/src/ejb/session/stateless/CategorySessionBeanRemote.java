@@ -19,11 +19,9 @@ public interface CategorySessionBeanRemote {
     public Long createNewCategory(Category category);
 
     public Category retrieveCategoryById(Long categoryId);
-    
-    public Long createNewCategory(Category category);
 
     public List<Category> retrieveAllCategory();
 
-    public Category retrieveCategoyrById(Long categoryId);
+ 
     
 }
