@@ -24,6 +24,7 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
+    @Override
     public Long createNewCategory(Category category)
     {
         em.persist(category);
@@ -33,4 +34,9 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
    
     }
     
+    @Override
+    public Category retrieveCategoryById(Long categoryId){
+        Category category = em.find(Category.class,categoryId);
+        return category;
+    }
 }

@@ -22,7 +22,6 @@ import javax.ejb.Local;
 @Local
 public interface CarEntitySessionBeanLocal {
 
-    public Long createNewCar(CarEntity car, Long modelId, Long outletId, Long rentalRateId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException;
 
     public List<CarEntity> retrieveAllCars();
 
@@ -37,5 +36,7 @@ public interface CarEntitySessionBeanLocal {
     public void viewCarDetails(CarEntity car) throws CarNotFoundException;
     
     public List<CarEntity> findListOfCars(Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate) throws OutletNotFoundException;
+
+    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException;
     
 }

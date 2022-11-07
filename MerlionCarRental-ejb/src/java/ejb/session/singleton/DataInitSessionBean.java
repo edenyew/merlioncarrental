@@ -7,6 +7,7 @@ package ejb.session.singleton;
 
 import ejb.session.stateless.OutletEntitySessionBeanLocal;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
+import entity.OutletEntity;
 import entity.PartnerEntity;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -44,6 +45,7 @@ public class DataInitSessionBean {
         {
             partnerEntitySessionBeanLocal.createNewPartnerRecord(new PartnerEntity("partner1", "91234567", "partner1@gmail.com" ,"A123456"));
         }
+        
     }
     
 }

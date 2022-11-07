@@ -24,12 +24,12 @@ public interface RentalRateSessionBeanLocal {
 
     public List<RentalRate> viewAllRentalRates();
 
-    public Long createRentalRate(RentalRate rentalRate);
-
     public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException;
 
     public void deleteRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, DeleteRentalRateException;
 
     public void viewRentalRateDetails(RentalRate rentalRate) throws RentalRateNotFoundException;
+
+    public Long createRentalRate(RentalRate rentalRate, Long categoryId);
     
 }

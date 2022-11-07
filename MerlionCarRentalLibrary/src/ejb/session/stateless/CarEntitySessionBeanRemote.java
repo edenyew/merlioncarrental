@@ -21,7 +21,7 @@ import javax.ejb.Remote;
 @Remote
 public interface CarEntitySessionBeanRemote {
     
-    public Long createNewCar(CarEntity car, Long modelId,  Long outletId, Long rentalRateId) throws ModelNotFoundException,  OutletNotFoundException, RentalRateNotFoundException;
+    //public Long createNewCar(CarEntity car, Long modelId,  Long outletId, Long rentalRateId) throws ModelNotFoundException,  OutletNotFoundException, RentalRateNotFoundException;
     
     public List<CarEntity> retrieveAllCars();
     
@@ -37,4 +37,5 @@ public interface CarEntitySessionBeanRemote {
 
     public List<CarEntity> findListOfCars(Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate) throws OutletNotFoundException;
     
+    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException;
 }

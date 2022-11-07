@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -52,6 +54,8 @@ public class Reservation implements Serializable {
     @OneToOne (optional = false)
     @JoinColumn(name = "returnOutletId", nullable = false)
     private OutletEntity returnOutlet;
+    @OneToMany
+    private List<RentalRate> rentalRates;
     
     @OneToOne (mappedBy = "reservation")
 //    //@JoinColumn(name = "customerId")
@@ -60,6 +64,20 @@ public class Reservation implements Serializable {
     
     public Reservation() {
     }
+
+    public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, Customer customer) {
+        this.pickUpDate = pickUpDate;
+        this.returnDate = returnDate;
+        this.totalCost = totalCost;
+        this.creditCard = creditCard;
+        this.car = car;
+        this.pickUpOutlet = pickUpOutlet;
+        this.returnOutlet = returnOutlet;
+        this.rentalRates = rentalRates;
+        this.customer = customer;
+    }
+
+   
 
     public Date getPickUpDate() {
         return pickUpDate;
@@ -77,6 +95,14 @@ public class Reservation implements Serializable {
         this.returnDate = returnDate;
     }
 
+    public List<RentalRate> getRentalRates() {
+        return rentalRates;
+    }
+
+    public void setRentalRates(List<RentalRate> rentalRates) {
+        this.rentalRates = rentalRates;
+    }
+
     public double getTotalCost() {
         return totalCost;
     }
@@ -92,9 +118,9 @@ public class Reservation implements Serializable {
     public void setCreditCard(CreditCard creditCard) {
         this.creditCard = creditCard;
     }
-    
 
-    
+
+
     public Long getId() {
         return id;
     }

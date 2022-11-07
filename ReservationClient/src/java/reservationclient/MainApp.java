@@ -8,15 +8,20 @@ package reservationclient;
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
+import ejb.session.stateless.RentalRateSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import entity.CarEntity;
+import entity.CreditCard;
 import entity.Customer;
 import entity.OutletEntity;
+import entity.RentalRate;
 import entity.Reservation;
 import exception.AlreadyLoggedInException;
+import exception.CarNotFoundException;
 import exception.CustomerNotFoundException;
 import exception.InvalidLoginCredentialException;
 import exception.OutletNotFoundException;
+import exception.RentalRateNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,17 +44,19 @@ public class MainApp {
     CarEntitySessionBeanRemote carSessionBeanRemote;
     @EJB 
     OutletEntitySessionBeanRemote outletSessionBeanRemote;
-    
+    @EJB
+    RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
     private Customer currentCustomer;
 
     public MainApp() {
     }
 
-    public MainApp(CustomerSessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote) {
+    public MainApp(CustomerSessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote) {
         this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
         this.carSessionBeanRemote = carSessionBeanRemote;
         this.outletSessionBeanRemote = outletSessionBeanRemote;
+        this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
     }
     
     public void runApp() {
@@ -66,7 +73,7 @@ public class MainApp {
            
             response = 0;
             
-            while(response < 1 || response > 2)
+            while(response < 1 || response > 4)
             {
                 System.out.print("> ");
 
@@ -75,7 +82,6 @@ public class MainApp {
                 if(response == 1)
                 {
                     registerAsCustomer();
-                    response = 0;
                 }
                 else if(response == 2)
                 {
@@ -100,7 +106,7 @@ public class MainApp {
                 }
             }
             
-            if(response == 3)
+            if(response == 4)
             {
                 break;
             }
@@ -143,8 +149,7 @@ public class MainApp {
             Scanner scanner = new Scanner(System.in);
             String pickUpDateString = "";
             String returnDateString = "";
-            OutletEntity returnOutlet;
-            OutletEntity pickUpOutlet;
+            
             
             System.out.println("*** Reservation Client :: Search Car ***\n");
             System.out.print("Enter pick up date (DD/MM/YYYY)> ");
@@ -155,29 +160,106 @@ public class MainApp {
             returnDateString = scanner.nextLine().trim();
             Date returnDate = new SimpleDateFormat("dd/MM/yyyy").parse(returnDateString);
             
-            System.out.print("Choose pickup outlet and type in its outlet id: \n");
+            System.out.print("Choose pickup outlet by typing in its outlet id: \n");
             List<OutletEntity> listOfOutlets = outletSessionBeanRemote.retrieveAllOutlets();
             for (OutletEntity outlet : listOfOutlets){
                  System.out.println("OutletId:" + outlet.getOutletId() + "Outlet Address: " + outlet.getAddress());
             }
             Long pickUpOutletId = scanner.nextLong();
             
-            System.out.print("Choose return outlet and type in its outlet id: \n");
+            System.out.print("Choose return outlet by typing in its outlet id: \n");
             for (OutletEntity outlet : listOfOutlets){
                  System.out.println("OutletId:" + outlet.getOutletId() + "Outlet Address: " + outlet.getAddress());
             }
             Long returnOutletId = scanner.nextLong();
-            
            
             List<CarEntity> listOfSearchedCars = carSessionBeanRemote.findListOfCars(pickUpOutletId, returnOutletId, pickUpDate, returnDate);
-            System.out.print("Choose car and select its car id: \n");
-            for (CarEntity car : listOfSearchedCars){
-                 System.out.println("CarId:" + car.getCarId() + "Car Address: " + car.getModel());
-            }
             
+            System.out.print("Choose car to by typing in its car id: \n");
+            for (CarEntity car : listOfSearchedCars){
+                 System.out.println("CarId:" + car.getCarId() + "Car Make and Model: " + car.getModel().getModelName() + ", " + car.getModel().getMakeName() );
+            }
+            Long response = scanner.nextLong();
+            
+       
+        try {
+            CarEntity carChosen = carSessionBeanRemote.retrieveCarById(response);
+             carSessionBeanRemote.viewCarDetails(carChosen);
+             Long totalAmountPayable = rentalRateSessionBeanRemote.calculateTotalCost(pickUpDate, returnDate, carChosen.getCategory().getRentalRates());
+             System.out.println("Total amount payable: " + totalAmountPayable);
+             System.out.println("*** Reservation Client :: Reserve Car? Y/N ***\n");
+        
+            String res = "";
+           
+                while (!"N".equals(res) || !"Y".equals(res)) {
+                    System.out.print("> ");
+                        
+                    res = scanner.nextLine();
+                     if (currentCustomer.isLoggedIn()){
+                        if ("Y".equals(res)) {
+                            reserveCar(carChosen, pickUpOutletId, returnOutletId, pickUpDate, returnDate,totalAmountPayable);
+                        }
+                        if ("N".equals(res)) {
+                            break;
+                        }
+                     } else {
+                          System.out.println("You are not logged in!");
+                          break;
+                }
+            }
+            } catch (CarNotFoundException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }            
             
         } catch (ParseException | OutletNotFoundException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+             System.out.println("Error: " + ex.getMessage() + "\n");
+        }
+    }
+    
+    public void reserveCar(CarEntity carChosen, Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate, Long totalAmountPayable){
+//       CarEntity carToReserve = carSessionBeanRemote.retrieveCarById(carChosen.getCarId());
+//       OutletEntity pickUpOutlet = outletSessionBeanRemote.retrieveOutletById(pickUpOutletId);
+//       OutletEntity returnOutlet = outletSessionBeanRemote.retrieveOutletById(returnOutletId);
+      
+        Scanner scanner = new Scanner(System.in);
+        String cardNumber = "";
+        String cvv = "";
+        String expDate ="";
+        String cardName = "";
+        
+        CreditCard creditCard = new CreditCard();
+        System.out.println("Please enter credit card details");
+        System.out.println("Card Number:");
+        cardNumber = scanner.nextLine().trim();
+        creditCard.setCreditCardNum(cardNumber);
+        
+        System.out.println("Card Name:");
+        cardName = scanner.nextLine().trim();
+        creditCard.setCardName(cardName);
+        
+        System.out.println("CVV:");
+        cvv = scanner.nextLine().trim();
+        creditCard.setCVV(cvv);
+        
+        System.out.println("Expiry Date:");
+        expDate = scanner.nextLine().trim();
+        creditCard.setExpiryDate(expDate);
+        try {
+        
+           Reservation reservation = new Reservation();
+         
+        reservation.setCustomer(currentCustomer);
+        reservation.setPickUpDate(pickUpDate);
+        reservation.setReturnDate(returnDate);
+        reservation.setTotalCost(totalAmountPayable);
+        
+        
+        Long reservationId = reservationSessionBeanRemote.creatNewReservation(reservation, carChosen.getCarId(), returnOutletId, pickUpOutletId);
+            System.out.println("Reservation successful, reservation Id:" + reservationId); 
+        
+        
+        } catch (CarNotFoundException | OutletNotFoundException | RentalRateNotFoundException ex) {
+           System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
     

@@ -43,22 +43,19 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     @EJB 
     private RentalRateSessionBeanLocal rentalRateSessionBeanLocal;
     
-    @Override
-    public Long createNewCar(CarEntity car, Long modelId, Long outletId, Long rentalRateId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException
+    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException
     {
        
        Model model = modelSessionBeanLocal.retrieveModelById(modelId);
        Category category = model.getCategory();
        OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
-       RentalRate rentalRate = rentalRateSessionBeanLocal.retrieveRentalRateByRentalRateId(rentalRateId);
-       
+        
        em.persist(car);
        
        model.getCars().add(car);
        car.setModel(model);
        car.setCategory(category);
        car.setOutletEntity(outlet);
-       car.getRentalRates().add(rentalRate);
        
        em.flush();
        return car.getCarId();
@@ -110,7 +107,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
                 carToUpdate.setColour(carEntity.getColour());
                 carToUpdate.setLocation(carEntity.getLocation());
                 carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-                carToUpdate.setRentalRates(carEntity.getRentalRates());
+                
                 carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
             } else {
                 throw new CarNotFoundException();
@@ -143,7 +140,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             System.out.println("Car Color: " + carToView.getColour());
             System.out.println("Car Model: " + carToView.getModel());      
             System.out.println("Car Category " + carToView.getCategory());
-            System.out.println("Car Rental Rates: " + carToView.getRentalRates());
+            //System.out.println("Car Rental Rates: " + carToView.getRentalRates());
             System.out.println("Car Current Outlet " + carToView.getOutletEntity());
                  
         }
@@ -154,13 +151,13 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     }
     
    
-    @Override
+    @Override // this is for searchCar use case
     public List<CarEntity> findListOfCars(Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date returnDate) throws OutletNotFoundException{
         
         OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
         OutletEntity pickUpOutlet = outletSessionBeanLocal.retrieveOutletById(pickUpOutletId);
-        Query query;
-        query = em.createQuery("SELECT c FROM CarEntity c WHERE c.outletEntity = :pickUpOutlet AND c.currentStatus = :notInUse");
+        
+        Query query = em.createQuery("SELECT c FROM CarEntity c WHERE c.outletEntity = :pickUpOutlet AND c.currentStatus = :notInUse");
         query.setParameter("pickUpOutlet", pickUpOutlet).setParameter("notInUse", CarStatusEnum.NOT_IN_USE);
         
         List<CarEntity> listOfCarsAtPickUpOutlet = query.getResultList();
@@ -176,6 +173,10 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         return listOfCarsAtPickUpOutlet;
     }
     
+    
+        
+    
+    // change state of car to in use, only if the car is in the outlet
     public void pickUpCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarNotInOutletException {
         OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
         CarEntity car = retrieveCarById(carEntity.getCarId());
@@ -187,6 +188,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         }
     }
     
+    // change state of car to not in use, only if the car is not already in the outlet
       public void returnCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException {
         OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
         CarEntity car = retrieveCarById(carEntity.getCarId());

@@ -45,10 +45,7 @@ public class CarEntity implements Serializable {
     
     @ManyToOne (optional = false)
     private Category category;
-    
-    @OneToMany(mappedBy="car")
-    private List<RentalRate> rentalRates;
-    
+        
     @ManyToOne 
     private OutletEntity outletEntity;
     
@@ -70,7 +67,6 @@ public class CarEntity implements Serializable {
         this.currentStatus = currentStatus;
         this.model = model;
         this.category = category;
-        this.rentalRates = rentalRate;
         this.outletEntity = outletEntity;
         this.transitDriverDispatchRecords = transitDriverDispatchRecords;
         this.reservations = reservations;
@@ -137,14 +133,6 @@ public class CarEntity implements Serializable {
 
     public void setColour(String colour) {
         this.colour = colour;
-    }
-
-    public List<RentalRate> getRentalRates() {
-        return rentalRates;
-    }
-
-    public void setRentalRates(List<RentalRate> rentalRates) {
-        this.rentalRates = rentalRates;
     }
 
    

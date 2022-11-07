@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +14,9 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface CategorySessionBeanRemote {
+
+    public Long createNewCategory(Category category);
+
+    public Category retrieveCategoryById(Long categoryId);
     
 }

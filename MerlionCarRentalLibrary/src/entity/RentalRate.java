@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import util.enumeration.RentalRateTypeEnum;
 
 /**
  *
@@ -32,10 +34,16 @@ public class RentalRate implements Serializable {
     private String name;
        
     @Column(precision = 11, scale = 2)
-    private BigDecimal ratePerDay;
+    private Long ratePerDay;
     
     @Column(nullable = false, length = 32)
     private String validityPeriod;
+    
+    @Column(nullable = true)
+    private Date startDate;
+    
+    @Column(nullable = true)
+    private Date endDate;
     
     @Column(nullable = false)
     private Boolean inUse;
@@ -47,23 +55,21 @@ public class RentalRate implements Serializable {
     @JoinColumn(nullable = false, name = "CategoryId")
     private Category category;
     
-    @ManyToOne (optional = false)
-    @JoinColumn(name = "CardId", nullable = false)
-    private CarEntity car;
-    
+    @Column(nullable=false)
+    private RentalRateTypeEnum rentalRateType = RentalRateTypeEnum.DEFAULT;
 
     public RentalRate() {
     }
 
-    public RentalRate(String name, Category category, BigDecimal ratePerDay, String validityPeriod, Boolean inUse, Boolean disabled, CarEntity car) {
+    public RentalRate(String name, Category category, Long ratePerDay, String validityPeriod, Boolean inUse, Boolean disabled, CarEntity car) {
         this.name = name;
         this.category = category;
         this.ratePerDay = ratePerDay;
         this.validityPeriod = validityPeriod;
         this.inUse = inUse;
         this.disabled = disabled;
-        this.car = car;
     }
+        
 
 
     public Long getId() {
@@ -130,15 +136,23 @@ public class RentalRate implements Serializable {
     /**
      * @return the ratePerDay
      */
-    public BigDecimal getRatePerDay() {
+    public Long getRatePerDay() {
         return ratePerDay;
     }
 
     /**
      * @param ratePerDay the ratePerDay to set
      */
-    public void setRatePerDay(BigDecimal ratePerDay) {
+    public void setRatePerDay(Long ratePerDay) {
         this.ratePerDay = ratePerDay;
+    }
+
+    public RentalRateTypeEnum getRentalRateType() {
+        return rentalRateType;
+    }
+
+    public void setRentalRateType(RentalRateTypeEnum rentalRateType) {
+        this.rentalRateType = rentalRateType;
     }
 
     /**
@@ -183,18 +197,21 @@ public class RentalRate implements Serializable {
         this.inUse = inUse;
     }
 
-    /**
-     * @return the car
-     */
-    public CarEntity getCar() {
-        return car;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    /**
-     * @param car the car to set
-     */
-    public void setCar(CarEntity car) {
-        this.car = car;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+  
     
 }

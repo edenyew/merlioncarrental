@@ -58,6 +58,46 @@ public class CreditCard implements Serializable {
         this.id = id;
     }
 
+    public String getCreditCardNum() {
+        return creditCardNum;
+    }
+
+    public void setCreditCardNum(String creditCardNum) {
+        this.creditCardNum = creditCardNum;
+    }
+
+    public String getCVV() {
+        return CVV;
+    }
+
+    public void setCVV(String CVV) {
+        this.CVV = CVV;
+    }
+
+    public String getCardName() {
+        return cardName;
+    }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
