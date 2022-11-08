@@ -98,7 +98,6 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
             
             rentalRateToUpdate.setName(rentalRate.getName());
             rentalRateToUpdate.setRatePerDay(rentalRate.getRatePerDay());
-            rentalRateToUpdate.setValidityPeriod(rentalRate.getValidityPeriod());
             rentalRateToUpdate.setInUse(rentalRate.getInUse());
             rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
             rentalRateToUpdate.setCategory(rentalRate.getCategory());
@@ -144,7 +143,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         if (rentalRateToView != null)
         {
             System.out.println("Name, CarCategory, RatePerDay, StartDateTime, EndDateTime");
-            System.out.println(rentalRateToView.getName() + ", " + rentalRateToView.getCategory().getName() + ", " + rentalRateToView.getRatePerDay() + ", " + rentalRateToView.getValidityPeriod());
+            System.out.println(rentalRateToView.getName() + ", " + rentalRateToView.getCategory().getName() + ", " + rentalRateToView.getRatePerDay());
         }
         else 
         {

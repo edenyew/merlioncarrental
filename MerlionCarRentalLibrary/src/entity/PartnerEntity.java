@@ -26,20 +26,17 @@ public class PartnerEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String name;
     @Column(nullable = false, length = 32)
-    private String contactNumber;
-    @Column(nullable = false, length = 32)
     private String email;
     @Column(nullable = false, length = 32)
-    private String passportNumber;
+    private String password;
 
     public PartnerEntity() {
     }
 
-    public PartnerEntity(String name, String contactNumber, String email, String passportNumber) {
+    public PartnerEntity(String name, String email, String password) {
         this.name = name;
-        this.contactNumber = contactNumber;
         this.email = email;
-        this.passportNumber = passportNumber;
+        this.password = password;
     }
 
     
@@ -91,20 +88,6 @@ public class PartnerEntity implements Serializable {
     }
 
     /**
-     * @return the contactNumber
-     */
-    public String getContactNumber() {
-        return contactNumber;
-    }
-
-    /**
-     * @param contactNumber the contactNumber to set
-     */
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    /**
      * @return the email
      */
     public String getEmail() {
@@ -118,18 +101,12 @@ public class PartnerEntity implements Serializable {
         this.email = email;
     }
 
-    /**
-     * @return the passportNumber
-     */
-    public String getPassportNumber() {
-        return passportNumber;
+    public String getPassword() {
+        return password;
     }
 
-    /**
-     * @param passportNumber the passportNumber to set
-     */
-    public void setPassportNumber(String passportNumber) {
-        this.passportNumber = passportNumber;
+    public void setPassword(String password) {
+        this.password = password;
     }
-    
+
 }

@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.EmployeeEntity;
 import exception.EmployeeNotFoundException;
 import exception.InvalidLoginCredentialException;
+import exception.OutletNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -20,8 +21,6 @@ public interface EmployeeEntitySessionBeanLocal {
 
     public List<EmployeeEntity> retrieveAllEmployee();
 
-    public Long createNewEmployee(EmployeeEntity employeeEntity);
-
     public EmployeeEntity employeeLogin(String username, String password) throws InvalidLoginCredentialException;
 
     public EmployeeEntity employeeLogout(EmployeeEntity employee) throws InvalidLoginCredentialException;
@@ -31,5 +30,7 @@ public interface EmployeeEntitySessionBeanLocal {
     public EmployeeEntity retrieveEmployeeById(Long employeeId);
 
     public void updateEmployee(EmployeeEntity employee);
+
+    public Long createNewEmployee(EmployeeEntity employeeEntity, Long outletId) throws OutletNotFoundException;
     
 }

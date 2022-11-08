@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import util.enumeration.AccessRightEnum;
 
@@ -45,6 +46,8 @@ public class EmployeeEntity implements Serializable {
     @JoinColumn(name = "transitDriverRecordId", nullable = true)
     private TransitDriverDispatchRecord  transitDriverDistpachRecord;
     
+    @ManyToOne
+    private OutletEntity outlet;
 
     public EmployeeEntity() {
     }
@@ -57,17 +60,7 @@ public class EmployeeEntity implements Serializable {
         this.password = password;
     }
 
-    public EmployeeEntity(Long id, String name, String contactNumber, AccessRightEnum accessRightEnum, String username, String password) {
-        this.id = id;
-        this.name = name;
-        this.contactNumber = contactNumber;
-        this.accessRightEnum = accessRightEnum;
-        this.username = username;
-        this.password = password;
-    }
-
-    public EmployeeEntity(Long id, String name, String contactNumber, AccessRightEnum accessRightEnum, String username, String password, boolean logged_in) {
-        this.id = id;
+    public EmployeeEntity(String name, String contactNumber, AccessRightEnum accessRightEnum, String username, String password, boolean logged_in) {
         this.name = name;
         this.contactNumber = contactNumber;
         this.accessRightEnum = accessRightEnum;
@@ -215,6 +208,14 @@ public class EmployeeEntity implements Serializable {
      */
     public void setTransitDriverDistpachRecord(TransitDriverDispatchRecord transitDriverDistpachRecord) {
         this.transitDriverDistpachRecord = transitDriverDistpachRecord;
+    }
+
+    public OutletEntity getOutlet() {
+        return outlet;
+    }
+
+    public void setOutlet(OutletEntity outlet) {
+        this.outlet = outlet;
     }
     
 }

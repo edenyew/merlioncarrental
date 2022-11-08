@@ -45,6 +45,9 @@ public class OutletEntity implements Serializable {
     
     @OneToMany(mappedBy = "returnOutlet")
     private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
+    
+    @OneToMany(mappedBy = "outlet")
+    private List<EmployeeEntity> employees;
 
     
     public OutletEntity() {
@@ -145,6 +148,14 @@ public class OutletEntity implements Serializable {
      */
     public void setCars(List<CarEntity> cars) {
         this.cars = cars;
+    }
+
+    public List<EmployeeEntity> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<EmployeeEntity> employees) {
+        this.employees = employees;
     }
 
     /**

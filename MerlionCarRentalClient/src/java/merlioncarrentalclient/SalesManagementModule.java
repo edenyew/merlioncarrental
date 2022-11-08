@@ -195,8 +195,6 @@ public class SalesManagementModule {
         newRentalRate.setName(scanner.nextLine().trim());
         System.out.print("Enter Rate Per Day> ");
         newRentalRate.setRatePerDay(scanner.nextLong());
-        System.out.print("Enter Validity Period> ");
-        newRentalRate.setValidityPeriod(scanner.nextLine().trim());
         
         System.out.print("Enter In Use? Y/N> ");
         if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
@@ -612,8 +610,8 @@ public class SalesManagementModule {
         System.out.print("Enter Colour> ");
         newCar.setColour(scanner.nextLine().trim());
         
-        System.out.print("Enter Location> ");
-        newCar.setLocation(scanner.nextLine().trim());
+//        System.out.print("Enter Location> ");
+//        newCar.setLocation(scanner.nextLine().trim());
         
         System.out.print("Enter Disable? Y/N> ");
         if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)

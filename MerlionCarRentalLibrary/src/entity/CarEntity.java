@@ -35,7 +35,6 @@ public class CarEntity implements Serializable {
     private String carPlateNumber;
     @Column(nullable = false)
     private String colour;
-    private String location;
     @Column(nullable = false)
     private Boolean disabled;
     private CarStatusEnum currentStatus;
@@ -65,7 +64,6 @@ public class CarEntity implements Serializable {
     public CarEntity(String carPlateNumber, String colour, String location, Boolean disabled, CarStatusEnum currentStatus, Model model, Category category, List<RentalRate> rentalRate, OutletEntity outletEntity, List<TransitDriverDispatchRecord> transitDriverDispatchRecords, List<Reservation> reservations) {
         this.carPlateNumber = carPlateNumber;
         this.colour = colour;
-        this.location = location;
         this.disabled = disabled;
         this.currentStatus = currentStatus;
         this.model = model;
@@ -75,8 +73,12 @@ public class CarEntity implements Serializable {
         this.reservations = reservations;
     }
 
-   
-
+    public CarEntity(String carPlateNumber, String colour, Boolean disabled, CarStatusEnum currentStatus) {
+        this.carPlateNumber = carPlateNumber;
+        this.colour = colour;
+        this.disabled = disabled;
+        this.currentStatus = currentStatus;
+    }
     
       public List<Reservation> getReservations() {
         return reservations;
@@ -120,14 +122,6 @@ public class CarEntity implements Serializable {
 
     public void setOutletEntity(OutletEntity outletEntity) {
         this.outletEntity = outletEntity;
-    }
-    
-      public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getColour() {

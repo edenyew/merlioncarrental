@@ -105,7 +105,6 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
                 carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
                 carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber()); 
                 carToUpdate.setColour(carEntity.getColour());
-                carToUpdate.setLocation(carEntity.getLocation());
                 carToUpdate.setOutletEntity(carEntity.getOutletEntity());
                 
                 carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
@@ -184,12 +183,13 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     }
     
     // change state of car to not in use, only if the car is not already in the outlet
+    @Override
       public void returnCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException {
         OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
         CarEntity car = retrieveCarById(carEntity.getCarId());
         if (outletSessionBeanLocal.findCarInOutlet(outlet.getOutletId(), car.getCarId())) {
             car.setCurrentStatus(CarStatusEnum.NOT_IN_USE);
-            car.setLocation(outlet.getAddress());
+            car.setOutletEntity(outlet); 
             outlet.getCars().add(car);
         } else {
             throw new CarAlreadyInOutletException("Car Is Already At That Outlet!");

@@ -36,9 +36,6 @@ public class RentalRate implements Serializable {
     @Column(precision = 11, scale = 2)
     private Long ratePerDay;
     
-    @Column(nullable = false, length = 32)
-    private String validityPeriod;
-    
     @Column(nullable = true)
     private Date startDate;
     
@@ -56,22 +53,21 @@ public class RentalRate implements Serializable {
     private Category category;
     
     @Column(nullable=false)
-    private RentalRateTypeEnum rentalRateType = RentalRateTypeEnum.DEFAULT;
+    private RentalRateTypeEnum rentalRateType;
 
     public RentalRate() {
     }
 
-    public RentalRate(String name, Long ratePerDay, String validityPeriod, Date startDate, Date endDate, Boolean inUse, Boolean disabled, Category category) {
+    public RentalRate(String name, Long ratePerDay, Date startDate, Date endDate, Boolean inUse, Boolean disabled, RentalRateTypeEnum rentalRateType) {
         this.name = name;
         this.ratePerDay = ratePerDay;
-        this.validityPeriod = validityPeriod;
         this.startDate = startDate;
         this.endDate = endDate;
         this.inUse = inUse;
         this.disabled = disabled;
-        this.category = category;
+        this.rentalRateType = rentalRateType;
     }
-       
+    
 
     public Long getId() {
         return id;
@@ -154,20 +150,6 @@ public class RentalRate implements Serializable {
 
     public void setRentalRateType(RentalRateTypeEnum rentalRateType) {
         this.rentalRateType = rentalRateType;
-    }
-
-    /**
-     * @return the validityPeriod
-     */
-    public String getValidityPeriod() {
-        return validityPeriod;
-    }
-
-    /**
-     * @param validityPeriod the validityPeriod to set
-     */
-    public void setValidityPeriod(String validityPeriod) {
-        this.validityPeriod = validityPeriod;
     }
 
     /**

@@ -6,9 +6,12 @@
 package ejb.session.stateless;
 
 import entity.EmployeeEntity;
+import entity.OutletEntity;
 import exception.EmployeeNotFoundException;
 import exception.InvalidLoginCredentialException;
+import exception.OutletNotFoundException;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -26,11 +29,19 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
+    @EJB
+    private OutletEntitySessionBeanLocal outletSessionBeanLocal;
+    
     
     @Override
-    public Long createNewEmployee(EmployeeEntity employeeEntity)
+    public Long createNewEmployee(EmployeeEntity employeeEntity, Long outletId) throws OutletNotFoundException
     {
+        OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
         em.persist(employeeEntity);
+        
+        employeeEntity.setOutlet(outlet);
+        outlet.getEmployees().add(employeeEntity);
+        
         em.flush();
         
         return employeeEntity.getId();
