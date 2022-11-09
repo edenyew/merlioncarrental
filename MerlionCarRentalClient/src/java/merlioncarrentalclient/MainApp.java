@@ -7,7 +7,6 @@ package merlioncarrentalclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.CategorySessionBeanRemote;
-import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
@@ -19,6 +18,7 @@ import java.util.Scanner;
 import entity.EmployeeEntity;
 import exception.CarNotFoundException;
 import exception.InvalidAccessRightException;
+import ejb.session.stateless.CustomerSessionBeanRemote;
 
 /**
  *

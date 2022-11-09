@@ -450,7 +450,7 @@ public class SalesManagementModule {
                     {
                         viewTransitDriverDispatchRecordsForCurrentDayReservations();
                     }
-                    catch (OutletNotFoundException | ParseException ex)
+                    catch (TransitRecordNotFoundException | OutletNotFoundException | ParseException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -721,7 +721,7 @@ public class SalesManagementModule {
     }
     
     
-    private void viewTransitDriverDispatchRecordsForCurrentDayReservations() throws OutletNotFoundException, ParseException
+    private void viewTransitDriverDispatchRecordsForCurrentDayReservations() throws OutletNotFoundException, ParseException, TransitRecordNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** Merlion Car Rental System :: Operations Management :: View Transit Driver Dispatch Records For Today's Reservation ***\n");
@@ -743,8 +743,7 @@ public class SalesManagementModule {
         List<TransitDriverDispatchRecord> transitDriverDispatchRecords = transitDriverDispatchRecordSessionBeanRemote.viewCurrentDayTransitRecord(currDate, outletId);
         for (TransitDriverDispatchRecord transitDriverRecord : transitDriverDispatchRecords)
         {
-//            transitDriverDispatchRecordSessionBeanRemote.viewRecordDetails(transitDriverRecord);
-//            add viewRecordDetailsMethod in SessionBean
+            transitDriverDispatchRecordSessionBeanRemote.viewRecordDetails(transitDriverRecord);
         }
     }
     

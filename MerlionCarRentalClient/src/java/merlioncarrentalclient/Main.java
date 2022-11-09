@@ -7,7 +7,6 @@ package merlioncarrentalclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.CategorySessionBeanRemote;
-import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
@@ -18,6 +17,7 @@ import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import entity.PartnerEntity;
 import java.util.List;
 import javax.ejb.EJB;
+import ejb.session.stateless.CustomerSessionBeanRemote;
 
 /**
  *

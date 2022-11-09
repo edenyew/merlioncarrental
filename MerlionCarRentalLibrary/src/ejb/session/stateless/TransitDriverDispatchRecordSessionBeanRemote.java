@@ -36,4 +36,6 @@ public interface TransitDriverDispatchRecordSessionBeanRemote {
     public void assignTransitDriver(TransitDriverDispatchRecord transitRecord, Long employeeId);
 
     public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord();
+
+    public void viewRecordDetails(TransitDriverDispatchRecord transitDriverRecord) throws TransitRecordNotFoundException;
 }

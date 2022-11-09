@@ -7,11 +7,11 @@ package reservationclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.CreditCardSessionBeanRemote;
-import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import javax.ejb.EJB;
+import ejb.session.stateless.CustomerSessionBeanRemote;
 
 /**
  *

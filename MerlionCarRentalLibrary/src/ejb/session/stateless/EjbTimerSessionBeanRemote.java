@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import exception.OutletNotFoundException;
+import java.text.ParseException;
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +15,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface EjbTimerSessionBeanRemote {
+    
+    public void timer(Long outletId) throws ParseException, OutletNotFoundException;
     
 }

@@ -103,6 +103,21 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
         
     }
     
+    public void viewRecordDetails(TransitDriverDispatchRecord transitDriverRecord) throws TransitRecordNotFoundException
+    {
+        TransitDriverDispatchRecord transitDriverRecordToView = retrieveTransitRecordById(transitDriverRecord.getTransitDriverDispatchId());
+        
+        if (transitDriverRecordToView != null)
+        {
+            System.out.println("Car Plate Number, Date Of Transit, Pickup Outlet, Return Outlet");
+            System.out.println(transitDriverRecord.getCar().getCarPlateNumber() + ", " + transitDriverRecord.getDateOfTransit() + ", " + transitDriverRecord.getPickUpOutlet().getAddress() + ", " + transitDriverRecord.getReturnOutlet().getAddress());
+        }
+        else
+        {
+            throw new TransitRecordNotFoundException("Transit Driver Dispatch Record does not exist!");
+        }
+    }
+    
     @Override
     public TransitDriverDispatchRecord retrieveTransitRecordByEmployee(EmployeeEntity employee)
     {

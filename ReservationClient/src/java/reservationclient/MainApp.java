@@ -7,7 +7,6 @@ package reservationclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.CreditCardSessionBeanRemote;
-import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
@@ -32,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.persistence.NoResultException;
+import ejb.session.stateless.CustomerSessionBeanRemote;
 
 /**
  *

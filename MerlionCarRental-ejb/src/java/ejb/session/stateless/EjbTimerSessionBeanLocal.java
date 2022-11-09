@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import exception.OutletNotFoundException;
+import java.text.ParseException;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface EjbTimerSessionBeanLocal {
+
+    public void timer(Long outletId) throws ParseException, OutletNotFoundException;
     
 }

@@ -6,7 +6,6 @@
 package merlioncarrentalclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
-import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import entity.CarEntity;
 import entity.Customer;
@@ -23,6 +22,7 @@ import exception.ReservationNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
+import ejb.session.stateless.CustomerSessionBeanRemote;
 
 /**
  *
