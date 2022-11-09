@@ -63,7 +63,6 @@ public class OutletEntity implements Serializable {
     }
    
 
-
     public Long getOutletId() {
         return outletId;
     }

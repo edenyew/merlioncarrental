@@ -25,6 +25,8 @@ public interface CustomerSessionBeanLocal {
     public Long createCustomer(Customer customer);
 
     public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
+    
+    public Customer retrieveCustomerById(Long customerId) throws CustomerNotFoundException;
 
     public Customer customerLogin(String email, String password) throws CustomerNotFoundException, InvalidLoginCredentialException, AlreadyLoggedInException;
     

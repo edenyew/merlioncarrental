@@ -57,20 +57,20 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     @Override
     public List<RentalRate> retrieveAllRentalRate()
     {
-        Query query = em.createQuery("Select r FROM RentalRate r ORDER BY r.category ASC, r.validityPeriod ASC");
+        Query query = em.createQuery("Select r FROM RentalRate r ORDER BY r.category ASC, r.startDate ASC");
         
         return query.getResultList();
     }
     
     
-/*    @Override
-    public List<RentalRate> viewAllRentalRates()
+    @Override
+    public List<RentalRate> retrieveRentalRatesOfCarCategory(Long categoryId)
     {
-        List<RentalRate> allRentalRates =  retrieveAllRentalRate();
+        Category category = categorySessionBeanLocal.retrieveCategoryById(categoryId);
         
-        return allRentalRates;
+        return category.getRentalRates();
     }
-*/
+
     
     @Override
     public RentalRate retrieveRentalRateByRentalRateId(Long rentalRateId) throws RentalRateNotFoundException
@@ -98,6 +98,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
             
             rentalRateToUpdate.setName(rentalRate.getName());
             rentalRateToUpdate.setRatePerDay(rentalRate.getRatePerDay());
+
             rentalRateToUpdate.setInUse(rentalRate.getInUse());
             rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
             rentalRateToUpdate.setCategory(rentalRate.getCategory());
@@ -157,14 +158,19 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
        Date currentDate = pickUpDate;
        List<RentalRate> listOfFinalRatesEachDay = new ArrayList<>();
        
-        while(pickUpDate.before(returnDate)){
+        while(currentDate.before(returnDate)){
             HashMap<RentalRateTypeEnum, RentalRate> mapOfEligibleRates = new HashMap<>();
             for(RentalRate rentalRate : rentalRates){
-                if (currentDate.compareTo(rentalRate.getStartDate())>0 && currentDate.compareTo(rentalRate.getEndDate())<0){
+                if (rentalRate.getStartDate() == null ||rentalRate.getEndDate() == null ){
+                mapOfEligibleRates.put(rentalRate.getRentalRateType(), rentalRate);
+                }
+                else if (currentDate.compareTo(rentalRate.getStartDate())<0 && currentDate.compareTo(rentalRate.getEndDate())>0){
                     if(mapOfEligibleRates.containsKey(rentalRate.getRentalRateType()) && mapOfEligibleRates.get(rentalRate.getRentalRateType()).getRatePerDay() - (rentalRate.getRatePerDay()) >0)
                    mapOfEligibleRates.replace(rentalRate.getRentalRateType(), rentalRate);
-                } else {
+                
+                    else {
                     mapOfEligibleRates.put(rentalRate.getRentalRateType(), rentalRate);
+                    }
                 }
             }
             RentalRateTypeEnum rentalRateTypeToChoose = RentalRateTypeEnum.DEFAULT;

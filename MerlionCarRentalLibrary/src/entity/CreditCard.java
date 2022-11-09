@@ -38,8 +38,8 @@ public class CreditCard implements Serializable {
     @Column(nullable = false, length = 32)
     private String expiryDate;
 
-    @OneToOne (optional = false)
-    @JoinColumn(nullable = false, name ="CustomerId")
+    @OneToOne (optional = true)
+    @JoinColumn(nullable = true, name ="CustomerId")
     private Customer customer;
     
     @OneToOne
@@ -49,6 +49,17 @@ public class CreditCard implements Serializable {
     @OneToOne
     @JoinColumn(name ="PaymentId")
     private Payment payment;
+
+    public CreditCard() {
+    }
+
+    public CreditCard(String creditCardNum, String CVV, String cardName, String expiryDate) {
+        this.creditCardNum = creditCardNum;
+        this.CVV = CVV;
+        this.cardName = cardName;
+        this.expiryDate = expiryDate;
+    }
+    
     
     public Long getId() {
         return id;

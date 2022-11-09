@@ -6,6 +6,7 @@
 package reservationclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.CreditCardSessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
@@ -30,6 +31,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.persistence.NoResultException;
 
 /**
  *
@@ -46,19 +48,22 @@ public class MainApp {
     private OutletEntitySessionBeanRemote outletSessionBeanRemote;
     @EJB
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    @EJB
+    private CreditCardSessionBeanRemote creditCardSessionBeanRemote;
     
-    private Customer currentCustomer;
+    private Customer currentCustomer ;
 
     public MainApp() {
     }
 
-    public MainApp(CustomerSessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote) {
+    public MainApp(CustomerSessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CreditCardSessionBeanRemote creditCardSessionBeanRemote) {
         this();
         this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
         this.carSessionBeanRemote = carSessionBeanRemote;
         this.outletSessionBeanRemote = outletSessionBeanRemote;
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
+        this.creditCardSessionBeanRemote = creditCardSessionBeanRemote;
     }
     
     public void runApp() {
@@ -87,31 +92,28 @@ public class MainApp {
                 }
                 else if(response == 2)
                 {
-                    try {
-                        
-                        customerLogin();
-                        System.out.println("Login successful!\n");
-                        menuMain();
-                        
+                    try {                     
+                        customerLogin();    
                     } catch (InvalidLoginCredentialException ex) {
                         
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                     }
                 }
-                else if(response == 3)
-                {
+                else if (response == 3) {
                     searchCar();
+                    
+                } else if (response == 4) {
+                    break;
+                    
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
                 }
-                else
-                {
-                    System.out.println("Invalid option, please try again!\n");                
+                if (response == 4) {
+                    break;
                 }
             }
             
-            if(response == 4)
-            {
-                break;
-            }
+           
         }
     }
     
@@ -133,8 +135,9 @@ public class MainApp {
             try {      
                 
                 currentCustomer = customerSessionBeanRemote.customerLogin(email, password);
-                
-            } catch (CustomerNotFoundException | AlreadyLoggedInException ex) {
+                 System.out.println("Login successful!\n");
+                  menuMain();
+            } catch (CustomerNotFoundException | AlreadyLoggedInException | NoResultException ex) {
                 
                 System.out.println("Error: " + ex.getMessage() + "\n");
             }
@@ -165,13 +168,13 @@ public class MainApp {
             System.out.print("Choose pickup outlet by typing in its outlet id: \n");
             List<OutletEntity> listOfOutlets = outletSessionBeanRemote.retrieveAllOutlets();
             for (OutletEntity outlet : listOfOutlets){
-                 System.out.println("OutletId:" + outlet.getOutletId() + "Outlet Name: " + outlet.getAddress());
+                 System.out.println("OutletId: " + outlet.getOutletId() + ", Outlet Name: " + outlet.getAddress());
             }
             Long pickUpOutletId = scanner.nextLong();
             
             System.out.print("Choose return outlet by typing in its outlet id: \n");
             for (OutletEntity outlet : listOfOutlets){
-                 System.out.println("OutletId:" + outlet.getOutletId() + "Outlet Address: " + outlet.getAddress());
+                 System.out.println("OutletId: " + outlet.getOutletId() + ", Outlet Address: " + outlet.getAddress());
             }
             Long returnOutletId = scanner.nextLong();
            
@@ -179,38 +182,35 @@ public class MainApp {
             
             System.out.print("Choose car to by typing in its car id: \n");
             for (CarEntity car : listOfSearchedCars){
-                 System.out.println("CarId:" + car.getCarId() + "Car Make and Model: " + car.getModel().getModelName() + ", " + car.getModel().getMakeName() );
+                 System.out.println("CarId: " + car.getCarId() + ", Car Make and Model: " + car.getModel().getMakeName() + ", " + car.getModel().getModelName() );
             }
             Long response = scanner.nextLong();
             
        
         try {
             CarEntity carChosen = carSessionBeanRemote.retrieveCarById(response);
-             carSessionBeanRemote.viewCarDetails(carChosen);
-             Long totalAmountPayable = rentalRateSessionBeanRemote.calculateTotalCost(pickUpDate, returnDate, carChosen.getCategory().getRentalRates());
+             List<RentalRate> listOfRentalRates = rentalRateSessionBeanRemote.retrieveRentalRatesOfCarCategory(carChosen.getCategory().getCategoryId());
+             Long totalAmountPayable = rentalRateSessionBeanRemote.calculateTotalCost(pickUpDate, returnDate, listOfRentalRates);
              System.out.println("Total amount payable: " + totalAmountPayable);
              System.out.println("*** Reservation Client :: Reserve Car? Y/N ***\n");
         
             String res = "";
-           
-                while (!"N".equals(res) || !"Y".equals(res)) {
-                    System.out.print("> ");
-                        
-                    res = scanner.nextLine();
-                     if (currentCustomer.isLoggedIn()){
+                  
+            res = scanner.nextLine();
+                if (!"N".equals(res) || !"Y".equals(res)) {
+              
+                     if (currentCustomer != null && currentCustomer.isLoggedIn()){
                         if ("Y".equals(res)) {
                             reserveCar(carChosen, pickUpOutletId, returnOutletId, pickUpDate, returnDate,totalAmountPayable);
                         }
-                        if ("N".equals(res)) {
-                            break;
-                        }
+
                      } else {
                           System.out.println("You are not logged in!");
-                          break;
+                         
                 }
             }
             } catch (CarNotFoundException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex.getMessage() + "\n");
         }            
             
         } catch (ParseException | OutletNotFoundException ex) {
@@ -230,7 +230,7 @@ public class MainApp {
         String cardName = "";
         
         CreditCard creditCard = new CreditCard();
-        System.out.println("Please enter credit card details");
+        System.out.println("Please enter credit card details before proceeding");
         System.out.println("Card Number:");
         cardNumber = scanner.nextLine().trim();
         creditCard.setCreditCardNum(cardNumber);
@@ -246,6 +246,15 @@ public class MainApp {
         System.out.println("Expiry Date:");
         expDate = scanner.nextLine().trim();
         creditCard.setExpiryDate(expDate);
+        Long creditCardId = creditCardSessionBeanRemote.createNewCreditCard(creditCard);
+        
+        String res = "";
+        System.out.println("Would you like to pay now using this credit card(Y) or pay in store(N)? :");
+        res = scanner.nextLine();
+        while  (!"N".equals(res) || !"Y".equals(res)) {   
+            res = scanner.nextLine();
+        }
+        
         try {
         
            Reservation reservation = new Reservation();
@@ -254,13 +263,17 @@ public class MainApp {
         reservation.setPickUpDate(pickUpDate);
         reservation.setReturnDate(returnDate);
         reservation.setTotalCost(totalAmountPayable);
+        if (res.equals("Y")){
+            reservation.setPaid(true);
+        } else {
+            reservation.setPaid(false);
+        }
         
-        
-        Long reservationId = reservationSessionBeanRemote.creatNewReservation(reservation, carChosen.getCarId(), returnOutletId, pickUpOutletId);
+        Long reservationId = reservationSessionBeanRemote.creatNewReservation(reservation, carChosen.getCarId(), returnOutletId, pickUpOutletId,creditCardId, currentCustomer.getCustomerId());
             System.out.println("Reservation successful, reservation Id:" + reservationId); 
         
         
-        } catch (CarNotFoundException | OutletNotFoundException | RentalRateNotFoundException ex) {
+        } catch (CarNotFoundException | OutletNotFoundException | RentalRateNotFoundException | CustomerNotFoundException ex) {
            System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
@@ -278,7 +291,7 @@ public class MainApp {
             System.out.println("4: Logout\n");
             response = 0;
             
-            while(response < 1 || response > 3)
+            while(currentCustomer.isLoggedIn() && (response < 1 || response > 3))
             {
                 System.out.print("> ");
 
@@ -364,7 +377,7 @@ public class MainApp {
     
     private void customerLogout(Customer customer) {
         try {
-            customerSessionBeanRemote.customerLogout(customer);
+            currentCustomer = customerSessionBeanRemote.customerLogout(customer);
         } catch (CustomerNotFoundException | InvalidLoginCredentialException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
         }

@@ -6,6 +6,7 @@
 package reservationclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.CreditCardSessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
@@ -30,10 +31,12 @@ public class Main {
     private static OutletEntitySessionBeanRemote outletSessionBeanRemote;
     @EJB
     private static RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    @EJB
+    private static CreditCardSessionBeanRemote creditCardSessionBeanRemote;
      
    
     public static void main(String[] args) {
-       MainApp mainApp = new MainApp(customerSessionBeanRemote, reservationSessionBeanRemote, carSessionBeanRemote, outletSessionBeanRemote, rentalRateSessionBeanRemote);
+       MainApp mainApp = new MainApp(customerSessionBeanRemote, reservationSessionBeanRemote, carSessionBeanRemote, outletSessionBeanRemote, rentalRateSessionBeanRemote, creditCardSessionBeanRemote);
         mainApp.runApp();
     }
     

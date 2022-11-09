@@ -40,9 +40,11 @@ public class Reservation implements Serializable {
     @Column(precision = 11, scale = 2)
     private double totalCost;
     
-    @OneToOne(optional = false)
-    @JoinColumn(name="CreditCardId", nullable = false)
+    @OneToOne(optional = true)
+    @JoinColumn(name="CreditCardId", nullable = true)
     private CreditCard creditCard;
+    
+    private boolean paid;
     
     @ManyToOne (optional = false)
     @JoinColumn(name = "CarId", nullable = false)
@@ -66,7 +68,7 @@ public class Reservation implements Serializable {
     public Reservation() {
     }
 
-    public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, Customer customer) {
+    public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, Customer customer, boolean paid) {
         this.pickUpDate = pickUpDate;
         this.returnDate = returnDate;
         this.totalCost = totalCost;
@@ -76,6 +78,7 @@ public class Reservation implements Serializable {
         this.returnOutlet = returnOutlet;
         this.rentalRates = rentalRates;
         this.customer = customer;
+        this.paid = paid;
     }
 
    
@@ -167,6 +170,14 @@ public class Reservation implements Serializable {
      */
     public void setCar(CarEntity car) {
         this.car = car;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
     }
 
     /**

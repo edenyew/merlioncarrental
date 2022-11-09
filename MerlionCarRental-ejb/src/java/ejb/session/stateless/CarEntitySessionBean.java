@@ -155,11 +155,12 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         query.setParameter("pickUpOutlet", pickUpOutlet).setParameter("notInUse", CarStatusEnum.NOT_IN_USE);
         
         List<CarEntity> listOfCarsAtPickUpOutlet = query.getResultList();
-        for (CarEntity car : listOfCarsAtPickUpOutlet){
-            List<Reservation> reservations = car.getReservations();
+        for (int i=0; i< listOfCarsAtPickUpOutlet.size();i++){
+            List<Reservation> reservations = listOfCarsAtPickUpOutlet.get(i).getReservations();
             for (Reservation reservation: reservations){
                 if (reservation.getPickUpDate().compareTo(pickUpDate) < 0 || reservation.getReturnDate().compareTo(returnDate) > 0){
-                    listOfCarsAtPickUpOutlet.remove(car);
+                    listOfCarsAtPickUpOutlet.remove(listOfCarsAtPickUpOutlet.get(i));
+                    break;
             }
             }
         }

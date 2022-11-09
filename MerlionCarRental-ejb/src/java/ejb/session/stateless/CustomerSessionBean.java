@@ -10,9 +10,11 @@ import entity.Reservation;
 import exception.AlreadyLoggedInException;
 import exception.CustomerNotFoundException;
 import exception.InvalidLoginCredentialException;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -72,13 +74,17 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     {
         Query query = em.createQuery("Select c From Customer c Where c.email = :email");
         query.setParameter("email", email);
+        try {
         Customer customer = (Customer) query.getSingleResult();
-        
         if (customer != null){
             return customer;
         } else {
             throw new CustomerNotFoundException("Customer Not Found!");
         }
+        } catch(NoResultException ex){
+            throw new CustomerNotFoundException("Customer Not Found!");
+        }
+        
         
     }
     
@@ -93,12 +99,11 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     {
         Customer customer = retrieveCustomerByEmail(email);
         if (customer.getPassword().equals(password)){
-            if (customer.isLoggedIn()== false){
+           
                 customer.setLoggedIn(true);
                 return customer;
-            } else {
-                throw new AlreadyLoggedInException("Customer is already logged in");
-            }
+            
+            
         } else {
             throw new InvalidLoginCredentialException("Email or Password is wrong");
         }
@@ -122,6 +127,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     public void viewAllReservations(Customer customer) throws CustomerNotFoundException
     {
         Customer customerToView= retrieveCustomerById(customer.getCustomerId());
+        List<Reservation> reservations = customerToView.getReservations();
         //Reservation reservation = customerToView.getReservation();
         
         //System.out.println(reservation.getId());

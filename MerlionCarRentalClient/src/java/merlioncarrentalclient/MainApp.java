@@ -12,6 +12,7 @@ import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import exception.InvalidLoginCredentialException;
 import java.util.Scanner;
@@ -34,7 +35,7 @@ public class MainApp {
     private ModelSessionBeanRemote modelSessionBeanRemote;
     private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote;
-    
+    private ReservationSessionBeanRemote reservationSessionBeanRemote;
     
     private SalesManagementModule salesManagementModule;
     private CustomerServiceModule customerServiceModule;
@@ -45,7 +46,7 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote) {
+    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote) {
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.customerSessionBeanRemote = customerSessionBeanRemote;
@@ -54,6 +55,7 @@ public class MainApp {
         this.modelSessionBeanRemote = modelSessionBeanRemote;
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
         this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
+        this.reservationSessionBeanRemote = reservationSessionBeanRemote;
     }
     
     
@@ -82,8 +84,8 @@ public class MainApp {
                         doLogin();
                         System.out.println("Login successful!\n");
                         
-                        salesManagementModule = new SalesManagementModule(categorySessionBeanRemote, carEntitySessionBeanRemote, rentalRateSessionBeanRemote, modelSessionBeanRemote, outletEntitySessionBeanRemote, employeeEntitySessionBeanRemote, transitDriverDispatchRecordSessionBeanRemote);
-                        customerServiceModule = new CustomerServiceModule(carEntitySessionBeanRemote, customerSessionBeanRemote, currentEmployeeEntity);
+                        salesManagementModule = new SalesManagementModule(categorySessionBeanRemote, carEntitySessionBeanRemote, rentalRateSessionBeanRemote, modelSessionBeanRemote, outletEntitySessionBeanRemote, employeeEntitySessionBeanRemote, transitDriverDispatchRecordSessionBeanRemote, currentEmployeeEntity);
+                        customerServiceModule = new CustomerServiceModule(carEntitySessionBeanRemote, customerSessionBeanRemote, currentEmployeeEntity, reservationSessionBeanRemote);
                     
                         menuMain();
                     }

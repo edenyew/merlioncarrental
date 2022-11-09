@@ -6,10 +6,13 @@
 package ejb.session.stateless;
 
 import entity.CarEntity;
+import entity.CreditCard;
+import entity.Customer;
 import entity.OutletEntity;
 import entity.RentalRate;
 import entity.Reservation;
 import exception.CarNotFoundException;
+import exception.CustomerNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
 import exception.ReservationNotFoundException;
@@ -31,13 +34,18 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     private OutletEntitySessionBeanLocal outletSessionBeanLocal;
     @EJB
     private CarEntitySessionBeanLocal carSessionBeanLocal;
+    @EJB
+    private CreditCardSessionBeanLocal creditCardSessionBeanLocal;
+    @EJB 
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
-    @Override
-    public Long creatNewReservation(Reservation reservation, Long carId, Long returnOutletId, Long pickUpOutletId) throws CarNotFoundException, OutletNotFoundException, RentalRateNotFoundException 
+    public Long creatNewReservation(Reservation reservation, Long carId, Long returnOutletId, Long pickUpOutletId, Long creditCardId, Long customerId) throws CarNotFoundException, OutletNotFoundException, RentalRateNotFoundException, CustomerNotFoundException 
     {
         CarEntity car = carSessionBeanLocal.retrieveCarById(carId);
         OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
         OutletEntity pickUpOutlet = outletSessionBeanLocal.retrieveOutletById(pickUpOutletId);
+        CreditCard creditCard = creditCardSessionBeanLocal.retrieveCreditCardById(creditCardId);
+        Customer customer = customerSessionBeanLocal.retrieveCustomerById(customerId);
         
         em.persist(reservation);
         
@@ -46,6 +54,10 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
          reservation.setPickUpOutlet(pickUpOutlet);
         car.getReservations().add(reservation);
         returnOutlet.getReservations().add(reservation);
+        reservation.setCreditCard(creditCard);
+        creditCard.setReservation(reservation);
+        reservation.setCustomer(customer);
+        customer.getReservations().add(reservation);
         
         em.flush();
         
@@ -61,6 +73,11 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         } else {
             throw new ReservationNotFoundException();
         }
+    }
+    
+    public void cancelReservation(Reservation reservation) throws ReservationNotFoundException {
+        Reservation reservationToCancel = retrieveReservationById(reservation.getId());
+        
     }
 
     

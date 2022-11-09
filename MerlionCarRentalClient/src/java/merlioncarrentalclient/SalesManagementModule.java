@@ -58,7 +58,7 @@ public class SalesManagementModule {
     }
     
 
-    public SalesManagementModule(CategorySessionBeanRemote categorySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote)
+    public SalesManagementModule(CategorySessionBeanRemote categorySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, EmployeeEntity currentEmployeeEntity)
     {
         this.categorySessionBeanRemote = categorySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
@@ -67,6 +67,7 @@ public class SalesManagementModule {
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
+        this.currentEmployeeEntity = currentEmployeeEntity;
     }
     
     public void menuSalesManagement() throws InvalidAccessRightException, CarNotFoundException
@@ -235,15 +236,14 @@ public class SalesManagementModule {
     
     private void viewAllRentalRates() throws RentalRateNotFoundException
     {
-        System.out.println("*** View All Car Records Rental Rate: ***\n");
-        List<RentalRate> rentalRates = rentalRateSessionBeanRemote.retrieveAllRentalRate();
-        
-        for(RentalRate rentalRate : rentalRates)
-        {
-            rentalRateSessionBeanRemote.viewRentalRateDetails(rentalRate);
-            System.out.println("");
+       
+        System.out.println("*** Merlion Car Rental System :: Sales Management :: View Details of Car Rental Rate ***\n");
+        for (RentalRate currentRates : rentalRateSessionBeanRemote.retrieveAllRentalRate()) {
+            System.out.println("Rental Rate ID:> " + currentRates.getId());
+            System.out.println("Rental Rate Name:> " + currentRates.getName());
+            System.out.println("Rental Rate Rate per day:> " + currentRates.getRatePerDay());
         }
-        
+
     }
     
     
@@ -252,12 +252,7 @@ public class SalesManagementModule {
         Scanner scanner = new Scanner(System.in);
         RentalRate rentalRate = new RentalRate();
         
-        System.out.println("*** Merlion Car Rental System :: Sales Management :: View Details of Car Rental Rate ***\n");
-        for (RentalRate currentRates : rentalRateSessionBeanRemote.retrieveAllRentalRate()) {
-            System.out.println("Rental Rate ID:> " + currentRates.getId());
-            System.out.println("Rental Rate Name:> " + currentRates.getName());
-            System.out.println("Rental Rate Rate per day:> " + currentRates.getRatePerDay());
-        }
+
         System.out.print("Enter Rental Rate ID:> ");
         
         rentalRate = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(scanner.nextLong()); 
@@ -281,13 +276,13 @@ public class SalesManagementModule {
         
         rentalRateToUpdate.setName(scanner.nextLine().trim());
         
-        System.out.print("Enter Car Category To Update> ");
+        System.out.print("Enter Car Category To Update> \n");
         List<Category> allCategories = categorySessionBeanRemote.retrieveAllCategory();
         for (Category category : allCategories)
         {
             System.out.println(category.getCategoryId() + ": " + category.getName());
         }
-        response = scanner.nextLong();
+        response = new Long(scanner.nextLine());
         rentalRateToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
         
         System.out.print("Enter StartDate (DD/MM/YYYY) To Update> ");

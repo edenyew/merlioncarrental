@@ -6,12 +6,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -45,9 +47,9 @@ public class Customer implements Serializable {
     
     private boolean loggedIn;
     
-     @OneToOne(optional = true)
+     @OneToMany
 //    //@JoinColumn(name = "ReservationId")
-   private Reservation reservation;
+   private List<Reservation> reservations;
     
     // add creditCard relationship here
 
@@ -87,6 +89,14 @@ public class Customer implements Serializable {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
     @Override
@@ -182,20 +192,6 @@ public class Customer implements Serializable {
      */
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
-    }
-
-    /**
-     * @return the reservation
-     */
-    public Reservation getReservation() {
-        return reservation;
-    }
-
-    /**
-     * @param reservation the reservation to set
-     */
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
     }
 //    
 }

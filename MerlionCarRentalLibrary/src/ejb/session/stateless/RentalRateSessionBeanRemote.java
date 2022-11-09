@@ -32,6 +32,8 @@ public interface RentalRateSessionBeanRemote {
      public Long createRentalRate(RentalRate rentalRate, Long categoryId);
 
     public Long calculateTotalCost(Date pickUpDate, Date returnDate, List<RentalRate> rentalRates);
+
+    public List<RentalRate> retrieveRentalRatesOfCarCategory(Long categoryId);
     
     
 }
