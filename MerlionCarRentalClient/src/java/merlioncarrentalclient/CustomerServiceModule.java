@@ -7,6 +7,7 @@ package merlioncarrentalclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.ReservationSessionBeanRemote;
 import entity.CarEntity;
 import entity.Customer;
 import entity.EmployeeEntity;
@@ -18,6 +19,8 @@ import exception.CarNotInOutletException;
 import exception.CustomerNotFoundException;
 import exception.InvalidAccessRightException;
 import exception.OutletNotFoundException;
+import exception.ReservationNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 
@@ -29,6 +32,7 @@ public class CustomerServiceModule {
 
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
     private CustomerSessionBeanRemote customerSessionBeanRemote;
+    private ReservationSessionBeanRemote reservationSessionBeanRemote;
     
     private EmployeeEntity currentEmployeeEntity;
     private Customer currentCustomer;
@@ -38,10 +42,11 @@ public class CustomerServiceModule {
     public CustomerServiceModule() {
     }
     
-    public CustomerServiceModule(CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, EmployeeEntity currentEmployeeEntity) {
+    public CustomerServiceModule(CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, EmployeeEntity currentEmployeeEntity, ReservationSessionBeanRemote reservationSessionBeanRemote) {
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.customerSessionBeanRemote =  customerSessionBeanRemote;
         this.currentEmployeeEntity = currentEmployeeEntity;
+        this.reservationSessionBeanRemote = reservationSessionBeanRemote;
     }
     
     
@@ -74,7 +79,7 @@ public class CustomerServiceModule {
                     {
                         doPickUpCard();
                     }
-                    catch(OutletNotFoundException | CarNotFoundException | CarNotInOutletException | CustomerNotFoundException ex)
+                    catch(OutletNotFoundException | CarNotFoundException | CarNotInOutletException | CustomerNotFoundException |  ReservationNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -85,7 +90,7 @@ public class CustomerServiceModule {
                     {
                         doReturnCar();
                     }
-                    catch(CustomerNotFoundException | OutletNotFoundException | CarNotFoundException | CarAlreadyInOutletException ex)
+                    catch(CustomerNotFoundException | OutletNotFoundException | CarNotFoundException | CarAlreadyInOutletException |  ReservationNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -106,7 +111,7 @@ public class CustomerServiceModule {
         }
     }
     
-    private void doPickUpCard() throws CustomerNotFoundException, OutletNotFoundException, CarNotFoundException, CarNotInOutletException
+    private void doPickUpCard() throws CustomerNotFoundException, OutletNotFoundException, CarNotFoundException, CarNotInOutletException, ReservationNotFoundException
     {   
         Scanner scanner = new Scanner(System.in);
         String passportNum = "";
@@ -116,14 +121,19 @@ public class CustomerServiceModule {
         passportNum = scanner.nextLine().trim();
         
         currentCustomer = customerSessionBeanRemote.retrieveCustomerWithPassportNumber(passportNum);
-        Reservation customerReservation = currentCustomer.getReservation();
-        CarEntity carReserved = customerReservation.getCar();
-        OutletEntity outletForCar = customerReservation.getPickUpOutlet();
+
+        List<Reservation> customerReservation = currentCustomer.getReservations();
+        System.out.print("Choose a reservation by ID> ");
+        Long reservationId = scanner.nextLong();
+        
+        Reservation selectedReservation = reservationSessionBeanRemote.retrieveReservationById(reservationId);
+        CarEntity carReserved = selectedReservation.getCar();
+        OutletEntity outletForCar = selectedReservation.getPickUpOutlet();
         carEntitySessionBeanRemote.pickUpCar(outletForCar.getOutletId(), carReserved);
     }
     
     
-    private void doReturnCar() throws CustomerNotFoundException, OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException
+    private void doReturnCar() throws CustomerNotFoundException, OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException, ReservationNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         String passportNum = "";
@@ -132,9 +142,14 @@ public class CustomerServiceModule {
         System.out.print("Enter Customer Passport Number> ");
         passportNum = scanner.nextLine().trim();
         currentCustomer = customerSessionBeanRemote.retrieveCustomerWithPassportNumber(passportNum);
-        Reservation customerReservation = currentCustomer.getReservation();
-        CarEntity carReserved = customerReservation.getCar();
-        OutletEntity outletForCar = customerReservation.getPickUpOutlet();
+        List<Reservation> customerReservation = currentCustomer.getReservations();
+         System.out.print("Choose a reservation by ID> ");
+        Long reservationId = scanner.nextLong();
+        
+        Reservation selectedReservation = reservationSessionBeanRemote.retrieveReservationById(reservationId);
+
+        CarEntity carReserved = selectedReservation.getCar();
+        OutletEntity outletForCar = selectedReservation.getReturnOutlet();
         carEntitySessionBeanRemote.returnCar(outletForCar.getOutletId(), carReserved);
     }
 

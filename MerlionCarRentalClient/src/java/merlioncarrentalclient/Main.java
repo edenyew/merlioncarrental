@@ -13,6 +13,7 @@ import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.PartnerEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import entity.PartnerEntity;
 import java.util.List;
@@ -40,7 +41,8 @@ public class Main {
     private static OutletEntitySessionBeanRemote outletEntitySessionBean;
     @EJB
     private static CarEntitySessionBeanRemote carEntitySessionBean;
-    
+    @EJB
+    private static ReservationSessionBeanRemote reservationSessionBeanRemote;
            
     /**
      * @param args the command line arguments
@@ -48,7 +50,7 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        MainApp mainApp = new MainApp(employeeEntitySessionBean, carEntitySessionBean, customerSessionBean, categorySessionBean, rentalRateSessionBean, modelSessionBean, outletEntitySessionBean, transitDriverDispatchRecordSessionBean);
+        MainApp mainApp = new MainApp(employeeEntitySessionBean, carEntitySessionBean, customerSessionBean, categorySessionBean, rentalRateSessionBean, modelSessionBean, outletEntitySessionBean, transitDriverDispatchRecordSessionBean, reservationSessionBeanRemote);
         mainApp.runApp();
         
     }
