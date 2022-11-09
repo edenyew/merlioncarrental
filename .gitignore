@@ -21,3 +21,6 @@ nbproject/project.properties
 MerlionCarRentalClient/build.xml
 *.xml
 /ReservationClient/build/
+/PartnerReservationClient/nbproject/private/
+/PartnerReservationClient/build/
+/PartnerReservationClient/dist/

@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,13 +43,10 @@ public class CreditCard implements Serializable {
     @JoinColumn(nullable = true, name ="CustomerId")
     private Customer customer;
     
-    @OneToOne
+    @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name ="ReservationId")
     private Reservation reservation;
-    
-    @OneToOne
-    @JoinColumn(name ="PaymentId")
-    private Payment payment;
+   
 
     public CreditCard() {
     }

@@ -47,7 +47,7 @@ public class Customer implements Serializable {
     
     private boolean loggedIn;
     
-     @OneToMany
+     @OneToMany(mappedBy = "customer")
 //    //@JoinColumn(name = "ReservationId")
    private List<Reservation> reservations;
     

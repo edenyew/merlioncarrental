@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.PartnerEntity;
+import exception.InvalidLoginCredentialException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -45,5 +46,51 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanRemote,
         return query.getResultList();
     }
     
+    @Override
+    public PartnerEntity retrievePartnerById(Long id) 
+    {
+        
+        return em.find(PartnerEntity.class, id);
+    }
     
+    @Override
+    public PartnerEntity retrievePartnerByEmail(String email){
+        Query query = em.createQuery("Select p From PartnerEntity p Where p.email = :email");
+        query.setParameter("email", email);
+        
+        PartnerEntity partner = (PartnerEntity) query.getSingleResult();
+
+            return partner;
+    }
+    
+    @Override
+    public PartnerEntity partnerLogin(String email, String password) throws InvalidLoginCredentialException{
+        PartnerEntity partner = retrievePartnerByEmail(email);
+        if (partner.getPassword().equals(password)){
+           
+                partner.setLoggedIn(true);
+                return partner;
+            
+            
+        } else {
+            throw new InvalidLoginCredentialException("Email or Password is wrong");
+        }
+    }
+
+    
+
+    @Override
+    public PartnerEntity partnerLogout(PartnerEntity partner) throws InvalidLoginCredentialException
+    {
+        PartnerEntity parnterToLogout = retrievePartnerById(partner.getPartnerId());
+        
+        if (parnterToLogout.isLoggedIn()){
+            parnterToLogout.setLoggedIn(false);
+            return parnterToLogout;
+        } else {
+            throw new InvalidLoginCredentialException("Customer is already logged out");
+        }
+        
+    }
+
 }

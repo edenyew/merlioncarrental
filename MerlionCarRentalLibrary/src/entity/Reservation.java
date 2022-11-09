@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,12 +58,15 @@ public class Reservation implements Serializable {
     
     @JoinColumn(name = "returnOutletId", nullable = false)
     private OutletEntity returnOutlet;
-    @OneToMany
+    @OneToMany 
     private List<RentalRate> rentalRates;
     
-    @OneToOne (mappedBy = "reservation")
+    @ManyToOne 
 //    //@JoinColumn(name = "customerId")
      private Customer customer;
+    
+    @ManyToOne
+    private PartnerEntity partner;
 
     
     public Reservation() {
@@ -79,6 +83,19 @@ public class Reservation implements Serializable {
         this.rentalRates = rentalRates;
         this.customer = customer;
         this.paid = paid;
+    }
+
+    public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, boolean paid, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, PartnerEntity partner) {
+        this.pickUpDate = pickUpDate;
+        this.returnDate = returnDate;
+        this.totalCost = totalCost;
+        this.creditCard = creditCard;
+        this.paid = paid;
+        this.car = car;
+        this.pickUpOutlet = pickUpOutlet;
+        this.returnOutlet = returnOutlet;
+        this.rentalRates = rentalRates;
+        this.partner = partner;
     }
 
    
@@ -185,6 +202,14 @@ public class Reservation implements Serializable {
      */
     public OutletEntity getPickUpOutlet() {
         return pickUpOutlet;
+    }
+
+    public PartnerEntity getPartner() {
+        return partner;
+    }
+
+    public void setPartner(PartnerEntity partner) {
+        this.partner = partner;
     }
 
     /**

@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -29,6 +31,10 @@ public class PartnerEntity implements Serializable {
     private String email;
     @Column(nullable = false, length = 32)
     private String password;
+    
+    private boolean loggedIn;
+    @OneToMany(mappedBy = "partner")
+    private List<Reservation> reservations;
 
     public PartnerEntity() {
     }
@@ -101,12 +107,28 @@ public class PartnerEntity implements Serializable {
         this.email = email;
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
 }
