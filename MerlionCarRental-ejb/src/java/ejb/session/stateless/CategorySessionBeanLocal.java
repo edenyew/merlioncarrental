@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import entity.Category;
+import exception.CategoryNotFoundException;
+import exception.InputDataValidationException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -16,7 +19,7 @@ import javax.ejb.Local;
 @Local
 public interface CategorySessionBeanLocal {
 
-    public Long createNewCategory(Category category);
+    public Long createNewCategory(Category category) throws CategoryNotFoundException, UnknownPersistenceException, InputDataValidationException;
 
     public List<Category> retrieveAllCategory();
     

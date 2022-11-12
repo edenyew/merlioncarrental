@@ -14,6 +14,7 @@ import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -43,6 +44,7 @@ public interface CarEntitySessionBeanLocal {
     public void pickUpCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarNotInOutletException;
 
     public void returnCar(Long outletId, CarEntity carEntity) throws OutletNotFoundException, CarNotFoundException, CarAlreadyInOutletException;
-    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException;
+    
+    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException, InputDataValidationException, UnknownPersistenceException, CarNotFoundException;
     
 }

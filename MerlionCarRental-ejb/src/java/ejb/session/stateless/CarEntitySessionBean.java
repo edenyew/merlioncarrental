@@ -18,6 +18,7 @@ import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -59,39 +61,71 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         validator = validatorFactory.getValidator();
     }
     
-    
-    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException
+    @Override
+    public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException, InputDataValidationException, UnknownPersistenceException, CarNotFoundException
     {
-       
-       Model model = modelSessionBeanLocal.retrieveModelById(modelId);
-       Category category = model.getCategory();
-       OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
+        Set<ConstraintViolation<CarEntity>>constraintViolations = validator.validate(car);
         
-       em.persist(car);
-       
-       model.getCars().add(car);
-       model.setInUse(true);
-       
-       car.setModel(model);
-       car.setCategory(category);
-       car.setOutletEntity(outlet);
-       
-       em.flush();
-       return car.getCarId();
-       
-   }
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+                
+             Model model = modelSessionBeanLocal.retrieveModelById(modelId);
+             Category category = model.getCategory();
+             OutletEntity outlet = outletSessionBeanLocal.retrieveOutletById(outletId);
+
+
+
+              em.persist(car);
+
+              model.getCars().add(car);
+              model.setInUse(true);
+
+              car.setModel(model);
+              car.setCategory(category);
+              car.setOutletEntity(outlet);
+
+              em.flush();
+              
+              return car.getCarId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new CarNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+    }
     
     @Override
-    public List<CarEntity> retrieveAllCars() {
-       
-       Query query;
+    public List<CarEntity> retrieveAllCars() 
+    {
+        Query query;
         query = em.createQuery("SELECT c FROM CarEntity c ORDER BY c.category, c.model, c.model.makeName, c.carPlateNumber");
        
        return query.getResultList();
-   }
+    }
     
     @Override
-     public CarEntity retrieveCarByPlateNumber(String carPlateNumber) throws CarNotFoundException{
+    public CarEntity retrieveCarByPlateNumber(String carPlateNumber) throws CarNotFoundException{
         Query query = em.createQuery("SELECT c FROM CarEntity c WHERE c.carPlateNumber = :inCarPlateNumber");
         query.setParameter("inCarPlateNumber", carPlateNumber);
         if ((CarEntity)query.getSingleResult() != null){

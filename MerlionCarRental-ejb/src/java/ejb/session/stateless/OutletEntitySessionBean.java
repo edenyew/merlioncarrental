@@ -6,17 +6,26 @@
 package ejb.session.stateless;
 
 import entity.CarEntity;
+import entity.Model;
 import entity.OutletEntity;
 import exception.CarNotFoundException;
 import exception.CarNotInOutletException;
+import exception.InputDataValidationException;
 import exception.OutletNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -28,19 +37,59 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
-     @EJB
+    @EJB
     private CarEntitySessionBeanLocal carSessionBeanLocal;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
     
-    @Override
-    public Long createNewOutlet(OutletEntity outletEntity)
+    
+    public OutletEntitySessionBean() 
     {
-        em.persist(outletEntity);
-        em.flush();
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+         
+     
+    @Override
+    public Long createNewOutlet(OutletEntity outletEntity) throws OutletNotFoundException, UnknownPersistenceException, InputDataValidationException
+    {
+        Set<ConstraintViolation<OutletEntity>>constraintViolations = validator.validate(outletEntity);
         
-        return outletEntity.getOutletId();
-        
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+                em.persist(outletEntity);
+                em.flush();
+
+                return outletEntity.getOutletId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new OutletNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
     
     @Override
@@ -88,6 +137,18 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
     public void updateOutletEntity(OutletEntity outlet)
     {
         em.merge(outlet);
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<OutletEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
     
     

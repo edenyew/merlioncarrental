@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import entity.Category;
+import exception.CategoryNotFoundException;
+import exception.InputDataValidationException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -16,7 +19,7 @@ import javax.ejb.Remote;
 @Remote
 public interface CategorySessionBeanRemote {
 
-    public Long createNewCategory(Category category);
+    public Long createNewCategory(Category category) throws CategoryNotFoundException, UnknownPersistenceException, InputDataValidationException;
 
     public Category retrieveCategoryById(Long categoryId);
 

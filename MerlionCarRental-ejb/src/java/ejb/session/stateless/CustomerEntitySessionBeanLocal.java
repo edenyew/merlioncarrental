@@ -8,7 +8,9 @@ package ejb.session.stateless;
 import entity.Customer;
 import exception.AlreadyLoggedInException;
 import exception.CustomerNotFoundException;
+import exception.InputDataValidationException;
 import exception.InvalidLoginCredentialException;
+import exception.UnknownPersistenceException;
 import javax.ejb.Local;
 
 /**
@@ -22,7 +24,7 @@ public interface CustomerEntitySessionBeanLocal {
 
     public Customer retrieveCustomerWithPassportNumber(String passportNum) throws CustomerNotFoundException;
 
-    public Long createCustomer(Customer customer);
+    public Long createCustomer(Customer customer) throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException;
 
     public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
     

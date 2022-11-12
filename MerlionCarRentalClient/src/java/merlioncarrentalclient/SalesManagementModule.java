@@ -29,6 +29,7 @@ import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
 import exception.TransitRecordNotFoundException;
+import exception.UnknownPersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,7 +119,7 @@ public class SalesManagementModule {
                     {
                         doCreateRentalRate(); // check this part again, does car and category need to be mandatory? if they are how to enforce when creating rental rate
                     }
-                    catch(CarNotFoundException ex)
+                    catch(RentalRateNotFoundException | UnknownPersistenceException | InputDataValidationException | CarNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -185,7 +186,7 @@ public class SalesManagementModule {
         }
     }
     
-    private void doCreateRentalRate() throws CarNotFoundException
+    private void doCreateRentalRate() throws CarNotFoundException, RentalRateNotFoundException, UnknownPersistenceException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         RentalRate newRentalRate = new RentalRate();
@@ -366,7 +367,14 @@ public class SalesManagementModule {
 
                 if (response == 1)
                 {
-                    createNewModel();
+                    try
+                    {
+                        createNewModel();
+                    }
+                    catch (ModelNotFoundException | UnknownPersistenceException | InputDataValidationException ex)
+                    {
+                        System.out.println("An error has occurred: " + ex.getMessage() + "\n");
+                    }
                 }
                 else if (response == 2)
                 {
@@ -401,7 +409,7 @@ public class SalesManagementModule {
                     {
                         createNewCar();
                     }
-                    catch (OutletNotFoundException | RentalRateNotFoundException | ModelNotFoundException ex)
+                    catch (CarNotFoundException | UnknownPersistenceException | InputDataValidationException | OutletNotFoundException | RentalRateNotFoundException | ModelNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -469,7 +477,7 @@ public class SalesManagementModule {
                     {
                         assignTransitDriver();
                     }
-                    catch (EmployeeNotFoundException | TransitRecordNotFoundException | OutletNotFoundException | CarNotFoundException ex)
+                    catch (UnknownPersistenceException | InputDataValidationException | EmployeeNotFoundException | TransitRecordNotFoundException | OutletNotFoundException | CarNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -502,7 +510,7 @@ public class SalesManagementModule {
         }
     }
     
-    private void createNewModel()
+    private void createNewModel() throws ModelNotFoundException, UnknownPersistenceException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         Model newModel = new Model();
@@ -603,7 +611,7 @@ public class SalesManagementModule {
     }
     
     
-    private void createNewCar() throws ModelNotFoundException, RentalRateNotFoundException, OutletNotFoundException
+    private void createNewCar() throws ModelNotFoundException, RentalRateNotFoundException, OutletNotFoundException, InputDataValidationException, UnknownPersistenceException, CarNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         CarEntity newCar = new CarEntity();
@@ -759,7 +767,7 @@ public class SalesManagementModule {
     }
     
     
-    private void assignTransitDriver() throws EmployeeNotFoundException, TransitRecordNotFoundException, OutletNotFoundException, CarNotFoundException
+    private void assignTransitDriver() throws EmployeeNotFoundException, TransitRecordNotFoundException, OutletNotFoundException, CarNotFoundException, UnknownPersistenceException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
 

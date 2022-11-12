@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import exception.CreditCardNotFoundException;
 import entity.CreditCard;
+import exception.InputDataValidationException;
+import exception.UnknownPersistenceException;
 import javax.ejb.Local;
 
 /**
@@ -15,7 +18,7 @@ import javax.ejb.Local;
 @Local
 public interface CreditCardSessionBeanLocal {
     
-    public Long createNewCreditCard(CreditCard creditCard);
+    public Long createNewCreditCard(CreditCard creditCard) throws CreditCardNotFoundException, UnknownPersistenceException, InputDataValidationException;
 
     public CreditCard retrieveCreditCardById(Long creditCardId);
     

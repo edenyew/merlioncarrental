@@ -7,7 +7,9 @@ package ejb.session.stateless;
 
 import entity.OutletEntity;
 import exception.CarNotFoundException;
+import exception.InputDataValidationException;
 import exception.OutletNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -22,7 +24,7 @@ public interface OutletEntitySessionBeanRemote {
     
     public void updateOutletEntity(OutletEntity outlet);
 
-    public Long createNewOutlet(OutletEntity outletEntity);
+    public Long createNewOutlet(OutletEntity outletEntity) throws OutletNotFoundException, UnknownPersistenceException, InputDataValidationException;
     
     public boolean findCarInOutlet(Long outletId, Long carId) throws CarNotFoundException, OutletNotFoundException;
 

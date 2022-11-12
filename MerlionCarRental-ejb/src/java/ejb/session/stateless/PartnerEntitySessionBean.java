@@ -6,12 +6,21 @@
 package ejb.session.stateless;
 
 import entity.PartnerEntity;
+import exception.InputDataValidationException;
 import exception.InvalidLoginCredentialException;
+import exception.PartnerEntityNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -24,18 +33,60 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanRemote,
     private EntityManager em;
     
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
     
+    
+    public PartnerEntitySessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     
     @Override
-    public Long createNewPartnerRecord(PartnerEntity partner) 
+    public Long createNewPartnerRecord(PartnerEntity partner) throws PartnerEntityNotFoundException, UnknownPersistenceException, InputDataValidationException
     {
-        em.persist(partner);
-        em.flush();
+        Set<ConstraintViolation<PartnerEntity>>constraintViolations = validator.validate(partner);
         
-        return partner.getPartnerId();
-    }      
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+        
+                em.persist(partner);
+                em.flush();
+
+                return partner.getPartnerId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new PartnerEntityNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+    }
     
     
     @Override
@@ -91,6 +142,18 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanRemote,
             throw new InvalidLoginCredentialException("Customer is already logged out");
         }
         
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<PartnerEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 
 }

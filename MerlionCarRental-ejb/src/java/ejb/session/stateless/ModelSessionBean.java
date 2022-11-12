@@ -10,11 +10,13 @@ import entity.Model;
 import exception.DeleteModelException;
 import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -43,18 +45,48 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
 
 
     @Override
-    public Long createNewModel(Model model, Long categoryId){
+    public Long createNewModel(Model model, Long categoryId) throws ModelNotFoundException, UnknownPersistenceException, InputDataValidationException
+    {
+        Set<ConstraintViolation<Model>>constraintViolations = validator.validate(model);
+        
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
        
-       Category category = em.find(Category.class, categoryId);
-       em.persist(model);
-       
-       category.getModels().add(model);
-       model.setCategory(category);
-       
-       em.flush();
-       return model.getModelId();
-       
-   }
+                Category category = em.find(Category.class, categoryId);
+                em.persist(model);
+
+                category.getModels().add(model);
+                model.setCategory(category);
+
+                em.flush();
+                return model.getModelId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new ModelNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+    }
    
     @Override
     public List<Model> retrieveAllModels() {

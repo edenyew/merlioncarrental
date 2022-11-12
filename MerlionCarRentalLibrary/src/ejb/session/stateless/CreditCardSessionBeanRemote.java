@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import entity.CreditCard;
+import exception.CreditCardNotFoundException;
+import exception.InputDataValidationException;
+import exception.UnknownPersistenceException;
 import javax.ejb.Remote;
 
 /**
@@ -16,7 +19,7 @@ import javax.ejb.Remote;
 public interface CreditCardSessionBeanRemote {
 
 
-    public Long createNewCreditCard(CreditCard creditCard);
+    public Long createNewCreditCard(CreditCard creditCard) throws CreditCardNotFoundException, UnknownPersistenceException, InputDataValidationException;
     
     public CreditCard retrieveCreditCardById(Long creditCardId);
     

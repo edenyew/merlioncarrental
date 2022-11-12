@@ -6,7 +6,10 @@
 package ejb.session.stateless;
 
 import entity.PartnerEntity;
+import exception.InputDataValidationException;
 import exception.InvalidLoginCredentialException;
+import exception.PartnerEntityNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -17,7 +20,7 @@ import javax.ejb.Remote;
 @Remote
 public interface PartnerEntitySessionBeanRemote {
     
-    public Long createNewPartnerRecord(PartnerEntity partner);
+    public Long createNewPartnerRecord(PartnerEntity partner) throws PartnerEntityNotFoundException, UnknownPersistenceException, InputDataValidationException;
     
     public List<PartnerEntity> retrieveAllPartnerRecord();
     

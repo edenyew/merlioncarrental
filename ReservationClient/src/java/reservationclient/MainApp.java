@@ -39,6 +39,9 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import exception.CreditCardNotFoundException;
+import exception.InputDataValidationException;
+import exception.UnknownPersistenceException;
 
 /**
  *
@@ -97,7 +100,14 @@ public class MainApp {
 
                 if(response == 1)
                 {
-                    registerAsCustomer();
+                    try
+                    {
+                        registerAsCustomer();
+                    }
+                    catch (CustomerNotFoundException | UnknownPersistenceException | InputDataValidationException ex)
+                    {
+                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                    }
                 }
                 else if(response == 2)
                 {
@@ -236,8 +246,16 @@ public class MainApp {
                 if (!"N".equals(res) || !"Y".equals(res)) {
               
                      if (currentCustomer != null && currentCustomer.isLoggedIn()){
-                        if ("Y".equals(res)) {
-                            reserveCar(modelChosen, pickUpOutletId, returnOutletId, pickUpDate, pickUpTimeDate, returnDate, returnTimeDate, finalRentalRatesApplied,totalAmountPayable);
+                        if ("Y".equals(res)) 
+                        {
+                            try
+                            {
+                                reserveCar(modelChosen, pickUpOutletId, returnOutletId, pickUpDate, pickUpTimeDate, returnDate, returnTimeDate, finalRentalRatesApplied,totalAmountPayable);
+                            }
+                            catch (ReservationNotFoundException | CreditCardNotFoundException | UnknownPersistenceException | InputDataValidationException ex)
+                            {
+                                System.out.println("Error: " + ex.getMessage() + "\n");
+                            }
                         }
 
                      } else {
@@ -258,7 +276,7 @@ public class MainApp {
         }
     }
     
-    public void reserveCar(Model modelChosen, Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date pickUpTime, Date returnDate, Date returnTime, List<RentalRate> finalRentalRatesApplied, Long totalAmountPayable){
+    public void reserveCar(Model modelChosen, Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date pickUpTime, Date returnDate, Date returnTime, List<RentalRate> finalRentalRatesApplied, Long totalAmountPayable) throws CreditCardNotFoundException, UnknownPersistenceException, InputDataValidationException, ReservationNotFoundException{
 //       CarEntity carToReserve = carSessionBeanRemote.retrieveCarById(carChosen.getCarId());
 //       OutletEntity pickUpOutlet = outletSessionBeanRemote.retrieveOutletById(pickUpOutletId);
 //       OutletEntity returnOutlet = outletSessionBeanRemote.retrieveOutletById(returnOutletId);
@@ -433,7 +451,7 @@ public class MainApp {
         }
     }
     
-    private void registerAsCustomer(){
+    private void registerAsCustomer() throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException{
         Scanner scanner = new Scanner(System.in);
          String firstName = "";
         String lastName = "";
