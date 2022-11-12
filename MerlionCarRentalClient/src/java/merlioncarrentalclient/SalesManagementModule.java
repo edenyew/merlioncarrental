@@ -248,31 +248,38 @@ public class SalesManagementModule {
     }
     
     
-    private void viewRentalRateDetails() throws CarNotFoundException, RentalRateNotFoundException
+    private Long viewRentalRateDetails() throws CarNotFoundException, RentalRateNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         RentalRate rentalRate = new RentalRate();
         
 
         System.out.print("Enter Rental Rate ID:> ");
+        long res = scanner.nextLong();
+        rentalRate = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(res); 
+        System.out.println("Name :" + rentalRate.getName());
+        System.out.println("CarCategory :" + rentalRate.getCategory().getName());
+        System.out.println("RatePerDay :" + rentalRate.getRatePerDay());
+        System.out.println("StartDateTime :" + rentalRate.getStartDate());
+        System.out.println("EndDateTime :" + rentalRate.getEndDate());
+
         
-        rentalRate = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(scanner.nextLong()); 
-        rentalRateSessionBeanRemote.viewRentalRateDetails(rentalRate);
+        return rentalRate.getId();
     }
     
     public void updateRentalRate() throws ParseException, CarNotFoundException, RentalRateNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         
-        RentalRate rentalRateToUpdate = new RentalRate();
+        
         String startDate = "";
         String endDate = "";
         Long response;
         
         System.out.println("*** Merlion Car Rental System :: Sales Management :: Update Rental Rate ***\n");
         
-        viewRentalRateDetails();
-        
+        Long rentalRateId = viewRentalRateDetails();
+        RentalRate rentalRateToUpdate = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(rentalRateId);
         System.out.print("Enter Name To Update> ");
         
         rentalRateToUpdate.setName(scanner.nextLine().trim());
@@ -462,7 +469,7 @@ public class SalesManagementModule {
                     {
                         assignTransitDriver();
                     }
-                    catch (EmployeeNotFoundException | TransitRecordNotFoundException ex)
+                    catch (EmployeeNotFoundException | TransitRecordNotFoundException | OutletNotFoundException | CarNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -542,21 +549,23 @@ public class SalesManagementModule {
         List<Model> allModels = modelSessionBeanRemote.retrieveAllModels();
         for (Model model : allModels)
         {
-            System.out.println(model.getMakeName()+ ", " + model.getModelName()+ ", " + model.getCategory().getName());
+            System.out.println("Model " + model.getModelId() + ": " + model.getMakeName()+ ", " + model.getModelName()+ ", " + model.getCategory().getName());
         }
     }
     
     private void updateModel() throws ModelNotFoundException, InputDataValidationException
     {
-        Scanner scanner = new Scanner(System.in);
-        Model modelToUpdate = new Model();
-        Long response;
+        Scanner scanner = new Scanner(System.in);      
+       
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Update Model ***\n");
+        System.out.print("Enter Model Id > ");
+        Model modelToUpdate = modelSessionBeanRemote.retrieveModelById(Long.parseLong(scanner.nextLine().trim()));
         
-        System.out.print("Enter Make> ");
+        Long response;
+        System.out.print("Enter Make To Update> ");
         modelToUpdate.setMakeName(scanner.nextLine().trim());
         
-        System.out.print("Enter Model> ");
+        System.out.print("Enter Model To Update> ");
         modelToUpdate.setModelName(scanner.nextLine().trim());
         
         System.out.print("Enter Category> \n");
@@ -629,15 +638,7 @@ public class SalesManagementModule {
         }
         
         Long modelId = scanner.nextLong();
-        
-        List<Category> allCategory = categorySessionBeanRemote.retrieveAllCategory();
-        
-        for (Category category : allCategory) 
-        {
-            System.out.println(category.getCategoryId()+ ": " + category.getName());
-        }
-        
-        Long categoryId = scanner.nextLong();        
+              
         
         List<OutletEntity> allOutlets = outletEntitySessionBeanRemote.retrieveAllOutlets();
         
@@ -659,7 +660,7 @@ public class SalesManagementModule {
         List<CarEntity> allCars =  carEntitySessionBeanRemote.retrieveAllCars();
         for (CarEntity car : allCars)
         {
-            carEntitySessionBeanRemote.viewCarDetails(car);
+             System.out.println("CarId: " + car.getCarId() + ", LicensePlateNumber: " + car.getCarPlateNumber() + ", Make: " + car.getModel().getMakeName() + ", Model: " + car.getModel().getModelName());
         }
     }
     
@@ -673,16 +674,25 @@ public class SalesManagementModule {
         System.out.print("Enter Car Plate Number To View Car Details> ");
         car = carEntitySessionBeanRemote.retrieveCarByPlateNumber(scanner.nextLine().trim()); 
         
-        carEntitySessionBeanRemote.viewCarDetails(car);
+        System.out.println("*** View Car Details: ***\n");
+        System.out.println("CarId: " + car.getCarId()); 
+        System.out.println("LicensePlateNumber: " + car.getCarPlateNumber()); 
+        System.out.println("Make: " + car.getModel().getMakeName()); 
+        System.out.println("Model: " + car.getModel()); 
+        System.out.println("Status: " + car.getCurrentStatus()); 
+        System.out.println("Outlet: " + car.getOutletEntity().getAddress());
+
         
     }
     
     private void updateCar() throws ModelNotFoundException, CarNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
-        Long response;
-        CarEntity carToUpdate = new CarEntity();
+        Long response;      
+
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Update Car ***\n");
+        System.out.print("Enter CarId Id > ");
+        CarEntity carToUpdate = carEntitySessionBeanRemote.retrieveCarById(Long.parseLong(scanner.nextLine().trim()));
         
         viewCarDetails();
         
@@ -735,7 +745,7 @@ public class SalesManagementModule {
         {
             System.out.println(outlet.getOutletId() + ": " + outlet.getAddress());
         }
-        outletId = scanner.nextLong();
+        outletId = Long.parseLong(scanner.nextLine().trim());
    
         System.out.print("Enter today's date (DD/MM/YYYY)> ");
         todayDateString = scanner.nextLine().trim();
@@ -749,31 +759,31 @@ public class SalesManagementModule {
     }
     
     
-    private void assignTransitDriver() throws EmployeeNotFoundException, TransitRecordNotFoundException
+    private void assignTransitDriver() throws EmployeeNotFoundException, TransitRecordNotFoundException, OutletNotFoundException, CarNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
 
         String employeeUsername = "";
         Long response;
-        
+        TransitDriverDispatchRecord record = new TransitDriverDispatchRecord();
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Assign Transit Driver ***\n");
         System.out.print("Enter Employee Username> ");
         employeeUsername = scanner.nextLine().trim();
         EmployeeEntity employee = employeeEntitySessionBeanRemote.retrieveEmployeeByUsername(employeeUsername);
         
-        List<TransitDriverDispatchRecord> allTransitDriverRecords = transitDriverDispatchRecordSessionBeanRemote.retrieveAllTransitDriverRecord();
+       // List<TransitDriverDispatchRecord> allTransitDriverRecords = transitDriverDispatchRecordSessionBeanRemote.retrieveAllTransitDriverRecord();
         
         System.out.print("Select Car To Assign Transit Driver To> ");
-        for (TransitDriverDispatchRecord transitDriverRecord : allTransitDriverRecords)
-        {
-            System.out.println(transitDriverRecord.getTransitDriverDispatchId() + ": " + transitDriverRecord.getCar().getCarPlateNumber());
-        }
+        viewAllCars();
+        Long carChosenId = scanner.nextLong();
+        System.out.print("Select PickUp Outlet To Assign Transit Driver To> ");
+        Long pickUpId = scanner.nextLong();
+        System.out.print("Select Return Outlet To Assign Transit Driver To> ");
+        Long returnId = scanner.nextLong();
         
-        response = scanner.nextLong();
+        transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, employee.getId(), pickUpId, returnId, carChosenId);
         
-        TransitDriverDispatchRecord transitRecordToAssign = transitDriverDispatchRecordSessionBeanRemote.retrieveTransitRecordById(response);
-        
-        transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(transitRecordToAssign, employee.getId());
+        //transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(record, employee.getId());
         
     }
     

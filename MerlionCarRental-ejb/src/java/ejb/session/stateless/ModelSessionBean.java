@@ -116,6 +116,7 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
                 }
             else if (modelToDelete.getInUse() == false) 
                 {
+                    
                     em.remove(modelToDelete);
                 }
         } else {

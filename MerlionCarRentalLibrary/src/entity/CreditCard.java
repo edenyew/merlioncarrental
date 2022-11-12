@@ -53,7 +53,7 @@ public class CreditCard implements Serializable {
     @JoinColumn(nullable = true, name ="CustomerId")
     private Customer customer;
     
-    @OneToOne (cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name ="ReservationId")
     private Reservation reservation;
    

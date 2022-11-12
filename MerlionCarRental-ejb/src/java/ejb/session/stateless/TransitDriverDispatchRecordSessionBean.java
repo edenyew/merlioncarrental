@@ -90,14 +90,14 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     }
     
     @Override
-    public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord()
+    public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord() 
     {
         Query query = em.createQuery("Select tdr From TransitDriverDispatchRecord tdr");
         return query.getResultList();
     }
     
     @Override
-    public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException{
+    public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException, TransitRecordNotFoundException{
         
          OutletEntity currentOutlet = outletSessionBeanLocal.retrieveOutletById(currentOutletId);
          if (currentOutlet == null){
@@ -106,7 +106,12 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
          
         Query query = em.createQuery("SELECT t FROM TransitDriverDispatchRecord t WHERE t.dateOfTransit = :currentDate AND t.returnOutlet = :outlet");
         query.setParameter("currentDate", currentDate).setParameter("outlet", currentOutlet);
-        return query.getResultList();
+        if (!query.getResultList().isEmpty()){
+               return query.getResultList();
+        } else {
+            throw new TransitRecordNotFoundException();
+        }
+     
     }
     
     @Override

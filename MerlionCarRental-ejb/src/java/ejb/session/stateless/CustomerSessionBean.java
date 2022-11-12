@@ -61,6 +61,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     @Override
     public Customer retrieveCustomerWithPassportNumber(String passportNum) throws CustomerNotFoundException
     {
+        try {
         Query query = em.createQuery("Select c From Customer c Where c.passportNumber = :passportNumber");
         query.setParameter("passportNumber", passportNum);
         Customer customer = (Customer) query.getSingleResult();
@@ -68,6 +69,9 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         if (customer != null){
             return customer;
         } else {
+            throw new CustomerNotFoundException("Customer Not Found!");
+        }
+        } catch (NoResultException ex) {
             throw new CustomerNotFoundException("Customer Not Found!");
         }
         

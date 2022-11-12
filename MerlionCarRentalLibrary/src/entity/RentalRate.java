@@ -20,6 +20,8 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import util.enumeration.RentalRateTypeEnum;
 
 /**
@@ -28,6 +30,7 @@ import util.enumeration.RentalRateTypeEnum;
  */
 @Entity
 public class RentalRate implements Serializable {
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,10 +49,18 @@ public class RentalRate implements Serializable {
     private Long ratePerDay;
     
     @Column(nullable = true)
+    @Temporal(TemporalType.DATE)
     private Date startDate;
+   
+    @Temporal(TemporalType.TIME)
+    private Date startTime;
     
     @Column(nullable = true)
+    @Temporal(TemporalType.DATE)
     private Date endDate;
+    
+     @Temporal(TemporalType.TIME)
+    private Date endTime;
     
     @Column(nullable = false)
     private Boolean inUse;
@@ -58,7 +69,7 @@ public class RentalRate implements Serializable {
     private Boolean disabled;
     
     @OneToOne (optional = false)
-    @JoinColumn(nullable = false, name = "CategoryId")
+    //@JoinColumn(nullable = false, name = "CategoryId")
     private Category category;
     
     @Column(nullable=false)
@@ -67,16 +78,18 @@ public class RentalRate implements Serializable {
     public RentalRate() {
     }
 
-    public RentalRate(String name, Long ratePerDay, Date startDate, Date endDate, Boolean inUse, Boolean disabled, RentalRateTypeEnum rentalRateType) {
+    public RentalRate(String name, Long ratePerDay, Date startDate, Date startTime, Date endDate, Date endTime, Boolean inUse, Boolean disabled, RentalRateTypeEnum rentalRateType) {
         this.name = name;
         this.ratePerDay = ratePerDay;
         this.startDate = startDate;
+        this.startTime = startTime;
         this.endDate = endDate;
+        this.endTime = endTime;
         this.inUse = inUse;
         this.disabled = disabled;
         this.rentalRateType = rentalRateType;
     }
-    
+
 
     public Long getId() {
         return id;
@@ -111,6 +124,21 @@ public class RentalRate implements Serializable {
         return "entity.RentalRate[ id=" + id + " ]";
     }
 
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
     /**
      * @return the name
      */

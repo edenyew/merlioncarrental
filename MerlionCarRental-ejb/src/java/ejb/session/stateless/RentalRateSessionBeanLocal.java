@@ -9,6 +9,7 @@ import entity.RentalRate;
 import exception.DeleteRentalRateException;
 import exception.InputDataValidationException;
 import exception.RentalRateNotFoundException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -31,4 +32,7 @@ public interface RentalRateSessionBeanLocal {
 
     public Long createRentalRate(RentalRate rentalRate, Long categoryId);
     
+    public Long calculateTotalCost(List<RentalRate> listOfFinalRatesEachDay);
+
+    public List<RentalRate> getEligibleRentalRatesForReservation(Date pickUpDate, Date pickUpTime, Date returnDate, Date returnTime, Long categoryId);    
 }

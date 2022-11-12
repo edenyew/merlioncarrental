@@ -113,15 +113,15 @@ public class DataInitSessionBean {
                 Long carElevenId = carEntitySessionBeanLocal.createNewCar(new CarEntity("LS00B4B5", "Red", false, CarStatusEnum.NOT_IN_USE), fiveSeriesId, outletBId);
                 Long carTwelveId = carEntitySessionBeanLocal.createNewCar(new CarEntity("LS00C4A6", "Red", false, CarStatusEnum.NOT_IN_USE), aSixId, outletCId);
                 
-                Long ssDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Standard Sedan - Default", new Long(100), null, null, false, false, RentalRateTypeEnum.DEFAULT), categorySSid);
-                Long ssPromoId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Standard Sedan - Weekend Promo", new Long(80), new SimpleDateFormat("dd/MM/yyyy").parse("09/12/2022"), new SimpleDateFormat("dd/MM/yyyy").parse("11/12/2022"), false, false, RentalRateTypeEnum.PROMOTION), categorySSid);
-                Long fsDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Family Sedan - Default", new Long(200), null, null, false, false, RentalRateTypeEnum.DEFAULT), categoryFSid);
-                Long lsDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Default", new Long(300), null, null, false, false, RentalRateTypeEnum.DEFAULT), categoryLSid);
-                Long lsMonPeakId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Monday", new Long(310), new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2022"), new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2022"), false, false, RentalRateTypeEnum.PEAK), categoryLSid);
-                Long lsTuesPeakId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Tuesday", new Long(320), new SimpleDateFormat("dd/MM/yyyy").parse("06/12/2022"), new SimpleDateFormat("dd/MM/yyyy").parse("06/12/2022"), false, false, RentalRateTypeEnum.PEAK), categoryLSid);
-                Long lsWedPeakId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Wednesday", new Long(330), new SimpleDateFormat("dd/MM/yyyy").parse("07/12/2022"), new SimpleDateFormat("dd/MM/yyyy").parse("07/12/2022"), false, false, RentalRateTypeEnum.PEAK), categoryLSid);
-                Long lsPromoId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Weekday Promo", new Long(250), new SimpleDateFormat("dd/MM/yyyy").parse("07/12/2022"), new SimpleDateFormat("dd/MM/yyyy").parse("08/12/2022"), false, false, RentalRateTypeEnum.PROMOTION), categoryLSid);
-                Long suvDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("SUV and Minivan - Default", new Long(400), null, null, false, false, RentalRateTypeEnum.PEAK), categoryLSid);
+                Long ssDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Standard Sedan - Default", new Long(100), null, null, null ,null, false, false, RentalRateTypeEnum.DEFAULT), categorySSid);
+                Long ssPromoId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Standard Sedan - Weekend Promo", new Long(80), new SimpleDateFormat("dd/MM/yyyy").parse("09/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("09/12/2022 12:00"), new SimpleDateFormat("dd/MM/yyyy").parse("11/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("09/12/2022 00:00"), false, false, RentalRateTypeEnum.PROMOTION), categorySSid);
+                Long fsDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Family Sedan - Default", new Long(200), null, null,  null ,null, false, false, RentalRateTypeEnum.DEFAULT), categoryFSid);
+                Long lsDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Default", new Long(300), null, null, null ,null, false, false, RentalRateTypeEnum.DEFAULT), categoryLSid);
+                Long lsMonPeakId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Monday", new Long(310), new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("05/12/2022 00:00"), new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("05/12/2022 23:59"), false, false, RentalRateTypeEnum.PEAK), categoryLSid);
+                Long lsTuesPeakId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Tuesday", new Long(320), new SimpleDateFormat("dd/MM/yyyy").parse("06/12/2022"),new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("06/12/2022 00:00"),  new SimpleDateFormat("dd/MM/yyyy").parse("06/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("06/12/2022 23:59"), false, false, RentalRateTypeEnum.PEAK), categoryLSid);
+                Long lsWedPeakId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Wednesday", new Long(330), new SimpleDateFormat("dd/MM/yyyy").parse("07/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("07/12/2022 00:00"), new SimpleDateFormat("dd/MM/yyyy").parse("07/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("07/12/2022 23:59"), false, false, RentalRateTypeEnum.PEAK), categoryLSid);
+                Long lsPromoId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("Luxury Sedan - Weekday Promo", new Long(250), new SimpleDateFormat("dd/MM/yyyy").parse("07/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("07/12/2022 12:00"), new SimpleDateFormat("dd/MM/yyyy").parse("08/12/2022"), new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("08/12/2022 12:00"), false, false, RentalRateTypeEnum.PROMOTION), categoryLSid);
+                Long suvDefaultId = rentalRateSessionBeanLocal.createRentalRate(new RentalRate("SUV and Minivan - Default", new Long(400), null, null, null ,null, false, false, RentalRateTypeEnum.DEFAULT),categorySUVid );
                 
                 Long EmployeeA1Id = employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("Employee A1", "91234567", AccessRightEnum.SALES_MANAGER, "EmployeeA1", "password", false), outletAId);
                 Long EmployeeA2Id = employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("Employee A2", "91234567", AccessRightEnum.OPERATIONS_MANAGER, "EmployeeA2", "password", false), outletAId);
@@ -135,12 +135,12 @@ public class DataInitSessionBean {
                 Long EmployeeC2Id = employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("Employee C2", "91234567", AccessRightEnum.OPERATIONS_MANAGER, "EmployeeC2", "password", false), outletCId);
                 Long EmployeeC3Id = employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("Employee C3", "91234567", AccessRightEnum.CUSTOMER_SERVICE_EXECUTIVE, "EmployeeC3", "password", false), outletCId);
                 
-            } catch (ModelNotFoundException | OutletNotFoundException | RentalRateNotFoundException | ParseException ex) {
+            } catch (ModelNotFoundException | OutletNotFoundException  | RentalRateNotFoundException | ParseException ex) {
                 Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
         
     }
-    
+    //| RentalRateNotFoundException | ParseException
 }
