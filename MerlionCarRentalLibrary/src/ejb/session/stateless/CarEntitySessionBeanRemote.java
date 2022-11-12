@@ -32,7 +32,7 @@ public interface CarEntitySessionBeanRemote {
     
     public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException, InputDataValidationException;
      
-    public void deleteCarEntity(CarEntity car) throws CarNotFoundException, ModelNotFoundException;
+    public void deleteCarEntity(CarEntity car) throws CarNotFoundException, ModelNotFoundException, InputDataValidationException;
 
     public CarEntity retrieveCarById(Long carId)throws CarNotFoundException;
     

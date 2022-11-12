@@ -116,27 +116,35 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     @Override
     public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException, InputDataValidationException
     {
-            CarEntity carToUpdate = retrieveCarById(carEntity.getCarId());
-            
-            if (carToUpdate != null) {
-                Set<ConstraintViolation<CarEntity>>constraintViolations = validator.validate(carToUpdate);
-                if (constraintViolations.isEmpty())
-            carToUpdate.setCategory(carEntity.getCategory());
-                carToUpdate.setDisabled(carEntity.getDisabled());
-                carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
-                carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber()); 
-                carToUpdate.setColour(carEntity.getColour());
-                carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-                
-                carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
-                em.merge(carToUpdate);
+        CarEntity carToUpdate = retrieveCarById(carEntity.getCarId());
+
+        if (carToUpdate != null) {
+            Set<ConstraintViolation<CarEntity>> constraintViolations = validator.validate(carToUpdate);
+
+            if (constraintViolations.isEmpty()) {
+                if (constraintViolations.isEmpty()) {
+                    carToUpdate.setCategory(carEntity.getCategory());
+                    carToUpdate.setDisabled(carEntity.getDisabled());
+                    carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
+                    carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber());
+                    carToUpdate.setColour(carEntity.getColour());
+                    carToUpdate.setOutletEntity(carEntity.getOutletEntity());
+
+                    carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
+                    em.merge(carToUpdate);
+                } else {
+                    throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
             } else {
                 throw new CarNotFoundException();
             }
+        }
+     
     }
     
     @Override
-    public void deleteCarEntity(CarEntity car)throws CarNotFoundException, ModelNotFoundException{
+    public void deleteCarEntity(CarEntity car)throws CarNotFoundException, ModelNotFoundException, InputDataValidationException
+    {
         
         CarEntity carToDelete = retrieveCarById(car.getCarId());
         if (carToDelete.getCurrentStatus().equals(CarStatusEnum.IN_USE))
