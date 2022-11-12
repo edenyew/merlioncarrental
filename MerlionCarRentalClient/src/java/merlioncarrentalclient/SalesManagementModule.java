@@ -33,11 +33,13 @@ import exception.UnknownPersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.enumeration.CarStatusEnum;
+import util.enumeration.RentalRateTypeEnum;
 
 /**
  *
@@ -199,25 +201,13 @@ public class SalesManagementModule {
         System.out.print("Enter Rate Per Day> ");
         newRentalRate.setRatePerDay(scanner.nextLong());
         
-        System.out.print("Enter In Use? Y/N> ");
-        if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
-        {
-            newRentalRate.setInUse(Boolean.TRUE);
-        }
-        else
-        {
-            newRentalRate.setInUse(Boolean.FALSE);
-        }
         
-        System.out.print("Enter Disable? Y/N> ");
-        if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
-        {
-            newRentalRate.setDisabled(Boolean.TRUE);
+        List<RentalRateTypeEnum> listOfRentalRateTypes = Arrays.asList(RentalRateTypeEnum.class.getEnumConstants());
+        for (int i=0; i <listOfRentalRateTypes.size();i++){
+            System.out.println(i + ": " +listOfRentalRateTypes.get(i));
         }
-        else
-        {
-            newRentalRate.setDisabled(Boolean.FALSE);
-        }
+        System.out.print("Enter a RentalRate Type> ");
+        newRentalRate.setRentalRateType(listOfRentalRateTypes.get(scanner.nextInt()));
         
         System.out.print("Enter Category> \n");
         List<Category> category = categorySessionBeanRemote.retrieveAllCategory();
@@ -229,11 +219,12 @@ public class SalesManagementModule {
         }
         categoryResponse = scanner.nextInt();
         newRentalRate.setCategory(category.get(categoryResponse - 1));
-        
-        System.out.print("Enter Car Plate Number To Add Car> ");
+        newRentalRate.setDisabled(false);
+        newRentalRate.setInUse(false);
+        //System.out.print("Enter Car Plate Number To Add Car> ");
      
-        
         rentalRateSessionBeanRemote.createRentalRate(newRentalRate, new Long(categoryResponse)); 
+        System.out.print("RentalRate succesfully created!");
     }
     
     private void viewAllRentalRates() throws RentalRateNotFoundException
@@ -243,7 +234,7 @@ public class SalesManagementModule {
         for (RentalRate currentRates : rentalRateSessionBeanRemote.retrieveAllRentalRate()) {
             System.out.println("Rental Rate ID:> " + currentRates.getId());
             System.out.println("Rental Rate Name:> " + currentRates.getName());
-            System.out.println("Rental Rate Rate per day:> " + currentRates.getRatePerDay());
+            //System.out.println("Rental Rate Rate per day:> " + currentRates.getRatePerDay());
         }
 
     }
@@ -254,16 +245,21 @@ public class SalesManagementModule {
         Scanner scanner = new Scanner(System.in);
         RentalRate rentalRate = new RentalRate();
         
-
+        
         System.out.print("Enter Rental Rate ID:> ");
         long res = scanner.nextLong();
         rentalRate = rentalRateSessionBeanRemote.retrieveRentalRateByRentalRateId(res); 
         System.out.println("Name :" + rentalRate.getName());
         System.out.println("CarCategory :" + rentalRate.getCategory().getName());
         System.out.println("RatePerDay :" + rentalRate.getRatePerDay());
-        System.out.println("StartDateTime :" + rentalRate.getStartDate());
-        System.out.println("EndDateTime :" + rentalRate.getEndDate());
-
+        System.out.println("Rental Rate Type :" + rentalRate.getRentalRateType());
+        if (rentalRate.getStartDate() == null || rentalRate.getEndDate() == null ){
+            System.out.println("StartDateTime :" + rentalRate.getStartDate());
+            System.out.println("EndDateTime :" + rentalRate.getEndDate());
+        } else {
+            System.out.println("No Start or End Time, Available all the time!");
+            
+        }
         
         return rentalRate.getId();
     }
@@ -284,28 +280,34 @@ public class SalesManagementModule {
         System.out.print("Enter Name To Update> ");
         
         rentalRateToUpdate.setName(scanner.nextLine().trim());
+       
+        System.out.print("Enter Rate Per Day To Update> ");
+        rentalRateToUpdate.setRatePerDay(scanner.nextLong());
         
-        System.out.print("Enter Car Category To Update> \n");
-        List<Category> allCategories = categorySessionBeanRemote.retrieveAllCategory();
-        for (Category category : allCategories)
-        {
-            System.out.println(category.getCategoryId() + ": " + category.getName());
+        
+//        System.out.print("Enter Car Category To Update> \n");
+//        List<Category> allCategories = categorySessionBeanRemote.retrieveAllCategory();
+//        for (Category category : allCategories)
+//        {
+//            System.out.println(category.getCategoryId() + ": " + category.getName());
+//        }
+//        response = new Long(scanner.nextLine());
+//        rentalRateToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
+        
+        if (rentalRateToUpdate.getStartDate() != null || rentalRateToUpdate.getStartDate() != null){
+            System.out.print("Enter StartDate (DD/MM/YYYY) To Update> ");
+            startDate = scanner.nextLine().trim();
+            Date startingDate = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
+
+            rentalRateToUpdate.setStartDate(startingDate);
+
+            System.out.print("Enter EndDate (DD/MM/YYYY) To Update> ");
+            endDate = scanner.nextLine().trim();
+            Date endingDate = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
+
+
+            rentalRateToUpdate.setEndDate(endingDate);
         }
-        response = new Long(scanner.nextLine());
-        rentalRateToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
-        
-        System.out.print("Enter StartDate (DD/MM/YYYY) To Update> ");
-        startDate = scanner.nextLine().trim();
-        Date startingDate = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
-        
-//        rentalRateToUpdate.setStartDate(startingDate);
-        
-        System.out.print("Enter EndDate (DD/MM/YYYY) To Update> ");
-        endDate = scanner.nextLine().trim();
-        Date endingDate = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
-        
-        
-//        rentalRateToUpdate.setEndDate(endingDate);
 
         rentalRateSessionBeanRemote.updateRentalRate(rentalRateToUpdate);
         
@@ -454,7 +456,7 @@ public class SalesManagementModule {
                     {
                         deleteCar();
                     }
-                    catch(CarNotFoundException ex)
+                    catch(CarNotFoundException | ModelNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -518,26 +520,8 @@ public class SalesManagementModule {
         System.out.print("Enter Model Name> ");
         newModel.setModelName(scanner.nextLine().trim());
         System.out.print("Enter Make Name> ");
-        newModel.setMakeName(scanner.nextLine().trim());
-        System.out.print("Enter In Use? Y/N> ");
-        if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
-        {
-            newModel.setInUse(Boolean.TRUE);
-        }
-        else
-        {
-            newModel.setInUse(Boolean.FALSE);
-        }
+        newModel.setMakeName(scanner.nextLine().trim());        
         
-        System.out.print("Enter Disable? Y/N> ");
-        if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
-        {
-            newModel.setDisabled(Boolean.TRUE);
-        }
-        else
-        {
-            newModel.setDisabled(Boolean.FALSE);
-        }
         List<Category> allCategory = categorySessionBeanRemote.retrieveAllCategory();
         Integer categoryChoice = 1;
         for (Category category : allCategory)
@@ -547,6 +531,8 @@ public class SalesManagementModule {
         }
         categoryChoice = scanner.nextInt();
         newModel.setCars(new ArrayList<>());
+        newModel.setInUse(false);
+        newModel.setDisabled(false);
         
         modelSessionBeanRemote.createNewModel(newModel, new Long(categoryChoice));
     }
@@ -555,9 +541,11 @@ public class SalesManagementModule {
     {
         System.out.println("*** Merlion Car Rental System :: Operations Management :: View All Model ***\n");
         List<Model> allModels = modelSessionBeanRemote.retrieveAllModels();
+        int i=1;
         for (Model model : allModels)
         {
-            System.out.println("Model " + model.getModelId() + ": " + model.getMakeName()+ ", " + model.getModelName()+ ", " + model.getCategory().getName());
+            System.out.println( i + ": " + model.getCategory().getName()+ ", " + model.getMakeName()+ ", " + model.getModelName() + "-- Model ID of this car is " + model.getModelId() + "LIST: " + model.getCars());
+            i++;
         }
     }
     
@@ -626,18 +614,18 @@ public class SalesManagementModule {
 //        System.out.print("Enter Location> ");
 //        newCar.setLocation(scanner.nextLine().trim());
         
-        System.out.print("Enter Disable? Y/N> ");
-        if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
-        {
-            newCar.setDisabled(Boolean.TRUE);
-        }
-        else
-        {
-            newCar.setDisabled(Boolean.FALSE);
-        }
+//        System.out.print("Enter Disable? Y/N> ");
+//        if (scanner.nextLine().trim().compareToIgnoreCase("Y") == 0)
+//        {
+//            newCar.setDisabled(Boolean.TRUE);
+//        }
+//        else
+//        {
+//            newCar.setDisabled(Boolean.FALSE);
+//        }
         
         newCar.setCurrentStatus(CarStatusEnum.NOT_IN_USE);
-        
+        newCar.setDisabled(false);
         List<Model> allModels = modelSessionBeanRemote.retrieveAllModels();
         
         for (Model model : allModels) 
@@ -672,7 +660,7 @@ public class SalesManagementModule {
         }
     }
     
-    private void viewCarDetails() throws CarNotFoundException
+    private long viewCarDetails() throws CarNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         CarEntity car = new CarEntity();
@@ -686,11 +674,11 @@ public class SalesManagementModule {
         System.out.println("CarId: " + car.getCarId()); 
         System.out.println("LicensePlateNumber: " + car.getCarPlateNumber()); 
         System.out.println("Make: " + car.getModel().getMakeName()); 
-        System.out.println("Model: " + car.getModel()); 
+        System.out.println("Model: " + car.getModel().getModelName()); 
         System.out.println("Status: " + car.getCurrentStatus()); 
         System.out.println("Outlet: " + car.getOutletEntity().getAddress());
 
-        
+        return car.getCarId();
     }
     
     private void updateCar() throws ModelNotFoundException, CarNotFoundException, InputDataValidationException
@@ -699,36 +687,33 @@ public class SalesManagementModule {
         Long response;      
 
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Update Car ***\n");
-        System.out.print("Enter CarId Id > ");
-        CarEntity carToUpdate = carEntitySessionBeanRemote.retrieveCarById(Long.parseLong(scanner.nextLine().trim()));
-        
-        viewCarDetails();
+//        System.out.print("Enter CarId Id > ");        
+        long carId = viewCarDetails();
+        CarEntity carToUpdate = carEntitySessionBeanRemote.retrieveCarById(carId);
         
         System.out.print("Enter Plate Number To Update> ");
         carToUpdate.setCarPlateNumber(scanner.nextLine().trim());
         
-        System.out.print("Select Make and Model To Update> ");
-        List<Model> allModels = modelSessionBeanRemote.retrieveAllModels();
-        for (Model model : allModels)
-        {
-            System.out.println(model.getModelId()+ ": " + model.getMakeName() + ", " + model.getModelName());
-        }
-        response = scanner.nextLong();
-        Model chosenModel = modelSessionBeanRemote.retrieveModelById(response);
-        carToUpdate.setModel(chosenModel);
+//        System.out.print("Select Make and Model To Update> ");
+//        List<Model> allModels = modelSessionBeanRemote.retrieveAllModels();
+//        for (Model model : allModels)
+//        {
+//            System.out.println(model.getModelId()+ ": " + model.getMakeName() + ", " + model.getModelName());
+//        }
+//        response = scanner.nextLong();
+//        Model chosenModel = modelSessionBeanRemote.retrieveModelById(response);
+//        carToUpdate.setModel(chosenModel);
         carEntitySessionBeanRemote.updateCarEntity(carToUpdate);
         
         System.out.println("Car successfully updated!");
     }
     
     
-    private void deleteCar() throws CarNotFoundException
+    private void deleteCar() throws CarNotFoundException, ModelNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         CarEntity carToDelete = new CarEntity();
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Delete Car ***\n");
-        
-        viewCarDetails();
         
         System.out.print("Enter Plate Number To Delete> ");
         carToDelete = carEntitySessionBeanRemote.retrieveCarByPlateNumber(scanner.nextLine().trim());
