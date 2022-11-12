@@ -92,7 +92,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         if (car != null ){
             return car;
         } else {
-            throw new CarNotFoundException("Model does not exist!");
+            throw new CarNotFoundException("Car does not exist!");
         }
     }
         
@@ -102,23 +102,21 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             CarEntity carToUpdate = retrieveCarById(carEntity.getCarId());
             
             if (carToUpdate != null) {
-            carToUpdate.setCategory(carEntity.getCategory());
-                carToUpdate.setDisabled(carEntity.getDisabled());
-                carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
+//             carToUpdate.setCategory(carEntity.getCategory());
                 carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber()); 
-                carToUpdate.setColour(carEntity.getColour());
-                carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-                
-                carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
+//                carToUpdate.setColour(carEntity.getColour());
+//                carToUpdate.setOutletEntity(carEntity.getOutletEntity());
+//                carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
+                em.merge(carToUpdate);
             } else {
-                throw new CarNotFoundException();
+                throw new CarNotFoundException("Car Does not Exist");
             }
         
     
     }
     
     @Override
-    public void deleteCarEntity(CarEntity car)throws CarNotFoundException{
+    public void deleteCarEntity(CarEntity car)throws CarNotFoundException, ModelNotFoundException{
         
         CarEntity carToDelete = retrieveCarById(car.getCarId());
         if (carToDelete.getCurrentStatus().equals(CarStatusEnum.IN_USE))
@@ -128,8 +126,11 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             else 
             {
                 carToDelete.getOutletEntity().getCars().remove(carToDelete);
-                if(carToDelete.getModel().getCars().isEmpty()){
-                    carToDelete.getModel().setInUse(false);
+                long modelId = carToDelete.getModel().getModelId();
+                Model modelToUpdate = modelSessionBeanLocal.retrieveModelById(modelId);
+                if(modelToUpdate.getCars().isEmpty()){
+                    modelToUpdate.setInUse(false);
+                    modelSessionBeanLocal.updateModel(modelToUpdate);
                 }
                 em.remove(carToDelete);
             }

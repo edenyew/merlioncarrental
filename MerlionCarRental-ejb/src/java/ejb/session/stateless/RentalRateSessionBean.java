@@ -189,25 +189,25 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
 //       long startTimeToCurrentTime = Math.abs(currentDate.getTime()- startDateInMs);
 //       long endTimeToCurrentTIme = Math.abs(currentDate.getTime()- endDateInMs);
                 //Date timeDiff = new Date(timeDiff);
-//                if (currentDate.before(rentalRate.getEndDate()) && currentDate.after(rentalRate.getStartDate())) {// && currentDate.before(rentalRate.getEndDate())){// && pickUpTime.compareTo(rentalRate.getStartTime())<0 && returnTime.compareTo(rentalRate.getEndTime())>0){
-//                  
-//                    if(mapOfEligibleRates.containsKey(rentalRate.getRentalRateType()) && mapOfEligibleRates.get(rentalRate.getRentalRateType()).getRatePerDay() - (rentalRate.getRatePerDay()) >0)
-//                   mapOfEligibleRates.replace(rentalRate.getRentalRateType(), rentalRate);
-//                
-//                    else {
-//                    mapOfEligibleRates.put(rentalRate.getRentalRateType(), rentalRate);
-//                    }
-//                    continue;
-//                }
-               Calendar calendar = Calendar.getInstance();
-                calendar.setTime(rentalRate.getEndDate());
-                calendar.add(Calendar.MILLISECOND, (int)rentalRate.getEndTime().getTime());
-                Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTime(rentalRate.getStartDate());
-                calendar2.add(Calendar.MILLISECOND, (int)rentalRate.getStartTime().getTime());
-                Date endDateAndTime = calendar.getTime();
-                Date startDateAndTime = calendar2.getTime();                
-                if (currentDate.before(endDateAndTime) && currentDate.after(startDateAndTime)) {
+                if (currentDate.before(rentalRate.getEndDate()) && currentDate.after(rentalRate.getStartDate())) {// && currentDate.before(rentalRate.getEndDate())){// && pickUpTime.compareTo(rentalRate.getStartTime())<0 && returnTime.compareTo(rentalRate.getEndTime())>0){
+                  
+                    if(mapOfEligibleRates.containsKey(rentalRate.getRentalRateType()) && mapOfEligibleRates.get(rentalRate.getRentalRateType()).getRatePerDay() - (rentalRate.getRatePerDay()) >0)
+                   mapOfEligibleRates.replace(rentalRate.getRentalRateType(), rentalRate);
+                
+                    else {
+                    mapOfEligibleRates.put(rentalRate.getRentalRateType(), rentalRate);
+                    }
+                    continue;
+                }
+//               Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(rentalRate.getEndDate());
+//                calendar.add(Calendar.MILLISECOND, (int)rentalRate.getEndTime().getTime());
+//                Calendar calendar2 = Calendar.getInstance();
+//                calendar2.setTime(rentalRate.getStartDate());
+//                calendar2.add(Calendar.MILLISECOND, (int)rentalRate.getStartTime().getTime());
+//                Date endDateAndTime = calendar.getTime();
+//                Date startDateAndTime = calendar2.getTime();                
+                if ((currentDate.equals(rentalRate.getEndDate()) && rentalRate.getEndDate().getTime() - currentDate.getTime()>0 )||(currentDate.equals(rentalRate.getStartDate()) && rentalRate.getStartDate().getTime() - currentDate.getTime()<0) ) {
                     
                     if(mapOfEligibleRates.containsKey(rentalRate.getRentalRateType()) && mapOfEligibleRates.get(rentalRate.getRentalRateType()).getRatePerDay() - (rentalRate.getRatePerDay()) >0)
                    mapOfEligibleRates.replace(rentalRate.getRentalRateType(), rentalRate);

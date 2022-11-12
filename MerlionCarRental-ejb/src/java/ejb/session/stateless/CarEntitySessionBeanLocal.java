@@ -31,7 +31,7 @@ public interface CarEntitySessionBeanLocal {
 
     public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException;
 
-    public void deleteCarEntity(CarEntity car) throws CarNotFoundException;
+    public void deleteCarEntity(CarEntity car) throws CarNotFoundException, ModelNotFoundException;
 
     public CarEntity retrieveCarById(Long carId) throws CarNotFoundException;
 

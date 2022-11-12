@@ -42,7 +42,7 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
     @Override
     public List<Model> retrieveAllModels() {
        
-       Query query = em.createQuery("SELECT m FROM Model m");
+       Query query = em.createQuery("SELECT m FROM Model m ORDER BY m.category ASC, m.makeName ASC, m.modelName ASC");
        
        return query.getResultList();
    }
