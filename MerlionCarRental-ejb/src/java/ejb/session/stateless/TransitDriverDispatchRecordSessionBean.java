@@ -10,15 +10,21 @@ import entity.EmployeeEntity;
 import entity.OutletEntity;
 import entity.TransitDriverDispatchRecord;
 import exception.CarNotFoundException;
+import exception.InputDataValidationException;
 import exception.OutletNotFoundException;
 import exception.TransitRecordNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.TransitStatusEnum;
 
 /**
@@ -36,6 +42,18 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     CarEntitySessionBeanLocal carEntitySessionBeanLocal;
     @EJB
     private EmployeeEntitySessionBeanLocal employeeEntitySessionBean;
+
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
+    
+    public TransitDriverDispatchRecordSessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+    
+    
     
     
     @Override
@@ -92,12 +110,24 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     }
     
     @Override
-    public void updateTransitAsComplete(TransitDriverDispatchRecord transitRecord) throws TransitRecordNotFoundException{
+    public void updateTransitAsComplete(TransitDriverDispatchRecord transitRecord) throws TransitRecordNotFoundException, InputDataValidationException
+    {
         
-        TransitDriverDispatchRecord transitRecordToUpdate = retrieveTransitRecordById(transitRecord.getTransitDriverDispatchId());
-        if (transitRecordToUpdate != null) {
-            transitRecordToUpdate.setTransitStatus(TransitStatusEnum.COMPLETED);
-        } else {
+        if (transitRecord != null) 
+        {
+            Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations = validator.validate(transitRecord);
+            if (constraintViolations.isEmpty())
+            {
+                TransitDriverDispatchRecord transitRecordToUpdate = retrieveTransitRecordById(transitRecord.getTransitDriverDispatchId());
+                transitRecordToUpdate.setTransitStatus(TransitStatusEnum.COMPLETED);
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }  
+        } 
+        else 
+        {
             throw new TransitRecordNotFoundException();
         }
         
@@ -152,4 +182,17 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     {
         em.merge(transitRecord);
     }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+    
 }

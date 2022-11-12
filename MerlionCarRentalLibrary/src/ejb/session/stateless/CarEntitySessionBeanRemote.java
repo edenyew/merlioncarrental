@@ -9,6 +9,7 @@ import entity.CarEntity;
 import exception.CarAlreadyInOutletException;
 import exception.CarNotFoundException;
 import exception.CarNotInOutletException;
+import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
@@ -29,7 +30,7 @@ public interface CarEntitySessionBeanRemote {
     
     public CarEntity retrieveCarByPlateNumber(String carPlateNumber) throws CarNotFoundException;
     
-    public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException;
+    public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException, InputDataValidationException;
      
     public void deleteCarEntity(CarEntity car) throws CarNotFoundException;
 

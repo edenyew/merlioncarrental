@@ -7,10 +7,15 @@ package ejb.session.stateless;
 
 import entity.Category;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -22,13 +27,22 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    
+
+    public CategorySessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     @Override
     public Long createNewCategory(Category category)
-    {
+    {        
         em.persist(category);
         em.flush();
         

@@ -18,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -33,12 +35,15 @@ public class Reservation implements Serializable {
     
     
     @Column(nullable = false)
+    @NotNull
     private Date pickUpDate;
     
     @Column(nullable = false)
+    @NotNull
     private Date returnDate;
     
     @Column(precision = 11, scale = 2)
+    @NotNull
     private double totalCost;
     
     @OneToOne(optional = true)

@@ -14,16 +14,22 @@ import entity.Reservation;
 import exception.CarAlreadyInOutletException;
 import exception.CarNotFoundException;
 import exception.CarNotInOutletException;
+import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.CarStatusEnum;
 
 /**
@@ -42,6 +48,17 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     private OutletEntitySessionBeanLocal outletSessionBeanLocal;
     @EJB 
     private RentalRateSessionBeanLocal rentalRateSessionBeanLocal;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
+    
+    public CarEntitySessionBean()
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+    
     
     public Long createNewCar(CarEntity car, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException
     {
@@ -95,24 +112,33 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     }
         
     @Override
-    public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException
+    public void updateCarEntity(CarEntity carEntity) throws CarNotFoundException, InputDataValidationException
     {
             CarEntity carToUpdate = retrieveCarById(carEntity.getCarId());
             
-            if (carToUpdate != null) {
-            carToUpdate.setCategory(carEntity.getCategory());
-                carToUpdate.setDisabled(carEntity.getDisabled());
-                carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
-                carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber()); 
-                carToUpdate.setColour(carEntity.getColour());
-                carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-                
-                carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
-            } else {
-                throw new CarNotFoundException();
+            if (carToUpdate != null) 
+            {
+                Set<ConstraintViolation<CarEntity>>constraintViolations = validator.validate(carToUpdate);
+                if (constraintViolations.isEmpty())
+                {
+                    carToUpdate.setCategory(carEntity.getCategory());
+                    carToUpdate.setDisabled(carEntity.getDisabled());
+                    carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
+                    carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber()); 
+                    carToUpdate.setColour(carEntity.getColour());
+                    carToUpdate.setOutletEntity(carEntity.getOutletEntity());
+
+                    carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords()); 
+                }
+                else
+                {
+                    throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
             }
-        
-    
+            else
+            {
+                    throw new CarNotFoundException();                
+            }
     }
     
     @Override
@@ -196,5 +222,16 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             throw new CarAlreadyInOutletException("Car Is Already At That Outlet!");
         }
     }
-    
+      
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<CarEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
 }

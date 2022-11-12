@@ -17,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.CarStatusEnum;
 
 /**
@@ -32,10 +34,15 @@ public class CarEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long carId;
     @Column(length = 8, nullable = false, unique = true)
+    @NotNull
+    @Size(min = 4, max = 12)
     private String carPlateNumber;
     @Column(nullable = false)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String colour;
     @Column(nullable = false)
+    @NotNull
     private Boolean disabled;
     private CarStatusEnum currentStatus;
     

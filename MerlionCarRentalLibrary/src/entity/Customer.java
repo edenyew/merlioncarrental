@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -28,22 +30,36 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
     
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String firstName;
     
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String lastName;
     
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String email;
     
     @Column(nullable = false, length = 12, unique = true)
+    @NotNull
+    @Size(min = 8, max = 12)
     private String passportNumber;
     
     @Column(nullable = false, length = 8)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String contactNumber;
     
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String password;
+    
     
     private boolean loggedIn;
     

@@ -23,6 +23,7 @@ import exception.CarNotFoundException;
 import exception.DeleteModelException;
 import exception.DeleteRentalRateException;
 import exception.EmployeeNotFoundException;
+import exception.InputDataValidationException;
 import exception.InvalidAccessRightException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
@@ -152,7 +153,7 @@ public class SalesManagementModule {
                     {
                         updateRentalRate();
                     }
-                    catch(ParseException | CarNotFoundException | RentalRateNotFoundException ex)
+                    catch(ParseException | CarNotFoundException | RentalRateNotFoundException | InputDataValidationException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -259,7 +260,7 @@ public class SalesManagementModule {
         rentalRateSessionBeanRemote.viewRentalRateDetails(rentalRate);
     }
     
-    public void updateRentalRate() throws ParseException, CarNotFoundException, RentalRateNotFoundException
+    public void updateRentalRate() throws ParseException, CarNotFoundException, RentalRateNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         
@@ -370,7 +371,7 @@ public class SalesManagementModule {
                     {
                         updateModel();
                     }
-                    catch (ModelNotFoundException ex)
+                    catch (ModelNotFoundException | InputDataValidationException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -426,7 +427,7 @@ public class SalesManagementModule {
                     {
                         updateCar();
                     }
-                    catch(ModelNotFoundException | CarNotFoundException ex)
+                    catch(ModelNotFoundException | CarNotFoundException | InputDataValidationException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n"); 
                     }
@@ -472,7 +473,7 @@ public class SalesManagementModule {
                     {
                         updateTransitAsCompleted();
                     }
-                    catch(CarNotFoundException | EmployeeNotFoundException | TransitRecordNotFoundException ex)
+                    catch(CarNotFoundException | EmployeeNotFoundException | TransitRecordNotFoundException | InputDataValidationException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -545,7 +546,7 @@ public class SalesManagementModule {
         }
     }
     
-    private void updateModel() throws ModelNotFoundException
+    private void updateModel() throws ModelNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         Model modelToUpdate = new Model();
@@ -676,7 +677,7 @@ public class SalesManagementModule {
         
     }
     
-    private void updateCar() throws ModelNotFoundException, CarNotFoundException
+    private void updateCar() throws ModelNotFoundException, CarNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         Long response;
@@ -777,7 +778,7 @@ public class SalesManagementModule {
     }
     
     
-    private  void updateTransitAsCompleted() throws CarNotFoundException, EmployeeNotFoundException, TransitRecordNotFoundException
+    private  void updateTransitAsCompleted() throws CarNotFoundException, EmployeeNotFoundException, TransitRecordNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
 

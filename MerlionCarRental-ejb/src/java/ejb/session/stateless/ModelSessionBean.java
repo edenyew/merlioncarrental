@@ -8,12 +8,18 @@ package ejb.session.stateless;
 import entity.Category;
 import entity.Model;
 import exception.DeleteModelException;
+import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -24,6 +30,17 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
 
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
+
+    public ModelSessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
 
     @Override
     public Long createNewModel(Model model, Long categoryId){
@@ -56,20 +73,28 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
     }
    
     @Override
-    public void updateModel(Model model) throws ModelNotFoundException
+    public void updateModel(Model model) throws ModelNotFoundException, InputDataValidationException
     {
-         if (model != null && model.getModelId()!= null)
+        if (model != null && model.getModelId()!= null)
         {
-            Model modelToUpdate = retrieveModelById(model.getModelId());
+            Set<ConstraintViolation<Model>>constraintViolations = validator.validate(model);
             
-            modelToUpdate.setCategory(model.getCategory());
-            modelToUpdate.setDisabled(model.getDisabled());
-            modelToUpdate.setInUse(model.getInUse());
-            modelToUpdate.setMakeName(model.getMakeName());
-            modelToUpdate.setModelName(model.getModelName());
-            
-            em.merge(modelToUpdate);
-
+            if (constraintViolations.isEmpty())
+            {
+                Model modelToUpdate = retrieveModelById(model.getModelId());
+                
+                modelToUpdate.setCategory(model.getCategory());
+                modelToUpdate.setDisabled(model.getDisabled());
+                modelToUpdate.setInUse(model.getInUse());
+                modelToUpdate.setMakeName(model.getMakeName());
+                modelToUpdate.setModelName(model.getModelName());
+                
+                em.merge(modelToUpdate);
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
         else 
         {
@@ -96,6 +121,18 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
         } else {
             throw new ModelNotFoundException("Model does not exist!");
         }
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Model>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
     
 

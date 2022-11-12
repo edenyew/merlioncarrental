@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -28,15 +30,23 @@ public class CreditCard implements Serializable {
     private Long id;
     
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 8, max = 32)
     private String creditCardNum;
     
     @Column(nullable = false, length = 3)
+    @NotNull
+    @Size(min = 3, max = 10)
     private String CVV;
     
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String cardName;
     
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String expiryDate;
 
     @OneToOne (optional = true)

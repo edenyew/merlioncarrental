@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Model;
 import exception.DeleteModelException;
+import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
@@ -22,7 +23,7 @@ public interface ModelSessionBeanLocal {
 
     public List<Model> retrieveAllModels();
 
-    public void updateModel(Model model)throws ModelNotFoundException;
+    public void updateModel(Model model) throws ModelNotFoundException, InputDataValidationException;
 
     public Model retrieveModelById(Long modelId)throws ModelNotFoundException;
 
