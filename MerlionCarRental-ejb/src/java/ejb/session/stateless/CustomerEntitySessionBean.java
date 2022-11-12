@@ -28,7 +28,7 @@ import javax.validation.ValidatorFactory;
  * @author edenyew
  */
 @Stateless
-public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerSessionBeanLocal {
+public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemote, CustomerEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
@@ -41,7 +41,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 
-    public CustomerSessionBean() 
+    public CustomerEntitySessionBean() 
     {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();

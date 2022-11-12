@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.persistence.NoResultException;
-import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import entity.Model;
 import exception.ModelNotFoundException;
@@ -39,6 +38,7 @@ import exception.ReservationNotFoundException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 
 /**
  *
@@ -46,7 +46,7 @@ import java.util.HashSet;
  */
 public class MainApp {
     @EJB
-     private CustomerSessionBeanRemote customerSessionBeanRemote;
+     private CustomerEntitySessionBeanRemote customerSessionBeanRemote;
     @EJB 
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
     @EJB 
@@ -64,7 +64,7 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(CustomerSessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CreditCardSessionBeanRemote creditCardSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote) {
+    public MainApp(CustomerEntitySessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CreditCardSessionBeanRemote creditCardSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote) {
         this();
         this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;

@@ -33,10 +33,6 @@ public class Reservation implements Serializable {
     
     @Column(nullable = false)
     @NotNull
-    private Date pickUpDate;
-    
-    @Column(nullable = false)
-    @NotNull
     @Temporal(TemporalType.DATE)
     private Date pickUpDate;
     

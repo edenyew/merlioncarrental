@@ -51,7 +51,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @EJB
     private CreditCardSessionBeanLocal creditCardSessionBeanLocal;
     @EJB 
-    private CustomerSessionBeanLocal customerSessionBeanLocal;
+    private CustomerEntitySessionBeanLocal customerSessionBeanLocal;
     @EJB
     private PartnerEntitySessionBeanLocal partnerSessionBeanLocal;
     

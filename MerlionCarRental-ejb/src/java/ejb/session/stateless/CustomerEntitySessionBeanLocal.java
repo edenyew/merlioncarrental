@@ -16,7 +16,7 @@ import javax.ejb.Local;
  * @author edenyew
  */
 @Local
-public interface CustomerSessionBeanLocal {
+public interface CustomerEntitySessionBeanLocal {
 
     public void updateCustomer(Customer customer);
 
@@ -29,5 +29,7 @@ public interface CustomerSessionBeanLocal {
     public Customer retrieveCustomerById(Long customerId) throws CustomerNotFoundException;
 
     public Customer customerLogin(String email, String password) throws CustomerNotFoundException, InvalidLoginCredentialException, AlreadyLoggedInException;
+    
+    public void viewAllReservations(Customer customer) throws CustomerNotFoundException;
     
 }

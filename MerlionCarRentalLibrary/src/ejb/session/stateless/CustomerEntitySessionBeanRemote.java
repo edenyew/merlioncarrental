@@ -16,7 +16,7 @@ import javax.ejb.Remote;
  * @author edenyew
  */
 @Remote
-public interface CustomerSessionBeanRemote {
+public interface CustomerEntitySessionBeanRemote {
     
     public void updateCustomer(Customer customer);
 
@@ -31,5 +31,7 @@ public interface CustomerSessionBeanRemote {
     public Customer customerLogout(Customer customer) throws CustomerNotFoundException, InvalidLoginCredentialException;
 
     public Customer retrieveCustomerById(Long customerId) throws CustomerNotFoundException;
+    
+    public void viewAllReservations(Customer customer) throws CustomerNotFoundException;
     
 }
