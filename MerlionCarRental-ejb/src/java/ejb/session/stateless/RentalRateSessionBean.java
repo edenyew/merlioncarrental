@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.Category;
 import entity.RentalRate;
 import exception.DeleteRentalRateException;
+import exception.InputDataValidationException;
 import exception.RentalRateNotFoundException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -19,12 +20,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.RentalRateTypeEnum;
 
 /**
@@ -37,11 +43,21 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     @EJB
     CategorySessionBeanLocal categorySessionBeanLocal;
     
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
+    public RentalRateSessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     
     @Override
     public Long createRentalRate(RentalRate rentalRate, Long categoryId)
@@ -91,22 +107,32 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     }
     
     @Override
-    public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException
+    public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, InputDataValidationException
     {
         if (rentalRate != null)
-        {            
-                        
-            RentalRate rentalRateToUpdate = retrieveRentalRateByRentalRateId(rentalRate.getId());
-            viewRentalRateDetails(rentalRateToUpdate);
+        {
             
-            rentalRateToUpdate.setName(rentalRate.getName());
-            rentalRateToUpdate.setRatePerDay(rentalRate.getRatePerDay());
+            Set<ConstraintViolation<RentalRate>>constraintViolations = validator.validate(rentalRate);
+            
+            if (constraintViolations.isEmpty())
+            {
+            
+                RentalRate rentalRateToUpdate = retrieveRentalRateByRentalRateId(rentalRate.getId());
+                viewRentalRateDetails(rentalRateToUpdate);
 
-            rentalRateToUpdate.setInUse(rentalRate.getInUse());
-            rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
-            rentalRateToUpdate.setCategory(rentalRate.getCategory());
-            
-            em.merge(rentalRate);
+                rentalRateToUpdate.setName(rentalRate.getName());
+                rentalRateToUpdate.setRatePerDay(rentalRate.getRatePerDay());
+
+                rentalRateToUpdate.setInUse(rentalRate.getInUse());
+                rentalRateToUpdate.setDisabled(rentalRate.getDisabled());
+                rentalRateToUpdate.setCategory(rentalRate.getCategory());
+
+                em.merge(rentalRate);
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
         else 
         {
@@ -256,6 +282,19 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         }
         return totalSum;
     }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<RentalRate>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+    
     
 }
 

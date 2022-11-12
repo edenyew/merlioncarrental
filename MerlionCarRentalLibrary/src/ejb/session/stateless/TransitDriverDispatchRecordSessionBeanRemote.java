@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.EmployeeEntity;
 import entity.TransitDriverDispatchRecord;
 import exception.CarNotFoundException;
+import exception.InputDataValidationException;
 import exception.OutletNotFoundException;
 import exception.TransitRecordNotFoundException;
 import java.util.Date;
@@ -27,7 +28,7 @@ public interface TransitDriverDispatchRecordSessionBeanRemote {
 
     public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException, TransitRecordNotFoundException;
 
-    public void updateTransitAsComplete(TransitDriverDispatchRecord transitRecord) throws TransitRecordNotFoundException;
+    public void updateTransitAsComplete(TransitDriverDispatchRecord transitRecord) throws TransitRecordNotFoundException, InputDataValidationException;
 
     public TransitDriverDispatchRecord retrieveTransitRecordByEmployee(EmployeeEntity employee);
 

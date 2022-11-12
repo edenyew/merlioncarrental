@@ -17,7 +17,7 @@ import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import entity.PartnerEntity;
 import java.util.List;
 import javax.ejb.EJB;
-import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 
 /**
  *
@@ -36,7 +36,7 @@ public class Main {
     @EJB
     private static RentalRateSessionBeanRemote rentalRateSessionBean;
     @EJB
-    private static CustomerSessionBeanRemote customerSessionBean;
+    private static CustomerEntitySessionBeanRemote customerSessionBean;
     @EJB
     private static OutletEntitySessionBeanRemote outletEntitySessionBean;
     @EJB

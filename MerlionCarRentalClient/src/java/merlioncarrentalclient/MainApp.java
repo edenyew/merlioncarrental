@@ -18,7 +18,7 @@ import java.util.Scanner;
 import entity.EmployeeEntity;
 import exception.CarNotFoundException;
 import exception.InvalidAccessRightException;
-import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 
 /**
  *
@@ -29,7 +29,7 @@ public class MainApp {
     
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
-    private CustomerSessionBeanRemote customerSessionBeanRemote;
+    private CustomerEntitySessionBeanRemote customerSessionBeanRemote;
     private CategorySessionBeanRemote categorySessionBeanRemote;
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
     private ModelSessionBeanRemote modelSessionBeanRemote;
@@ -46,7 +46,7 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote) {
+    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote) {
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.customerSessionBeanRemote = customerSessionBeanRemote;

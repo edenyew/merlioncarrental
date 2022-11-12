@@ -22,7 +22,7 @@ import exception.ReservationNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
-import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 
 /**
  *
@@ -31,7 +31,7 @@ import ejb.session.stateless.CustomerSessionBeanRemote;
 public class CustomerServiceModule {
 
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
-    private CustomerSessionBeanRemote customerSessionBeanRemote;
+    private CustomerEntitySessionBeanRemote customerSessionBeanRemote;
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
     
     private EmployeeEntity currentEmployeeEntity;
@@ -42,7 +42,7 @@ public class CustomerServiceModule {
     public CustomerServiceModule() {
     }
     
-    public CustomerServiceModule(CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, EmployeeEntity currentEmployeeEntity, ReservationSessionBeanRemote reservationSessionBeanRemote) {
+    public CustomerServiceModule(CarEntitySessionBeanRemote carEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerSessionBeanRemote, EmployeeEntity currentEmployeeEntity, ReservationSessionBeanRemote reservationSessionBeanRemote) {
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.customerSessionBeanRemote =  customerSessionBeanRemote;
         this.currentEmployeeEntity = currentEmployeeEntity;

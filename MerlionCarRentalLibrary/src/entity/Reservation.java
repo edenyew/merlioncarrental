@@ -18,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -30,22 +32,27 @@ public class Reservation implements Serializable {
     private Long id;
     
     @Column(nullable = false)
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date pickUpDate;
     
     @Column(nullable = false)
+    @NotNull
     @Temporal(TemporalType.TIME)
     private Date pickUpTime;
     
     @Column(nullable = false)
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date returnDate;
     
     @Column(nullable = false)
+    @NotNull
     @Temporal(TemporalType.TIME)
     private Date returnTime;
     
     @Column(precision = 11, scale = 2)
+    @NotNull
     private double totalCost;
     
     @OneToOne(orphanRemoval = true, optional = true)

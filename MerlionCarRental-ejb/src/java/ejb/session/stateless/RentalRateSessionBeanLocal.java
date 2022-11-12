@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.RentalRate;
 import exception.DeleteRentalRateException;
+import exception.InputDataValidationException;
 import exception.RentalRateNotFoundException;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,7 @@ public interface RentalRateSessionBeanLocal {
 
     public List<RentalRate> retrieveAllRentalRate();
 
-    public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException;
+    public void updateRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, InputDataValidationException;
 
     public void deleteRentalRate(RentalRate rentalRate) throws RentalRateNotFoundException, DeleteRentalRateException;
 

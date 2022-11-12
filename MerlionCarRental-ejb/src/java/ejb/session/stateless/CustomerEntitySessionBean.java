@@ -11,27 +11,41 @@ import exception.AlreadyLoggedInException;
 import exception.CustomerNotFoundException;
 import exception.InvalidLoginCredentialException;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
  * @author edenyew
  */
 @Stateless
-public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerSessionBeanLocal {
+public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemote, CustomerEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "MerlionCarRental-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
     
     @EJB
     ReservationSessionBeanLocal reservationSessionBeanLocal;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
+    public CustomerEntitySessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
     
     @Override
     public Long createCustomer(Customer customer) 
@@ -126,6 +140,29 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         }
         
     }
+    
+    @Override
+    public void viewAllReservations(Customer customer) throws CustomerNotFoundException
+    {
+        Customer customerToView= retrieveCustomerById(customer.getCustomerId());
+        List<Reservation> reservations = customerToView.getReservations();
+        //Reservation reservation = customerToView.getReservation();
+        
+        //System.out.println(reservation.getId());
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Customer>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+    
     
 //    public void reserveCar(Reservation reservation, Customer customer, CarEntity car){
 //        

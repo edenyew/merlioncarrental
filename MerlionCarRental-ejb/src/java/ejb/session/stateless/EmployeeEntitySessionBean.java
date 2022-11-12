@@ -18,6 +18,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -31,6 +34,16 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
     
     @EJB
     private OutletEntitySessionBeanLocal outletSessionBeanLocal;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    
+    public EmployeeEntitySessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
     
     
     @Override

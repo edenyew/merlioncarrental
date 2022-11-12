@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.AccessRightEnum;
 
 /**
@@ -29,17 +31,31 @@ public class EmployeeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 32)
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String name;
-    @Column(nullable = false, length = 32)
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String contactNumber;
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccessRightEnum accessRightEnum;
-    @Column(nullable = false, unique = true, length = 32)
+    
+    @Column(nullable = false, unique = true, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String username;
-    @Column(nullable = false, length = 32)
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String password;
+    
     private boolean logged_in;
     
     @OneToOne(optional = true)

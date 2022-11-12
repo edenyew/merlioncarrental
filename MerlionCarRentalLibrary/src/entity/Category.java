@@ -15,6 +15,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -30,6 +32,8 @@ public class Category implements Serializable {
     private Long categoryId;
     
     @Column(nullable = false)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String name;
     
     @OneToMany(mappedBy = "category")
