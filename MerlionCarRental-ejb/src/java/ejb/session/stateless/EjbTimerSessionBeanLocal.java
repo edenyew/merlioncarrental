@@ -16,6 +16,8 @@ import javax.ejb.Local;
 @Local
 public interface EjbTimerSessionBeanLocal {
 
-    public void timer(Long outletId) throws ParseException, OutletNotFoundException;
+    
+
+    public void timer();
     
 }

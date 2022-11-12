@@ -53,6 +53,8 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
        em.persist(car);
        
        model.getCars().add(car);
+       model.setInUse(true);
+       
        car.setModel(model);
        car.setCategory(category);
        car.setOutletEntity(outlet);
@@ -125,6 +127,10 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             }
             else 
             {
+                carToDelete.getOutletEntity().getCars().remove(carToDelete);
+                if(carToDelete.getModel().getCars().isEmpty()){
+                    carToDelete.getModel().setInUse(false);
+                }
                 em.remove(carToDelete);
             }
     }

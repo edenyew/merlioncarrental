@@ -16,6 +16,8 @@ import javax.ejb.Remote;
 @Remote
 public interface EjbTimerSessionBeanRemote {
     
-    public void timer(Long outletId) throws ParseException, OutletNotFoundException;
+    public void timer() ;
+
+    public void allocateCarsToCurrentDayReservationsTimer();
     
 }

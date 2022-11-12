@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,7 +50,7 @@ public class CarEntity implements Serializable {
     @ManyToOne 
     private OutletEntity outletEntity;
     
-    @OneToMany(mappedBy = "car")
+    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE)
     private List<TransitDriverDispatchRecord> transitDriverDispatchRecords;
     
     @OneToMany(mappedBy = "car")

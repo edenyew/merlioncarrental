@@ -18,11 +18,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-/**
- *
- * @author edenyew
- */
 @Entity
 public class Reservation implements Serializable {
 
@@ -31,35 +29,46 @@ public class Reservation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    
     @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date pickUpDate;
     
     @Column(nullable = false)
+    @Temporal(TemporalType.TIME)
+    private Date pickUpTime;
+    
+    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date returnDate;
+    
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIME)
+    private Date returnTime;
     
     @Column(precision = 11, scale = 2)
     private double totalCost;
     
-    @OneToOne(optional = true)
+    @OneToOne(orphanRemoval = true, optional = true)
     @JoinColumn(name="CreditCardId", nullable = true)
     private CreditCard creditCard;
     
     private boolean paid;
     
-    @ManyToOne (optional = false)
-    @JoinColumn(name = "CarId", nullable = false)
+    @ManyToOne (optional = true)
+    @JoinColumn(name = "CarId", nullable = true)
     private CarEntity car;
     
     @OneToOne (optional = false)
     @JoinColumn(name = "pickUpOutletId", nullable = false)
     private OutletEntity pickUpOutlet;
-    @OneToOne (optional = false)
     
+    @OneToOne (optional = false)
     @JoinColumn(name = "returnOutletId", nullable = false)
     private OutletEntity returnOutlet;
     @OneToMany 
     private List<RentalRate> rentalRates;
+    @ManyToOne
+    private Model model;
     
     @ManyToOne 
 //    //@JoinColumn(name = "customerId")
@@ -72,19 +81,33 @@ public class Reservation implements Serializable {
     public Reservation() {
     }
 
-    public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, Customer customer, boolean paid) {
+//    public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, Customer customer, boolean paid) {
+//        this.pickUpDate = pickUpDate;
+//        this.returnDate = returnDate;
+//        this.totalCost = totalCost;
+//        this.creditCard = creditCard;
+//        this.car = car;
+//        this.pickUpOutlet = pickUpOutlet;
+//        this.returnOutlet = returnOutlet;
+//        this.rentalRates = rentalRates;
+//        this.customer = customer;
+//        this.paid = paid;
+//    }
+
+    public Reservation(Date pickUpDate, Date pickUpTime, Date returnDate, Date returnTime, double totalCost, CreditCard creditCard, boolean paid, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, Customer customer) {
         this.pickUpDate = pickUpDate;
+        this.pickUpTime = pickUpTime;
         this.returnDate = returnDate;
+        this.returnTime = returnTime;
         this.totalCost = totalCost;
         this.creditCard = creditCard;
+        this.paid = paid;
         this.car = car;
         this.pickUpOutlet = pickUpOutlet;
         this.returnOutlet = returnOutlet;
-        this.rentalRates = rentalRates;
         this.customer = customer;
-        this.paid = paid;
     }
-
+    
     public Reservation(Date pickUpDate, Date returnDate, double totalCost, CreditCard creditCard, boolean paid, CarEntity car, OutletEntity pickUpOutlet, OutletEntity returnOutlet, List<RentalRate> rentalRates, PartnerEntity partner) {
         this.pickUpDate = pickUpDate;
         this.returnDate = returnDate;
@@ -189,6 +212,22 @@ public class Reservation implements Serializable {
         this.car = car;
     }
 
+    public Date getPickUpTime() {
+        return pickUpTime;
+    }
+
+    public void setPickUpTime(Date pickUpTime) {
+        this.pickUpTime = pickUpTime;
+    }
+
+    public Date getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
+    }
+
     public boolean isPaid() {
         return paid;
     }
@@ -217,6 +256,14 @@ public class Reservation implements Serializable {
      */
     public void setPickUpOutlet(OutletEntity outlet) {
         this.pickUpOutlet = outlet;
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 
     public OutletEntity getReturnOutlet() {
