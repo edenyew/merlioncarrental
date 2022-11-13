@@ -503,7 +503,7 @@ public class SalesManagementModule {
                     {
                         deleteCar();
                     }
-                    catch(InputDataValidationException | CarNotFoundException | ModelNotFoundException ex)
+                    catch(CarNotFoundException | ModelNotFoundException | InputDataValidationException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }

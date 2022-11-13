@@ -23,7 +23,6 @@ import javax.ejb.Remote;
 @Remote
 public interface TransitDriverDispatchRecordSessionBeanRemote {
     
-    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long employeeId, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException, InputDataValidationException;  
 
     public TransitDriverDispatchRecord retrieveTransitRecordById(Long transitRecordId) throws TransitRecordNotFoundException;
 

@@ -18,5 +18,8 @@ public interface EjbTimerSessionBeanLocal {
 
     
 
+public void generateTransitRecordsTimer();
+
+public void allocateCarsToCurrentDayReservationsTimer()
     
 }

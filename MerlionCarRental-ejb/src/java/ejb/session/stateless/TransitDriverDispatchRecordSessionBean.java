@@ -59,58 +59,35 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     
     
     @Override
-    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long employeeId, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException, InputDataValidationException 
+    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException, InputDataValidationException 
     {
         Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations = validator.validate(transitRecord);
         
         if (constraintViolations.isEmpty())
         {
-            try
-            {
+            
        
-                EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
-                OutletEntity pickupOutlet = outletSessionBeanLocal.retrieveOutletById(pickupOutletId);
-                OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
-                CarEntity car = carEntitySessionBeanLocal.retrieveCarById(carId);
-
-                em.persist(transitRecord);
-
-                returnOutlet.getTransitDriverDispatchRecords().add(transitRecord);
-                car.getTransitDriverDispatchRecords().add(transitRecord);
-                transitRecord.setTransitDriver(employee);
-                transitRecord.setPickUpOutlet(pickupOutlet);
-                transitRecord.setReturnOutlet(returnOutlet);
-                transitRecord.setCar(car);
-
-                em.flush();
-                return transitRecord.getTransitDriverDispatchId();
-            }
-            catch(PersistenceException ex)
-            {
-                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
-                {
-                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
-                    {
-                        throw new TransitRecordNotFoundException();
-                    }
-                    else
-                    {
-                        throw new UnknownPersistenceException(ex.getMessage());
-                    }
-                }
-                else
-                {
-                    throw new UnknownPersistenceException(ex.getMessage());
-                }
-            }
+      // EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
+       OutletEntity pickupOutlet = outletSessionBeanLocal.retrieveOutletById(pickupOutletId);
+       OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
+       CarEntity car = carEntitySessionBeanLocal.retrieveCarById(carId);
+       
+       em.persist(transitRecord);
+      
+       returnOutlet.getTransitDriverDispatchRecords().add(transitRecord);
+       car.getTransitDriverDispatchRecords().add(transitRecord);
+       //transitRecord.setTransitDriver(employee);
+       transitRecord.setPickUpOutlet(pickupOutlet);
+       transitRecord.setReturnOutlet(returnOutlet);
+       transitRecord.setCar(car);
+       
+       em.flush();
+       return transitRecord.getTransitDriverDispatchId();
+            } else {
+            throw new InputDataValidationException();
         }
-        else
-        {
-            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-        }
-    }
-    
-    
+       
+   }
     @Override
     public TransitDriverDispatchRecord retrieveTransitRecordById(Long transitRecordId) throws TransitRecordNotFoundException
     {

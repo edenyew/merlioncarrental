@@ -10,8 +10,12 @@ import entity.Model;
 import entity.OutletEntity;
 import entity.Reservation;
 import entity.TransitDriverDispatchRecord;
+import exception.CarNotFoundException;
+import exception.InputDataValidationException;
 import exception.OutletNotFoundException;
 import exception.ReservationNotFoundException;
+import exception.TransitRecordNotFoundException;
+import exception.UnknownPersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,16 +42,12 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
     @EJB
     OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
     
-    
-//@Schedule(hour = "*", minute = "*", second = "*/5", info = "generateTransitDriverDispatchRecordCheckTimer")    
-    // For testing purpose, we are allowing the timer to trigger every 5 seconds instead of every 5 minutes
-    // To trigger the timer once every 5 minutes instead, use the following the @Schedule annotation
-    // @Schedule(hour = "*", minute = "*/5", info = "productEntityReorderQuantityCheckTimer")
+    @Schedule(hour = "*", minute = "*", second = "*/5", info = "generateTransitDriverDispatchRecordCheckTimer")    
     @Override
     public void generateTransitRecordsTimer()  
-    public void timer()  
+   
     {
-//         try {
+        try {
             Date currDate = new Date();
             List<OutletEntity> allOutlets = outletEntitySessionBeanLocal.retrieveAllOutlets();//            
             for (OutletEntity outlet : allOutlets)
@@ -59,6 +59,10 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                     System.out.println(transitDriverDispatchRecord.getReturnOutlet().getAddress());
                  }
             }
+            
+        }   catch (OutletNotFoundException | TransitRecordNotFoundException ex) {
+            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
    // @Schedule(hour = "*", minute = "*", second = "*/5", info = "allocateCarsToCurrentDayReservations")   
@@ -83,19 +87,23 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                         Long pickUpOutletId = car.getOutletEntity().getOutletId();
                         Long returnOutletId = reservation.getPickUpOutlet().getOutletId();
                         
-                        try {
-                            transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
-                        } catch (TransitRecordNotFoundException | UnknownPersistenceException ex) {
+                    
+                             try {
+                                 transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
+                             } catch (OutletNotFoundException | CarNotFoundException | InputDataValidationException ex) {
+                                 Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+                             } catch (TransitRecordNotFoundException ex) {
+                            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (UnknownPersistenceException ex) {
                             Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        
                     }                                      
                 }
             }
             
         } catch (ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
-        } catch (OutletNotFoundException | CarNotFoundException ex) {
-            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

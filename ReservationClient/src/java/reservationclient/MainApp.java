@@ -42,6 +42,7 @@ import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import exception.CreditCardNotFoundException;
 import exception.InputDataValidationException;
 import exception.UnknownPersistenceException;
+import java.util.InputMismatchException;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -53,6 +54,7 @@ import javax.validation.ValidatorFactory;
  * @author jonta
  */
 public class MainApp {
+
 
     @EJB
      private CustomerEntitySessionBeanRemote customerSessionBeanRemote;
@@ -189,7 +191,7 @@ public class MainApp {
             pickUpDateString = scanner.nextLine().trim();
             Date pickUpDate = new SimpleDateFormat("dd/MM/yyyy").parse(pickUpDateString);
 
-            System.out.print("Enter pick up time (in Hours ie 0 - 24)> ");
+            System.out.print("Enter pick up time in hours from 0-24 )> ");
             pickUpTime = Integer.parseInt(scanner.nextLine().trim());
             cal.setTime(pickUpDate);
             cal.add(Calendar.HOUR_OF_DAY, pickUpTime);
@@ -199,7 +201,7 @@ public class MainApp {
             returnDateString = scanner.nextLine().trim();
             Date returnDate = new SimpleDateFormat("dd/MM/yyyy").parse(returnDateString);
 
-            System.out.print("Enter pick up time (in Hours ie 0 - 24)> ");
+            System.out.print("Enter pick up time in hours from 0-24> ");
             returnTime = Integer.parseInt(scanner.nextLine().trim());
             cal.setTime(returnDate);
             cal.add(Calendar.HOUR_OF_DAY, returnTime);
@@ -228,7 +230,13 @@ public class MainApp {
                     setOfSearchedModels.add(car.getModel());
                 }
             }
-            System.out.print("Choose car by typing in its model id: \n");
+            
+            System.out.print("List of available cars  at outlet chosen: \n");
+            for(CarEntity car : listOfSearchedCars){
+                System.out.println("Car :" + car.getCategory().getName() + ", " + car.getModel().getModelName());
+            }
+            
+            System.out.println("Calculate the cost of reserving by typing in its model id: \n");
             for (Model model : setOfSearchedModels) {
                 System.out.println("Model ID " + model.getModelId() + ": " + "Car Category, Make and Model: " + model.getCategory().getName() + "," + model.getMakeName() + ", " + model.getModelName());
             }
@@ -274,7 +282,7 @@ public class MainApp {
                 System.out.println("Error: " + ex.getMessage() + "\n");
             }
 
-        } catch (ParseException | OutletNotFoundException ex) {
+        } catch (ParseException | InputMismatchException | OutletNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
@@ -337,7 +345,7 @@ public class MainApp {
             Long reservationId = reservationSessionBeanRemote.creatNewReservation(reservation, modelChosen.getModelId(), returnOutletId, pickUpOutletId, creditCardId, currentCustomer.getCustomerId(), finalRentalRatesApplied);
             System.out.println("Reservation successful, reservation Id:" + reservationId);
 
-        } catch (ModelNotFoundException | OutletNotFoundException | RentalRateNotFoundException | CustomerNotFoundException ex) {
+        } catch (InputMismatchException | ModelNotFoundException | OutletNotFoundException | RentalRateNotFoundException | CustomerNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
@@ -411,7 +419,7 @@ public class MainApp {
             Reservation reservation = reservationSessionBeanRemote.retrieveReservationById(reservationId);
             System.out.println("Reservation Id " + reservation.getId() + ": Model " + reservation.getModel().getModelName() + " " + reservation.getModel().getMakeName() + ", Pick up Date on " + reservation.getPickUpDate() + "Pick up Time at:  " + reservation.getPickUpTime() + "Pick up outlet at " + reservation.getPickUpOutlet().getAddress());
 
-        } catch (ReservationNotFoundException ex) {
+        } catch (InputMismatchException | ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
@@ -431,13 +439,13 @@ public class MainApp {
             Date date = new Date();
             double penaltyPayable = reservationSessionBeanRemote.cancelReservation(reservation, date);
             System.out.println("penalty charged to creditcard: $" + String.format("%.2f", penaltyPayable));
-        } catch (ReservationNotFoundException ex) {
+        } catch (InputMismatchException | ReservationNotFoundException ex) {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void registerAsCustomer() throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException
-    {
+
+    private void registerAsCustomer() throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException {
+        try {
         Scanner scanner = new Scanner(System.in);
         String firstName = "";
         String lastName = "";
@@ -471,28 +479,11 @@ public class MainApp {
         System.out.print("Enter passportNumber> ");
         passportNumber = scanner.nextLine().trim();
         newCustomer.setPassportNumber(passportNumber);
-        
-        Set<ConstraintViolation<Customer>>constraintViolations = validator.validate(newCustomer);
-        
-        if(constraintViolations.isEmpty())
-        {
-            try
-            {
-                Long newCustomerId = customerSessionBeanRemote.createCustomer(newCustomer);
-                System.out.println("New customer created successfully!: " + newCustomerId + "\n");
-            }
-            catch(UnknownPersistenceException ex)
-            {
-                System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
-            }
-            catch(InputDataValidationException ex)
-            {
-                System.out.println(ex.getMessage() + "\n");
-            }
-        }
-        else
-        {
-            showInputDataValidationErrorsForCustomer(constraintViolations);
+
+        Long newCustomerId = customerSessionBeanRemote.createCustomer(newCustomer);
+        System.out.println("New user created successfully!: " + newCustomerId + "\n");
+        } catch (InputMismatchException ex) {
+            System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
 
