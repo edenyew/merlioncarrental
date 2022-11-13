@@ -50,8 +50,6 @@ import exception.UnknownPersistenceException;
 public class MainApp {
 
     @EJB
-    private CustomerSessionBeanRemote customerSessionBeanRemote;
-    @EJB
      private CustomerEntitySessionBeanRemote customerSessionBeanRemote;
     @EJB 
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
@@ -236,7 +234,6 @@ public class MainApp {
 
                 res = scanner.nextLine();
                 if (!"N".equals(res) || !"Y".equals(res)) {
-<<<<<<< HEAD
               
                      if (currentCustomer != null && currentCustomer.isLoggedIn()){
                         if ("Y".equals(res)) 
@@ -249,12 +246,6 @@ public class MainApp {
                             {
                                 System.out.println("Error: " + ex.getMessage() + "\n");
                             }
-=======
-
-                    if (currentCustomer != null && currentCustomer.isLoggedIn()) {
-                        if ("Y".equals(res)) {
-                            reserveCar(modelChosen, pickUpOutletId, returnOutletId, pickUpDate, pickUpTimeDate, returnDate, returnTimeDate, finalRentalRatesApplied, totalAmountPayable);
->>>>>>> 84e262e81fd2b7e98d0eafe77b0d1dd8ec784341
                         }
 
                     } else {
@@ -273,13 +264,8 @@ public class MainApp {
             System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
-<<<<<<< HEAD
     
     public void reserveCar(Model modelChosen, Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date pickUpTime, Date returnDate, Date returnTime, List<RentalRate> finalRentalRatesApplied, Long totalAmountPayable) throws CreditCardNotFoundException, UnknownPersistenceException, InputDataValidationException, ReservationNotFoundException{
-=======
-
-    public void reserveCar(Model modelChosen, Long pickUpOutletId, Long returnOutletId, Date pickUpDate, Date pickUpTime, Date returnDate, Date returnTime, List<RentalRate> finalRentalRatesApplied, Long totalAmountPayable) {
->>>>>>> 84e262e81fd2b7e98d0eafe77b0d1dd8ec784341
 //       CarEntity carToReserve = carSessionBeanRemote.retrieveCarById(carChosen.getCarId());
 //       OutletEntity pickUpOutlet = outletSessionBeanRemote.retrieveOutletById(pickUpOutletId);
 //       OutletEntity returnOutlet = outletSessionBeanRemote.retrieveOutletById(returnOutletId);
@@ -435,13 +421,8 @@ public class MainApp {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-<<<<<<< HEAD
     
     private void registerAsCustomer() throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException{
-=======
-
-    private void registerAsCustomer() {
->>>>>>> 84e262e81fd2b7e98d0eafe77b0d1dd8ec784341
         Scanner scanner = new Scanner(System.in);
         String firstName = "";
         String lastName = "";

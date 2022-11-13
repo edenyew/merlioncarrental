@@ -456,7 +456,7 @@ public class SalesManagementModule {
                     {
                         deleteCar();
                     }
-                    catch(CarNotFoundException | ModelNotFoundException ex)
+                    catch(InputDataValidationException | CarNotFoundException | ModelNotFoundException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -709,7 +709,7 @@ public class SalesManagementModule {
     }
     
     
-    private void deleteCar() throws CarNotFoundException, ModelNotFoundException
+    private void deleteCar() throws CarNotFoundException, ModelNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         CarEntity carToDelete = new CarEntity();
