@@ -60,7 +60,7 @@ public class PartnerReservationClient {
                 String password = "";
 
                 System.out.println("*** Partner Reservation Client :: Login ***\n");
-                System.out.print("Enter email> ");
+                System.out.println("Enter email> ");
                 email = scanner.nextLine().trim();
                 System.out.print("Enter password> ");
                 password = scanner.nextLine().trim();

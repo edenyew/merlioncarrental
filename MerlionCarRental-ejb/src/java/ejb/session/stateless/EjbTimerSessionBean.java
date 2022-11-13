@@ -42,7 +42,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
     @EJB
     OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
     
-    @Schedule(hour = "*", minute = "*", second = "*/5", info = "generateTransitDriverDispatchRecordCheckTimer")    
+    @Schedule(hour = "2", minute = "0", second = "0", info = "generateTransitDriverDispatchRecordCheckTimer")    
     @Override
     public void generateTransitRecordsTimer()  
    
@@ -65,7 +65,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
         }
     }
     
-   // @Schedule(hour = "*", minute = "*", second = "*/5", info = "allocateCarsToCurrentDayReservations")   
+    @Schedule(hour = "0", minute = "0", second = "0", info = "allocateCarsToCurrentDayReservations")   
     @Override
     public void allocateCarsToCurrentDayReservationsTimer() {
         try {
@@ -86,18 +86,13 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                          TransitDriverDispatchRecord record = new TransitDriverDispatchRecord();
                         Long pickUpOutletId = car.getOutletEntity().getOutletId();
                         Long returnOutletId = reservation.getPickUpOutlet().getOutletId();
-                        
-                    
+                             
                              try {
                                  transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
-                             } catch (OutletNotFoundException | CarNotFoundException | InputDataValidationException ex) {
+                             } catch (OutletNotFoundException | CarNotFoundException | TransitRecordNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
                                  Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-                             } catch (TransitRecordNotFoundException ex) {
-                            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (UnknownPersistenceException ex) {
-                            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        
+                             }
+         
                     }                                      
                 }
             }

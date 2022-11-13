@@ -39,4 +39,6 @@ public interface TransitDriverDispatchRecordSessionBeanRemote {
     public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord();
 
     public void viewRecordDetails(TransitDriverDispatchRecord transitDriverRecord) throws TransitRecordNotFoundException;
+
+    public Long createNewTransitRecord(TransitDriverDispatchRecord record, Long pickUpOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException, InputDataValidationException ;
 }

@@ -11,6 +11,7 @@ import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import entity.CarEntity;
 import entity.Category;
@@ -18,6 +19,7 @@ import entity.EmployeeEntity;
 import entity.Model;
 import entity.OutletEntity;
 import entity.RentalRate;
+import entity.Reservation;
 import entity.TransitDriverDispatchRecord;
 import exception.CarNotFoundException;
 import exception.DeleteModelException;
@@ -28,6 +30,7 @@ import exception.InvalidAccessRightException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
+import exception.ReservationNotFoundException;
 import exception.TransitRecordNotFoundException;
 import exception.UnknownPersistenceException;
 import java.text.ParseException;
@@ -42,6 +45,8 @@ import util.enumeration.AccessRightEnum;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.RentalRateTypeEnum;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -60,6 +65,7 @@ public class SalesManagementModule {
     private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
     private TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote;
+    private ReservationSessionBeanRemote reservationSessionBeanRemote;
     
     private EmployeeEntity currentEmployeeEntity;
     
@@ -73,7 +79,7 @@ public class SalesManagementModule {
     }
     
 
-    public SalesManagementModule(CategorySessionBeanRemote categorySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, EmployeeEntity currentEmployeeEntity)
+    public SalesManagementModule(CategorySessionBeanRemote categorySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, EmployeeEntity currentEmployeeEntity, ReservationSessionBeanRemote reservationSessionBeanRemote)
     {
         this();
         this.categorySessionBeanRemote = categorySessionBeanRemote;
@@ -84,6 +90,7 @@ public class SalesManagementModule {
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
         this.currentEmployeeEntity = currentEmployeeEntity;
+        this.reservationSessionBeanRemote = reservationSessionBeanRemote;
     }
     
     public void menuSalesManagement() throws InvalidAccessRightException, CarNotFoundException
@@ -405,10 +412,11 @@ public class SalesManagementModule {
             System.out.println("10: View Transit Driver Dispatch Records for Current Day Reservations");
             System.out.println("11: Assign Transit Driver");
             System.out.println("12: Update Transit As Completed");
-            System.out.println("13: Back\n");
+            System.out.println("13: Allocate Cars To Current Day Reservation (Demo)");
+            System.out.println("14: Back\n");
             response = 0;
             
-            while (response < 1 || response > 13)
+            while (response < 1 || response > 14)
             {
                  System.out.print("> ");
 
@@ -545,6 +553,14 @@ public class SalesManagementModule {
                 }
                 else if (response == 13)
                 {
+                     try {
+                         allocateCarsToCurrentDayReservations();
+                     } catch (ParseException | ReservationNotFoundException | OutletNotFoundException | TransitRecordNotFoundException | UnknownPersistenceException | InputDataValidationException ex) {
+                          System.out.println("An error has occurred: " + ex.getMessage() + "\n");
+                     }
+                }
+                else if (response == 14)
+                {
                     break;
                 }
                 else
@@ -552,7 +568,7 @@ public class SalesManagementModule {
                     System.out.println("Invalid option, please try again!\n");      
                 }
             }
-            if (response == 13)
+            if (response == 14)
             {
                 break;
             }
@@ -945,7 +961,37 @@ public class SalesManagementModule {
             throw new TransitRecordNotFoundException ("Transit Record Not Found!");
         }
     }
-    
+    public void allocateCarsToCurrentDayReservations() throws ParseException, ReservationNotFoundException, OutletNotFoundException, CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException, InputDataValidationException {
+        
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter current date: ");
+            String currentDateString = scanner.nextLine().trim();
+            Date currDate = new SimpleDateFormat("dd/MM/yyyy").parse(currentDateString);
+            
+            List<Reservation> reservations = reservationSessionBeanRemote.retrieveReservationsOnPickUpDate(currDate);
+            for(Reservation reservation :reservations){
+                Model model = reservation.getModel();
+                for (CarEntity car : model.getCars()) {
+                    if (car.getOutletEntity().equals(reservation.getPickUpOutlet()) && car.getCurrentStatus().equals(CarStatusEnum.NOT_IN_USE)){
+                        for (Reservation existingReservation : car.getReservations()) {
+                            if (existingReservation.getPickUpDate().compareTo(currDate) < 0 && existingReservation.getReturnDate().compareTo(currDate) > 0) {
+                               reservation.setCar(car);
+                               car.getReservations().add(reservation);
+                               System.out.println(car.getCarPlateNumber() + " allocated to " +  reservation.getId());
+                            }
+                        }
+                    } else {
+                         TransitDriverDispatchRecord record = new TransitDriverDispatchRecord();
+                        Long pickUpOutletId = car.getOutletEntity().getOutletId();
+                        Long returnOutletId = reservation.getPickUpOutlet().getOutletId();
+                         transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
+                         System.out.println(reservation.getId() + " allocated to " +  car.getCarPlateNumber());
+                        }
+                        
+                    }
+            }       
+      
+    }
     private void showInputDataValidationErrorsForRentalRate(Set<ConstraintViolation<RentalRate>>constraintViolations)
     {
         System.out.println("\nInput data validation error!:");

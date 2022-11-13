@@ -157,14 +157,14 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
 
             if (constraintViolations.isEmpty()) {
                 if (constraintViolations.isEmpty()) {
-                    carToUpdate.setCategory(carEntity.getCategory());
-                    carToUpdate.setDisabled(carEntity.getDisabled());
-                    carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
+//                    carToUpdate.setCategory(carEntity.getCategory());
+//                    carToUpdate.setDisabled(carEntity.getDisabled());
+//                    carToUpdate.setCurrentStatus(carEntity.getCurrentStatus());
                     carToUpdate.setCarPlateNumber(carEntity.getCarPlateNumber());
-                    carToUpdate.setColour(carEntity.getColour());
-                    carToUpdate.setOutletEntity(carEntity.getOutletEntity());
-
-                    carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
+//                    carToUpdate.setColour(carEntity.getColour());
+//                    carToUpdate.setOutletEntity(carEntity.getOutletEntity());
+//
+//                    carToUpdate.setTransitDriverDispatchRecords(carEntity.getTransitDriverDispatchRecords());
                     em.merge(carToUpdate);
                 } else {
                     throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
