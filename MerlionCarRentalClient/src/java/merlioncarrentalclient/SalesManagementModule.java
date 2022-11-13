@@ -526,7 +526,7 @@ public class SalesManagementModule {
                     {
                         assignTransitDriver();
                     }
-                    catch (UnknownPersistenceException | InputDataValidationException | EmployeeNotFoundException | TransitRecordNotFoundException | OutletNotFoundException | CarNotFoundException ex)
+                    catch (UnknownPersistenceException | InputDataValidationException | EmployeeNotFoundException | TransitRecordNotFoundException | OutletNotFoundException | CarNotFoundException | ParseException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -611,7 +611,7 @@ public class SalesManagementModule {
         int i=1;
         for (Model model : allModels)
         {
-            System.out.println( i + ": " + model.getCategory().getName()+ ", " + model.getMakeName()+ ", " + model.getModelName() + "-- Model ID of this car is " + model.getModelId() + "LIST: " + model.getCars());
+            System.out.println( i + ": " + model.getCategory().getName()+ ", " + model.getMakeName()+ ", " + model.getModelName() + "-- Model ID of this car is " + model.getModelId());
             i++;
         }
     }
@@ -870,7 +870,7 @@ public class SalesManagementModule {
     }
     
     
-    private void assignTransitDriver() throws EmployeeNotFoundException, TransitRecordNotFoundException, OutletNotFoundException, CarNotFoundException, UnknownPersistenceException, InputDataValidationException
+    private void assignTransitDriver() throws EmployeeNotFoundException, TransitRecordNotFoundException, OutletNotFoundException, CarNotFoundException, UnknownPersistenceException, InputDataValidationException, ParseException
     {
         Scanner scanner = new Scanner(System.in);
 
@@ -878,6 +878,7 @@ public class SalesManagementModule {
         
         
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Assign Transit Driver ***\n");
+        viewTransitDriverDispatchRecordsForCurrentDayReservations();
         System.out.print("Enter Employee Username> ");
         employeeUsername = scanner.nextLine().trim();
         EmployeeEntity employee = employeeEntitySessionBeanRemote.retrieveEmployeeByUsername(employeeUsername);
