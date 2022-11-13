@@ -75,10 +75,10 @@ public class ReservationWebService {
     }
     
     @WebMethod(operationName = "cancelReservation")
-     public double cancelReservation(Reservation reservation, Date currDate) throws ReservationNotFoundException
-     {
-         return reservationSessionBean.cancelReservation(reservation, currDate);
-     }
+    public double cancelReservation(Reservation reservation, Date currDate) throws ReservationNotFoundException
+    {
+        return reservationSessionBean.cancelReservation(reservation, currDate);
+    }
     
     
 
