@@ -37,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -140,7 +141,7 @@ public class SalesManagementModule {
                     {
                         doCreateRentalRate(); // check this part again, does car and category need to be mandatory? if they are how to enforce when creating rental rate
                     }
-                    catch(RentalRateNotFoundException | UnknownPersistenceException | InputDataValidationException | CarNotFoundException ex)
+                    catch(RentalRateNotFoundException | UnknownPersistenceException | InputDataValidationException | CarNotFoundException | ParseException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -207,7 +208,7 @@ public class SalesManagementModule {
         }
     }
     
-    private void doCreateRentalRate() throws CarNotFoundException, RentalRateNotFoundException, UnknownPersistenceException, InputDataValidationException
+    private void doCreateRentalRate() throws CarNotFoundException, RentalRateNotFoundException, UnknownPersistenceException, InputDataValidationException, ParseException
     {
         Scanner scanner = new Scanner(System.in);
         RentalRate newRentalRate = new RentalRate();
@@ -226,7 +227,8 @@ public class SalesManagementModule {
             System.out.println(i + ": " +listOfRentalRateTypes.get(i));
         }
         System.out.print("Enter a RentalRate Type> ");
-        newRentalRate.setRentalRateType(listOfRentalRateTypes.get(scanner.nextInt()));
+         RentalRateTypeEnum rentalRateType = listOfRentalRateTypes.get(scanner.nextInt());
+        newRentalRate.setRentalRateType(rentalRateType);
         
         System.out.print("Enter Category> \n");
         List<Category> category = categorySessionBeanRemote.retrieveAllCategory();
@@ -236,7 +238,40 @@ public class SalesManagementModule {
             System.out.println(categoryResponse + ": " + chosenCategory.getName());
             categoryResponse++;
         }
-        categoryResponse = scanner.nextInt();
+         categoryResponse = scanner.nextInt();
+        scanner.nextLine();
+            Calendar cal = Calendar.getInstance(); // creates calendar
+           
+           
+            if (!rentalRateType.equals(RentalRateTypeEnum.DEFAULT)){
+                System.out.print("Enter start date (DD/MM/YYYY)> ");
+                String pickUpDateString = scanner.nextLine().trim();
+                Date pickUpDate = new SimpleDateFormat("dd/MM/yyyy").parse(pickUpDateString);
+
+                System.out.print("Enter start time in hours from 0-24 )> ");
+                int  pickUpTime = Integer.parseInt(scanner.nextLine().trim());
+                cal.setTime(pickUpDate);
+                cal.add(Calendar.HOUR_OF_DAY, pickUpTime);
+                Date pickUpTimeDate = cal.getTime();
+
+                System.out.print("Enter end Date (DD/MM/YYYY)> ");
+                String returnDateString = scanner.nextLine().trim();
+                Date returnDate = new SimpleDateFormat("dd/MM/yyyy").parse(returnDateString);
+
+                System.out.print("Enter end time in hours from 0-24> ");
+                int returnTime = Integer.parseInt(scanner.nextLine().trim());
+                cal.setTime(returnDate);
+                cal.add(Calendar.HOUR_OF_DAY, returnTime);
+                Date returnTimeDate = cal.getTime();
+
+                newRentalRate.setEndDate(returnDate);
+                newRentalRate.setEndTime(returnTimeDate);
+                newRentalRate.setStartDate(pickUpDate);
+                newRentalRate.setStartTime(pickUpTimeDate);
+            }
+            
+       ;
+       
         newRentalRate.setCategory(category.get(categoryResponse - 1));
         newRentalRate.setDisabled(false);
         newRentalRate.setInUse(false);
@@ -292,7 +327,7 @@ public class SalesManagementModule {
         System.out.println("CarCategory :" + rentalRate.getCategory().getName());
         System.out.println("RatePerDay :" + rentalRate.getRatePerDay());
         System.out.println("Rental Rate Type :" + rentalRate.getRentalRateType());
-        if (rentalRate.getStartDate() == null || rentalRate.getEndDate() == null ){
+        if (rentalRate.getStartDate() != null || rentalRate.getEndDate() != null ){
             System.out.println("StartDateTime :" + rentalRate.getStartDate());
             System.out.println("EndDateTime :" + rentalRate.getEndDate());
         } else {
@@ -322,7 +357,7 @@ public class SalesManagementModule {
        
         System.out.print("Enter Rate Per Day To Update> ");
         rentalRateToUpdate.setRatePerDay(scanner.nextLong());
-        
+        scanner.nextLine();
         
 //        System.out.print("Enter Car Category To Update> \n");
 //        List<Category> allCategories = categorySessionBeanRemote.retrieveAllCategory();
@@ -333,20 +368,20 @@ public class SalesManagementModule {
 //        response = new Long(scanner.nextLine());
 //        rentalRateToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
         
-        if (rentalRateToUpdate.getStartDate() != null || rentalRateToUpdate.getStartDate() != null){
-            System.out.print("Enter StartDate (DD/MM/YYYY) To Update> ");
-            startDate = scanner.nextLine().trim();
-            Date startingDate = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
-
-            rentalRateToUpdate.setStartDate(startingDate);
-
-            System.out.print("Enter EndDate (DD/MM/YYYY) To Update> ");
-            endDate = scanner.nextLine().trim();
-            Date endingDate = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
-
-
-            rentalRateToUpdate.setEndDate(endingDate);
-        }
+//        if (rentalRateToUpdate.getStartDate() != null || rentalRateToUpdate.getStartDate() != null){
+//            System.out.print("Enter StartDate (DD/MM/YYYY) To Update> ");
+//            startDate = scanner.nextLine().trim();
+//            Date startingDate = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
+//
+//            rentalRateToUpdate.setStartDate(startingDate);
+//
+//            System.out.print("Enter EndDate (DD/MM/YYYY) To Update> ");
+//            endDate = scanner.nextLine().trim();
+//            Date endingDate = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
+//
+//
+//            rentalRateToUpdate.setEndDate(endingDate);
+//        }
         
         Set<ConstraintViolation<RentalRate>>constraintViolations = validator.validate(rentalRateToUpdate);
         

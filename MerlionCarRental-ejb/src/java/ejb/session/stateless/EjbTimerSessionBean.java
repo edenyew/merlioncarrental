@@ -61,7 +61,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
             }
             
         }   catch (OutletNotFoundException | TransitRecordNotFoundException ex) {
-            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+           System.out.println("An error has occurred: " + ex.getMessage() + "\n");
         }
     }
     
@@ -90,7 +90,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                              try {
                                  transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
                              } catch (OutletNotFoundException | CarNotFoundException | TransitRecordNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
-                                 Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+                                 System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                              }
          
                     }                                      

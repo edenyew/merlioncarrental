@@ -26,11 +26,15 @@ public class PartnerWebService {
     private PartnerEntitySessionBeanLocal partnerEntitySessionBean;
         
     @WebMethod(operationName = "retrievePartnerByEmail")
-    public PartnerEntity retrievePartnerByEmail(String email){
+    public PartnerEntity retrievePartnerByEmail(@WebParam(name = "email")String email){
         return partnerEntitySessionBean.retrievePartnerByEmail(email);
     }
     @WebMethod(operationName = "partnerLogin")
-    public PartnerEntity partnerLogin(String email, String password) throws InvalidLoginCredentialException{
+    public PartnerEntity partnerLogin(@WebParam(name = "email")String email, @WebParam(name = "password")String password) throws InvalidLoginCredentialException{
         return partnerEntitySessionBean.partnerLogin(email, password);
+    }
+    @WebMethod(operationName = "partnerLogout")
+    public PartnerEntity partnerLogout(@WebParam(name = "partner")PartnerEntity partner) throws InvalidLoginCredentialException {
+        return partnerEntitySessionBean.partnerLogout(partner);
     }
 }

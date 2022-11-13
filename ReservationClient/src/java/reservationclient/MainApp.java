@@ -417,7 +417,7 @@ public class MainApp {
             reservationId = scanner.nextLong();
 
             Reservation reservation = reservationSessionBeanRemote.retrieveReservationById(reservationId);
-            System.out.println("Reservation Id " + reservation.getId() + ": Model " + reservation.getModel().getModelName() + " " + reservation.getModel().getMakeName() + ", Pick up Date on " + reservation.getPickUpDate() + "Pick up Time at:  " + reservation.getPickUpTime() + "Pick up outlet at " + reservation.getPickUpOutlet().getAddress());
+            System.out.println("Reservation Id " + reservation.getId() + ": Model " + reservation.getModel().getModelName() + " " + reservation.getModel().getMakeName() + ", Pick up Date and Time: "  + reservation.getPickUpTime() + ", Pick up outlet at " + reservation.getPickUpOutlet().getAddress());
 
         } catch (InputMismatchException | ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");

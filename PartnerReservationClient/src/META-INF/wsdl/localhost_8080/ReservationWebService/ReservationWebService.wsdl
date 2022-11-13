@@ -4,6 +4,36 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/ReservationWebService/ReservationWebService?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="cancelReservation">
+<part name="parameters" element="tns:cancelReservation"/>
+</message>
+<message name="cancelReservationResponse">
+<part name="parameters" element="tns:cancelReservationResponse"/>
+</message>
+<message name="ReservationNotFoundException">
+<part name="fault" element="tns:ReservationNotFoundException"/>
+</message>
+<message name="retrieveReservationById">
+<part name="parameters" element="tns:retrieveReservationById"/>
+</message>
+<message name="retrieveReservationByIdResponse">
+<part name="parameters" element="tns:retrieveReservationByIdResponse"/>
+</message>
+<message name="retrieveOutletById">
+<part name="parameters" element="tns:retrieveOutletById"/>
+</message>
+<message name="retrieveOutletByIdResponse">
+<part name="parameters" element="tns:retrieveOutletByIdResponse"/>
+</message>
+<message name="OutletNotFoundException">
+<part name="fault" element="tns:OutletNotFoundException"/>
+</message>
+<message name="retrieveAllOutlets">
+<part name="parameters" element="tns:retrieveAllOutlets"/>
+</message>
+<message name="retrieveAllOutletsResponse">
+<part name="parameters" element="tns:retrieveAllOutletsResponse"/>
+</message>
 <message name="createNewReservation">
 <part name="parameters" element="tns:createNewReservation"/>
 </message>
@@ -13,22 +43,32 @@
 <message name="CarNotFoundException">
 <part name="fault" element="tns:CarNotFoundException"/>
 </message>
-<message name="OutletNotFoundException">
-<part name="fault" element="tns:OutletNotFoundException"/>
-</message>
 <message name="RentalRateNotFoundException">
 <part name="fault" element="tns:RentalRateNotFoundException"/>
 </message>
 <message name="CustomerNotFoundException">
 <part name="fault" element="tns:CustomerNotFoundException"/>
 </message>
-<message name="hello">
-<part name="parameters" element="tns:hello"/>
-</message>
-<message name="helloResponse">
-<part name="parameters" element="tns:helloResponse"/>
-</message>
 <portType name="ReservationWebService">
+<operation name="cancelReservation">
+<input wsam:Action="http://ws.session.ejb/ReservationWebService/cancelReservationRequest" message="tns:cancelReservation"/>
+<output wsam:Action="http://ws.session.ejb/ReservationWebService/cancelReservationResponse" message="tns:cancelReservationResponse"/>
+<fault message="tns:ReservationNotFoundException" name="ReservationNotFoundException" wsam:Action="http://ws.session.ejb/ReservationWebService/cancelReservation/Fault/ReservationNotFoundException"/>
+</operation>
+<operation name="retrieveReservationById">
+<input wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveReservationByIdRequest" message="tns:retrieveReservationById"/>
+<output wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveReservationByIdResponse" message="tns:retrieveReservationByIdResponse"/>
+<fault message="tns:ReservationNotFoundException" name="ReservationNotFoundException" wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveReservationById/Fault/ReservationNotFoundException"/>
+</operation>
+<operation name="retrieveOutletById">
+<input wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveOutletByIdRequest" message="tns:retrieveOutletById"/>
+<output wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveOutletByIdResponse" message="tns:retrieveOutletByIdResponse"/>
+<fault message="tns:OutletNotFoundException" name="OutletNotFoundException" wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveOutletById/Fault/OutletNotFoundException"/>
+</operation>
+<operation name="retrieveAllOutlets">
+<input wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveAllOutletsRequest" message="tns:retrieveAllOutlets"/>
+<output wsam:Action="http://ws.session.ejb/ReservationWebService/retrieveAllOutletsResponse" message="tns:retrieveAllOutletsResponse"/>
+</operation>
 <operation name="createNewReservation">
 <input wsam:Action="http://ws.session.ejb/ReservationWebService/createNewReservationRequest" message="tns:createNewReservation"/>
 <output wsam:Action="http://ws.session.ejb/ReservationWebService/createNewReservationResponse" message="tns:createNewReservationResponse"/>
@@ -37,13 +77,54 @@
 <fault message="tns:RentalRateNotFoundException" name="RentalRateNotFoundException" wsam:Action="http://ws.session.ejb/ReservationWebService/createNewReservation/Fault/RentalRateNotFoundException"/>
 <fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/ReservationWebService/createNewReservation/Fault/CustomerNotFoundException"/>
 </operation>
-<operation name="hello">
-<input wsam:Action="http://ws.session.ejb/ReservationWebService/helloRequest" message="tns:hello"/>
-<output wsam:Action="http://ws.session.ejb/ReservationWebService/helloResponse" message="tns:helloResponse"/>
-</operation>
 </portType>
 <binding name="ReservationWebServicePortBinding" type="tns:ReservationWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="cancelReservation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ReservationNotFoundException">
+<soap:fault name="ReservationNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveReservationById">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ReservationNotFoundException">
+<soap:fault name="ReservationNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveOutletById">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="OutletNotFoundException">
+<soap:fault name="OutletNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveAllOutlets">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="createNewReservation">
 <soap:operation soapAction=""/>
 <input>
@@ -64,15 +145,6 @@
 <fault name="CustomerNotFoundException">
 <soap:fault name="CustomerNotFoundException" use="literal"/>
 </fault>
-</operation>
-<operation name="hello">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
 </operation>
 </binding>
 <service name="ReservationWebService">
