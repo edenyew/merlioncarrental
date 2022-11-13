@@ -10,8 +10,10 @@ import entity.Model;
 import entity.OutletEntity;
 import entity.Reservation;
 import entity.TransitDriverDispatchRecord;
+import exception.CarNotFoundException;
 import exception.OutletNotFoundException;
 import exception.ReservationNotFoundException;
+import exception.TransitRecordNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,50 +40,30 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
     @EJB
     OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
     
-    
-//@Schedule(hour = "*", minute = "*", second = "*/5", info = "generateTransitDriverDispatchRecordCheckTimer")    
-    // For testing purpose, we are allowing the timer to trigger every 5 seconds instead of every 5 minutes
-    // To trigger the timer once every 5 minutes instead, use the following the @Schedule annotation
-    // @Schedule(hour = "*", minute = "*/5", info = "productEntityReorderQuantityCheckTimer")
+    @Schedule(hour = "*", minute = "*", second = "*/5", info = "generateTransitDriverDispatchRecordCheckTimer")    
     @Override
-    public void timer()  
+    public void generateTransitRecordsTimer()  
     {
-//        try {
-//            Scanner scanner = new Scanner(System.in);
-//            List<OutletEntity> allOutlets = outletEntitySessionBeanLocal.retrieveAllOutlets();
-//            Long response;
-//            String todayDateString = "";
-//            
-//            System.out.println("Choose OutletID> ");
-//            
-//            for (OutletEntity outlet : allOutlets)
-//            {
-//                System.out.println(outlet.getOutletId() + ", " + outlet.getAddress());
-//            }
-//            
-//            response = scanner.nextLong();
+        try {
+            Date currDate = new Date();
+            List<OutletEntity> allOutlets = outletEntitySessionBeanLocal.retrieveAllOutlets();//            
+            for (OutletEntity outlet : allOutlets)
+            {
+                 List<TransitDriverDispatchRecord>  transitDriverDispatchRecords = transitDriverDispatchRecordSessionBeanLocal. viewCurrentDayTransitRecord(currDate, outlet.getOutletId());
+                 for (TransitDriverDispatchRecord transitDriverDispatchRecord: transitDriverDispatchRecords){
+                    System.out.println(transitDriverDispatchRecord.getCar().getCarPlateNumber());
+                    System.out.println(transitDriverDispatchRecord.getPickUpOutlet().getAddress());
+                    System.out.println(transitDriverDispatchRecord.getReturnOutlet().getAddress());
+                 }
+            }
             
-//            System.out.print("Enter today's date (DD/MM/YYYY)> ");
-//            todayDateString = scanner.nextLine().trim();
-//            Date currDate = new SimpleDateFormat("dd/MM/yyyy").parse(todayDateString);
-//            
-//            String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-//            System.out.println("********** EjbTimerSessionBean.generateTransitDriverDispatchRecordCheckTimer(): Timeout at " + timeStamp);
-            
-//            List<TransitDriverDispatchRecord> transitDriverDispatchRecords = transitDriverDispatchRecordSessionBeanLocal.viewCurrentDayTransitRecord(currDate, response);
-//            
-//            System.out.println("Car Plate Number, Date Of Transit, Pickup Outlet, Return Outlet");
-            
-//            for(TransitDriverDispatchRecord transitDriverRecord : transitDriverDispatchRecords)
-//            {
-//                System.out.println(transitDriverRecord.getCar().getCarPlateNumber() + ", " + transitDriverRecord.getDateOfTransit() + ", " + transitDriverRecord.getPickUpOutlet().getAddress() + ", " + transitDriverRecord.getReturnOutlet().getAddress());
-//            }
-//        } catch (ParseException | OutletNotFoundException ex) {
-//            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        }   catch (OutletNotFoundException | TransitRecordNotFoundException ex) {
+            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
    // @Schedule(hour = "*", minute = "*", second = "*/5", info = "allocateCarsToCurrentDayReservations")   
+    @Override
     public void allocateCarsToCurrentDayReservationsTimer() {
         try {
             Date currDate = new Date();
@@ -98,13 +80,19 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                             }
                         }
                     } else {
+                        TransitDriverDispatchRecord record = new TransitDriverDispatchRecord();
+                        Long pickUpOutletId = car.getOutletEntity().getOutletId();
+                        Long returnOutletId = reservation.getPickUpOutlet().getOutletId();
                         
+                        transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
                     }                                      
                 }
             }
             
         } catch (ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
+        } catch (OutletNotFoundException | CarNotFoundException ex) {
+            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }

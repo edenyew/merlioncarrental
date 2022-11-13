@@ -57,10 +57,10 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     
     
     @Override
-    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long employeeId, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException  
+    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException  
     {
        
-       EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
+      // EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
        OutletEntity pickupOutlet = outletSessionBeanLocal.retrieveOutletById(pickupOutletId);
        OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
        CarEntity car = carEntitySessionBeanLocal.retrieveCarById(carId);
@@ -69,7 +69,7 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
       
        returnOutlet.getTransitDriverDispatchRecords().add(transitRecord);
        car.getTransitDriverDispatchRecords().add(transitRecord);
-       transitRecord.setTransitDriver(employee);
+       //transitRecord.setTransitDriver(employee);
        transitRecord.setPickUpOutlet(pickupOutlet);
        transitRecord.setReturnOutlet(returnOutlet);
        transitRecord.setCar(car);

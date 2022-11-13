@@ -448,7 +448,7 @@ public class SalesManagementModule {
                     {
                         deleteCar();
                     }
-                    catch(CarNotFoundException | ModelNotFoundException ex)
+                    catch(CarNotFoundException | ModelNotFoundException | InputDataValidationException ex)
                     {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
@@ -701,7 +701,7 @@ public class SalesManagementModule {
     }
     
     
-    private void deleteCar() throws CarNotFoundException, ModelNotFoundException
+    private void deleteCar() throws CarNotFoundException, ModelNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         CarEntity carToDelete = new CarEntity();
@@ -766,7 +766,7 @@ public class SalesManagementModule {
         System.out.print("Select Return Outlet To Assign Transit Driver To> ");
         Long returnId = scanner.nextLong();
         
-        transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, employee.getId(), pickUpId, returnId, carChosenId);
+        transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, pickUpId, returnId, carChosenId);
         
         //transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(record, employee.getId());
         

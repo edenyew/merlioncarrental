@@ -16,7 +16,7 @@ import javax.ejb.Remote;
 @Remote
 public interface EjbTimerSessionBeanRemote {
     
-    public void timer() ;
+    public void generateTransitRecordsTimer() ;
 
     public void allocateCarsToCurrentDayReservationsTimer();
     
