@@ -892,7 +892,7 @@ public class SalesManagementModule {
         System.out.print("Select Return Outlet To Assign Transit Driver To> ");
         Long returnId = scanner.nextLong();
         
-        Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations = validator.validate(record);
+        transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, employee.getId(), pickUpId, returnId, carChosenId);
         
             if(constraintViolations.isEmpty())
             {

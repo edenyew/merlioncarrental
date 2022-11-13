@@ -23,8 +23,6 @@ import javax.ejb.Local;
 @Local
 public interface TransitDriverDispatchRecordSessionBeanLocal {
 
-    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long employeeId, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException,CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException, InputDataValidationException;  
-
     public TransitDriverDispatchRecord retrieveTransitRecordById(Long transitRecordId) throws TransitRecordNotFoundException;
 
     public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException, TransitRecordNotFoundException;
@@ -40,5 +38,8 @@ public interface TransitDriverDispatchRecordSessionBeanLocal {
     public List<TransitDriverDispatchRecord> retrieveAllTransitDriverRecord();
 
     public void viewRecordDetails(TransitDriverDispatchRecord transitDriverRecord) throws TransitRecordNotFoundException;
+
+  
+    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException, CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException;
     
 }

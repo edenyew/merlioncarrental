@@ -42,7 +42,7 @@ public class Customer implements Serializable {
     
     @Column(nullable = false, length = 64)
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(min = 5, max = 64)
     private String email;
     
     @Column(nullable = false, length = 12, unique = true)
@@ -52,12 +52,12 @@ public class Customer implements Serializable {
     
     @Column(nullable = false, length = 8)
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(min = 8, max = 64)
     private String contactNumber;
     
     @Column(nullable = false, length = 64)
     @NotNull
-    @Size(min = 1, max = 64)
+    @Size(min = 5, max = 64)
     private String password;
     
     
