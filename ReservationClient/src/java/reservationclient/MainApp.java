@@ -42,6 +42,11 @@ import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import exception.CreditCardNotFoundException;
 import exception.InputDataValidationException;
 import exception.UnknownPersistenceException;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -64,8 +69,14 @@ public class MainApp {
     @EJB
     private ModelSessionBeanRemote modelSessionBeanRemote;
     private Customer currentCustomer;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
-    public MainApp() {
+    public MainApp() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     public MainApp(CustomerEntitySessionBeanRemote customerSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, CarEntitySessionBeanRemote carSessionBeanRemote, OutletEntitySessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CreditCardSessionBeanRemote creditCardSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote) {
@@ -105,14 +116,17 @@ public class MainApp {
                     }
                     catch (CustomerNotFoundException | UnknownPersistenceException | InputDataValidationException ex)
                     {
-                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                        System.out.println("An error has occurred: " + ex.getMessage() + "\n");
                     }
                 }
                 else if(response == 2)
                 {
-                    try {                     
+                    try 
+                    {                     
                         customerLogin();    
-                    } catch (InvalidLoginCredentialException ex) {
+                    } 
+                    catch (InvalidLoginCredentialException ex) 
+                    {
 
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                     }
@@ -422,7 +436,8 @@ public class MainApp {
         }
     }
     
-    private void registerAsCustomer() throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException{
+    private void registerAsCustomer() throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException
+    {
         Scanner scanner = new Scanner(System.in);
         String firstName = "";
         String lastName = "";
@@ -456,16 +471,49 @@ public class MainApp {
         System.out.print("Enter passportNumber> ");
         passportNumber = scanner.nextLine().trim();
         newCustomer.setPassportNumber(passportNumber);
-
-        Long newCustomerId = customerSessionBeanRemote.createCustomer(newCustomer);
-        System.out.println("New student created successfully!: " + newCustomerId + "\n");
+        
+        Set<ConstraintViolation<Customer>>constraintViolations = validator.validate(newCustomer);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                Long newCustomerId = customerSessionBeanRemote.createCustomer(newCustomer);
+                System.out.println("New customer created successfully!: " + newCustomerId + "\n");
+            }
+            catch(UnknownPersistenceException ex)
+            {
+                System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForCustomer(constraintViolations);
+        }
     }
 
-    private void customerLogout(Customer customer) {
+    private void customerLogout(Customer customer) 
+    {
         try {
             currentCustomer = customerSessionBeanRemote.customerLogout(customer);
         } catch (CustomerNotFoundException | InvalidLoginCredentialException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
         }
+    }
+    
+    private void showInputDataValidationErrorsForCustomer(Set<ConstraintViolation<Customer>>constraintViolations)
+    {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
     }
 }

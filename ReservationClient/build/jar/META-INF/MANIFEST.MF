@@ -2,8 +2,5 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.10.8
 Created-By: 1.8.0_341-b10 (Oracle Corporation)
 X-COMMENT: Main-Class will be added automatically by build
-Class-Path: jakarta.jakartaee-api-8.0.0.jar lib/jakarta.jakartaee-api-
- 8.0.0.jar MerlionCarRentalLibrary.jar lib/MerlionCarRentalLibrary.jar
-  
 Main-Class: reservationclient.Main
 

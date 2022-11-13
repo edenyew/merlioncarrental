@@ -37,9 +37,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import javax.validation.Validation;
 import util.enumeration.AccessRightEnum;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.RentalRateTypeEnum;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -57,13 +63,19 @@ public class SalesManagementModule {
     
     private EmployeeEntity currentEmployeeEntity;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
     
-    public SalesManagementModule() {
+    public SalesManagementModule() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
     
 
     public SalesManagementModule(CategorySessionBeanRemote categorySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, EmployeeEntity currentEmployeeEntity)
     {
+        this();
         this.categorySessionBeanRemote = categorySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
@@ -222,9 +234,29 @@ public class SalesManagementModule {
         newRentalRate.setDisabled(false);
         newRentalRate.setInUse(false);
         //System.out.print("Enter Car Plate Number To Add Car> ");
-     
-        rentalRateSessionBeanRemote.createRentalRate(newRentalRate, new Long(categoryResponse)); 
-        System.out.print("RentalRate succesfully created!");
+        
+        Set<ConstraintViolation<RentalRate>>constraintViolations = validator.validate(newRentalRate);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                rentalRateSessionBeanRemote.createRentalRate(newRentalRate, new Long(categoryResponse)); 
+                System.out.print("RentalRate succesfully created!");
+            }
+            catch(UnknownPersistenceException ex)
+            {
+                System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForRentalRate(constraintViolations);
+        }
     }
     
     private void viewAllRentalRates() throws RentalRateNotFoundException
@@ -308,9 +340,24 @@ public class SalesManagementModule {
 
             rentalRateToUpdate.setEndDate(endingDate);
         }
-
-        rentalRateSessionBeanRemote.updateRentalRate(rentalRateToUpdate);
         
+        Set<ConstraintViolation<RentalRate>>constraintViolations = validator.validate(rentalRateToUpdate);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                rentalRateSessionBeanRemote.updateRentalRate(rentalRateToUpdate);
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForRentalRate(constraintViolations);
+        }
     }
     
     public void deleteRentalRate() throws DeleteRentalRateException, RentalRateNotFoundException 
@@ -534,7 +581,27 @@ public class SalesManagementModule {
         newModel.setInUse(false);
         newModel.setDisabled(false);
         
-        modelSessionBeanRemote.createNewModel(newModel, new Long(categoryChoice));
+        Set<ConstraintViolation<Model>>constraintViolations = validator.validate(newModel);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                modelSessionBeanRemote.createNewModel(newModel, new Long(categoryChoice));
+            }
+            catch(UnknownPersistenceException ex)
+            {
+                System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForModel(constraintViolations);
+        }
     }
     
     private void viewAllModels()
@@ -572,9 +639,25 @@ public class SalesManagementModule {
         }
         response = scanner.nextLong();
         modelToUpdate.setCategory(categorySessionBeanRemote.retrieveCategoryById(response));
-        modelSessionBeanRemote.updateModel(modelToUpdate);
         
-        System.out.println("Model successfully updated!");
+         Set<ConstraintViolation<Model>>constraintViolations = validator.validate(modelToUpdate);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                modelSessionBeanRemote.updateModel(modelToUpdate);
+                System.out.println("Model successfully updated!");
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForModel(constraintViolations);
+        }
     }
     
     private void deleteModel() throws ModelNotFoundException, DeleteModelException
@@ -645,8 +728,27 @@ public class SalesManagementModule {
         
         Long outletId = scanner.nextLong();
         
-        carEntitySessionBeanRemote.createNewCar(newCar, modelId, outletId);
+        Set<ConstraintViolation<CarEntity>>constraintViolations = validator.validate(newCar);
         
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                carEntitySessionBeanRemote.createNewCar(newCar, modelId, outletId);
+            }
+            catch(UnknownPersistenceException ex)
+            {
+                System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForCar(constraintViolations);
+        }
     }
     
     
@@ -703,9 +805,25 @@ public class SalesManagementModule {
 //        response = scanner.nextLong();
 //        Model chosenModel = modelSessionBeanRemote.retrieveModelById(response);
 //        carToUpdate.setModel(chosenModel);
-        carEntitySessionBeanRemote.updateCarEntity(carToUpdate);
+
+        Set<ConstraintViolation<CarEntity>>constraintViolations = validator.validate(carToUpdate);
         
-        System.out.println("Car successfully updated!");
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                carEntitySessionBeanRemote.updateCarEntity(carToUpdate);
+                System.out.println("Car successfully updated!");
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForCar(constraintViolations);
+        }
     }
     
     
@@ -774,10 +892,28 @@ public class SalesManagementModule {
         System.out.print("Select Return Outlet To Assign Transit Driver To> ");
         Long returnId = scanner.nextLong();
         
-        transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, employee.getId(), pickUpId, returnId, carChosenId);
+        Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations = validator.validate(record);
         
-        //transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(record, employee.getId());
-        
+            if(constraintViolations.isEmpty())
+            {
+                try
+                {
+                    transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, employee.getId(), pickUpId, returnId, carChosenId);
+                    //transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(record, employee.getId());
+                }
+                catch(UnknownPersistenceException ex)
+                {
+                    System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
+                }
+                catch(InputDataValidationException ex)
+                {
+                    System.out.println(ex.getMessage() + "\n");
+                }
+            }
+            else
+            {
+                showInputDataValidationErrorsForTransitDriverDispatchRecord(constraintViolations);
+            }
     }
     
     
@@ -803,7 +939,24 @@ public class SalesManagementModule {
         
         if (transitDriverRecord.getCar().equals(returnedCar))
         {
-            transitDriverDispatchRecordSessionBeanRemote.updateTransitAsComplete(transitDriverRecord);
+            
+            Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations = validator.validate(transitDriverRecord);
+        
+            if(constraintViolations.isEmpty())
+            {
+                try
+                {
+                    transitDriverDispatchRecordSessionBeanRemote.updateTransitAsComplete(transitDriverRecord);
+                }
+                catch(InputDataValidationException ex)
+                {
+                    System.out.println(ex.getMessage() + "\n");
+                }
+            }
+            else
+            {
+                showInputDataValidationErrorsForTransitDriverDispatchRecord(constraintViolations);
+            }
         }
         else
         {
@@ -811,4 +964,51 @@ public class SalesManagementModule {
         }
     }
     
+    private void showInputDataValidationErrorsForRentalRate(Set<ConstraintViolation<RentalRate>>constraintViolations)
+    {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }
+    
+    private void showInputDataValidationErrorsForModel(Set<ConstraintViolation<Model>>constraintViolations)
+    {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }
+    
+    private void showInputDataValidationErrorsForCar(Set<ConstraintViolation<CarEntity>>constraintViolations)
+    {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }
+    
+    private void showInputDataValidationErrorsForTransitDriverDispatchRecord(Set<ConstraintViolation<TransitDriverDispatchRecord>>constraintViolations)
+    {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }
 }
