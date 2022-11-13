@@ -42,7 +42,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
     @EJB
     OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
     
-    @Schedule(hour = "2", minute = "0", second = "0", info = "generateTransitDriverDispatchRecordCheckTimer")    
+    @Schedule(hour = "2", minute = "0", second = "0", info = "generateTransitDriverDispatchRecordCheckTimer") 
     @Override
     public void generateTransitRecordsTimer()  
    
