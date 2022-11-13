@@ -6,11 +6,15 @@
 package ejb.session.stateless;
 
 import entity.Category;
+import exception.CategoryNotFoundException;
+import exception.InputDataValidationException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -41,13 +45,42 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
     }
 
     @Override
-    public Long createNewCategory(Category category)
-    {        
-        em.persist(category);
-        em.flush();
+    public Long createNewCategory(Category category) throws CategoryNotFoundException, UnknownPersistenceException, InputDataValidationException
+    {
+        Set<ConstraintViolation<Category>>constraintViolations = validator.validate(category);
         
-        return category.getCategoryId();
-   
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+                em.persist(category);
+                em.flush();
+                
+                return category.getCategoryId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new CategoryNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
     
     @Override
@@ -62,6 +95,18 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
     {
         Category category = em.find(Category.class, categoryId);
         return category;
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Category>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
     
 }

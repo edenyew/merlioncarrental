@@ -7,8 +7,10 @@ package ejb.session.stateless;
 
 import entity.EmployeeEntity;
 import exception.EmployeeNotFoundException;
+import exception.InputDataValidationException;
 import exception.InvalidLoginCredentialException;
 import exception.OutletNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -31,6 +33,6 @@ public interface EmployeeEntitySessionBeanLocal {
 
     public void updateEmployee(EmployeeEntity employee);
 
-    public Long createNewEmployee(EmployeeEntity employeeEntity, Long outletId) throws OutletNotFoundException;
+    public Long createNewEmployee(EmployeeEntity employeeEntity, Long outletId) throws OutletNotFoundException, EmployeeNotFoundException, UnknownPersistenceException, InputDataValidationException;
     
 }

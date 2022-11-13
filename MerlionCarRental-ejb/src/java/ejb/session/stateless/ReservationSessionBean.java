@@ -15,19 +15,27 @@ import entity.RentalRate;
 import entity.Reservation;
 import exception.CarNotFoundException;
 import exception.CustomerNotFoundException;
+import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
 import exception.RentalRateNotFoundException;
 import exception.ReservationNotFoundException;
 import exception.TransitRecordNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -55,36 +63,74 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @EJB
     private PartnerEntitySessionBeanLocal partnerSessionBeanLocal;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public ReservationSessionBean() 
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
     
 
     @Override
-    public Long creatNewReservation(Reservation reservation, Long modelId, Long returnOutletId, Long pickUpOutletId, Long creditCardId, Long customerId, List<RentalRate> finalRentalRatesApplied) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException, CustomerNotFoundException 
+    public Long creatNewReservation(Reservation reservation, Long modelId, Long returnOutletId, Long pickUpOutletId, Long creditCardId, Long customerId, List<RentalRate> finalRentalRatesApplied) throws ModelNotFoundException, OutletNotFoundException, RentalRateNotFoundException, CustomerNotFoundException, ReservationNotFoundException, UnknownPersistenceException, InputDataValidationException 
     {
-        Model model = modelSessionBean.retrieveModelById(modelId);
-        OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
-        OutletEntity pickUpOutlet = outletSessionBeanLocal.retrieveOutletById(pickUpOutletId);
-        CreditCard creditCard = creditCardSessionBeanLocal.retrieveCreditCardById(creditCardId);
-        Customer customer = customerSessionBeanLocal.retrieveCustomerById(customerId);
+        Set<ConstraintViolation<Reservation>>constraintViolations = validator.validate(reservation);
         
-        em.persist(reservation);
-        
-        reservation.setModel(model);
-        reservation.setReturnOutlet(returnOutlet);
-         reservation.setPickUpOutlet(pickUpOutlet);
-        //model.getReservations().add(reservation);
-        returnOutlet.getReservations().add(reservation);
-        reservation.setCreditCard(creditCard);
-        creditCard.setReservation(reservation);
-        reservation.setCustomer(customer);
-        customer.getReservations().add(reservation);
-        for (RentalRate rentalRate : finalRentalRatesApplied) {   
-            RentalRate updateInUse = rentalRateSessionBean.retrieveRentalRateByRentalRateId(rentalRate.getId());
-            updateInUse.setInUse(true);
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+                Model model = modelSessionBean.retrieveModelById(modelId);
+                OutletEntity returnOutlet = outletSessionBeanLocal.retrieveOutletById(returnOutletId);
+                OutletEntity pickUpOutlet = outletSessionBeanLocal.retrieveOutletById(pickUpOutletId);
+                CreditCard creditCard = creditCardSessionBeanLocal.retrieveCreditCardById(creditCardId);
+                Customer customer = customerSessionBeanLocal.retrieveCustomerById(customerId);
+
+                em.persist(reservation);
+
+                reservation.setModel(model);
+                reservation.setReturnOutlet(returnOutlet);
+                 reservation.setPickUpOutlet(pickUpOutlet);
+                //model.getReservations().add(reservation);
+                returnOutlet.getReservations().add(reservation);
+                reservation.setCreditCard(creditCard);
+                creditCard.setReservation(reservation);
+                reservation.setCustomer(customer);
+                customer.getReservations().add(reservation);
+                for (RentalRate rentalRate : finalRentalRatesApplied) {   
+                    RentalRate updateInUse = rentalRateSessionBean.retrieveRentalRateByRentalRateId(rentalRate.getId());
+                    updateInUse.setInUse(true);
+                }
+
+                em.flush();
+
+                return reservation.getId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new ReservationNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
         }
-        
-        em.flush();
-        
-        return reservation.getId();
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
     
     @Override
@@ -175,6 +221,19 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
         
         return penalty * reservationToCancel.getTotalCost();
+    }
+    
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Reservation>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 
     

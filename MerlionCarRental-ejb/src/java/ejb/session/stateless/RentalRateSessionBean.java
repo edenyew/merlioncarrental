@@ -10,6 +10,7 @@ import entity.RentalRate;
 import exception.DeleteRentalRateException;
 import exception.InputDataValidationException;
 import exception.RentalRateNotFoundException;
+import exception.UnknownPersistenceException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -60,17 +62,48 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
 
     
     @Override
-    public Long createRentalRate(RentalRate rentalRate, Long categoryId)
+    public Long createRentalRate(RentalRate rentalRate, Long categoryId) throws RentalRateNotFoundException, UnknownPersistenceException, InputDataValidationException
     {
-        Category category = categorySessionBeanLocal.retrieveCategoryById(categoryId);
-        em.persist(rentalRate);
+        Set<ConstraintViolation<RentalRate>>constraintViolations = validator.validate(rentalRate);
         
-        rentalRate.setCategory(category);
-        category.getRentalRates().add(rentalRate);
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
         
-        em.flush();
-        
-        return rentalRate.getId();
+                Category category = categorySessionBeanLocal.retrieveCategoryById(categoryId);
+                em.persist(rentalRate);
+
+                rentalRate.setCategory(category);
+                category.getRentalRates().add(rentalRate);
+
+                em.flush();
+
+                return rentalRate.getId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new RentalRateNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
     
     @Override

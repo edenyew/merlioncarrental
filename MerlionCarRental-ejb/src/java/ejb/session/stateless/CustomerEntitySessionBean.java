@@ -9,7 +9,9 @@ import entity.Customer;
 import entity.Reservation;
 import exception.AlreadyLoggedInException;
 import exception.CustomerNotFoundException;
+import exception.InputDataValidationException;
 import exception.InvalidLoginCredentialException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -17,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -48,14 +51,45 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     }
     
     @Override
-    public Long createCustomer(Customer customer) 
+    public Long createCustomer(Customer customer) throws CustomerNotFoundException, UnknownPersistenceException, InputDataValidationException
     {  
         //Customer customerWithSamePassport = retrieveCustomerWithPassportNumber(customer.getPassportNumber());
         
-        em.persist(customer);
-        em.flush();
+        Set<ConstraintViolation<Customer>>constraintViolations = validator.validate(customer);
         
-        return customer.getCustomerId();
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+        
+                em.persist(customer);
+                em.flush();
+
+                return customer.getCustomerId();
+            }
+            catch(PersistenceException ex)
+            {
+                if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                {
+                    if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                    {
+                        throw new CustomerNotFoundException();
+                    }
+                    else
+                    {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
     
     @Override

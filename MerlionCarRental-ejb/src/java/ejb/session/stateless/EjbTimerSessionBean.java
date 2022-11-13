@@ -14,6 +14,7 @@ import exception.CarNotFoundException;
 import exception.OutletNotFoundException;
 import exception.ReservationNotFoundException;
 import exception.TransitRecordNotFoundException;
+import exception.UnknownPersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -84,7 +85,11 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                         Long pickUpOutletId = car.getOutletEntity().getOutletId();
                         Long returnOutletId = reservation.getPickUpOutlet().getOutletId();
                         
-                        transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
+                        try {
+                            transitDriverDispatchRecordSessionBeanLocal.createNewTransitRecord(record, pickUpOutletId, returnOutletId, car.getCarId());
+                        } catch (TransitRecordNotFoundException | UnknownPersistenceException ex) {
+                            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }                                      
                 }
             }

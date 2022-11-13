@@ -11,6 +11,7 @@ import exception.CarNotFoundException;
 import exception.InputDataValidationException;
 import exception.OutletNotFoundException;
 import exception.TransitRecordNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
@@ -21,11 +22,9 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface TransitDriverDispatchRecordSessionBeanRemote {
-    
-    //public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long employeeId, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException, CarNotFoundException;
-    public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException, CarNotFoundException;
+       public Long createNewTransitRecord(TransitDriverDispatchRecord transitRecord, Long pickupOutletId, Long returnOutletId, Long carId) throws OutletNotFoundException, CarNotFoundException, TransitRecordNotFoundException, UnknownPersistenceException;
 
-    public TransitDriverDispatchRecord retrieveTransitRecordById(Long transitRecordId) throws TransitRecordNotFoundException;
+       public TransitDriverDispatchRecord retrieveTransitRecordById(Long transitRecordId) throws TransitRecordNotFoundException;
 
     public List<TransitDriverDispatchRecord> viewCurrentDayTransitRecord(Date currentDate, Long currentOutletId) throws OutletNotFoundException, TransitRecordNotFoundException;
 

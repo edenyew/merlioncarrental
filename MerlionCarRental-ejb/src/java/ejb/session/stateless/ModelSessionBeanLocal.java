@@ -9,6 +9,7 @@ import entity.Model;
 import exception.DeleteModelException;
 import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
+import exception.UnknownPersistenceException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -19,7 +20,7 @@ import javax.ejb.Local;
 @Local
 public interface ModelSessionBeanLocal {
 
-    public Long createNewModel(Model model, Long categoryId);
+    public Long createNewModel(Model model, Long categoryId) throws ModelNotFoundException, UnknownPersistenceException, InputDataValidationException;
 
     public List<Model> retrieveAllModels();
 

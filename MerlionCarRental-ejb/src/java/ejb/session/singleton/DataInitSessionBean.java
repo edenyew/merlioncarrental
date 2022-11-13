@@ -21,9 +21,16 @@ import entity.PartnerEntity;
 import entity.RentalRate;
 import entity.Reservation;
 import entity.TransitDriverDispatchRecord;
+import exception.CarNotFoundException;
+import exception.CategoryNotFoundException;
+import exception.CreditCardNotFoundException;
+import exception.EmployeeNotFoundException;
+import exception.InputDataValidationException;
 import exception.ModelNotFoundException;
 import exception.OutletNotFoundException;
+import exception.PartnerEntityNotFoundException;
 import exception.RentalRateNotFoundException;
+import exception.UnknownPersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,7 +85,14 @@ public class DataInitSessionBean {
     {
         if (em.find(PartnerEntity.class, 1l) == null)
         {
-            partnerEntitySessionBeanLocal.createNewPartnerRecord(new PartnerEntity("Holiday.com", "partner1@gmail.com", "password"));
+            try
+            {
+                partnerEntitySessionBeanLocal.createNewPartnerRecord(new PartnerEntity("Holiday.com", "partner1@gmail.com", "password"));
+            }
+            catch (UnknownPersistenceException | InputDataValidationException | PartnerEntityNotFoundException ex)
+            {
+                Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         if (em.find(OutletEntity.class, 1l) == null && em.find(Category.class, 1l) == null && em.find(Model.class, 1l) == null && em.find(CarEntity.class, 1l) ==null && em.find(RentalRate.class, 1l) ==null)
@@ -135,7 +149,7 @@ public class DataInitSessionBean {
                 Long EmployeeC2Id = employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("Employee C2", "91234567", AccessRightEnum.OPERATIONS_MANAGER, "EmployeeC2", "password", false), outletCId);
                 Long EmployeeC3Id = employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("Employee C3", "91234567", AccessRightEnum.CUSTOMER_SERVICE_EXECUTIVE, "EmployeeC3", "password", false), outletCId);
                 
-            } catch (ModelNotFoundException | OutletNotFoundException  | RentalRateNotFoundException | ParseException ex) {
+            } catch (EmployeeNotFoundException | CategoryNotFoundException |CarNotFoundException | ModelNotFoundException | OutletNotFoundException  | RentalRateNotFoundException | ParseException | InputDataValidationException | UnknownPersistenceException ex) {
                 Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
