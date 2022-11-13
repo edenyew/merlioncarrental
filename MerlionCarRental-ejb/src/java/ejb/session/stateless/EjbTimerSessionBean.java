@@ -59,11 +59,11 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
             }
             
         }   catch (OutletNotFoundException | TransitRecordNotFoundException ex) {
-            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex.getMessage() + "\n");
         }
     }
     
-   // @Schedule(hour = "*", minute = "*", second = "*/5", info = "allocateCarsToCurrentDayReservations")   
+    @Schedule(hour = "*", minute = "*", second = "*/5", info = "allocateCarsToCurrentDayReservations")   
     @Override
     public void allocateCarsToCurrentDayReservationsTimer() {
         try {
@@ -97,9 +97,8 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
         } catch (ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage() + "\n");
         } catch (OutletNotFoundException | CarNotFoundException ex) {
-            Logger.getLogger(EjbTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex.getMessage() + "\n");
         }
-        
     }
     
 }

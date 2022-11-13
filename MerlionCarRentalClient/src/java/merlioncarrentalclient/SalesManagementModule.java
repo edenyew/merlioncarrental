@@ -757,26 +757,23 @@ public class SalesManagementModule {
         Scanner scanner = new Scanner(System.in);
 
         String employeeUsername = "";
-        Long response;
-        TransitDriverDispatchRecord record = new TransitDriverDispatchRecord();
+        
+        
         System.out.println("*** Merlion Car Rental System :: Operations Management :: Assign Transit Driver ***\n");
         System.out.print("Enter Employee Username> ");
         employeeUsername = scanner.nextLine().trim();
         EmployeeEntity employee = employeeEntitySessionBeanRemote.retrieveEmployeeByUsername(employeeUsername);
         
-       // List<TransitDriverDispatchRecord> allTransitDriverRecords = transitDriverDispatchRecordSessionBeanRemote.retrieveAllTransitDriverRecord();
+       List<TransitDriverDispatchRecord> allTransitDriverRecords = transitDriverDispatchRecordSessionBeanRemote.retrieveAllTransitDriverRecord();
         
-        System.out.print("Select Car To Assign Transit Driver To> ");
-        viewAllCars();
-        Long carChosenId = scanner.nextLong();
-        System.out.print("Select PickUp Outlet To Assign Transit Driver To> ");
-        Long pickUpId = scanner.nextLong();
-        System.out.print("Select Return Outlet To Assign Transit Driver To> ");
-        Long returnId = scanner.nextLong();
-        
-        transitDriverDispatchRecordSessionBeanRemote.createNewTransitRecord(record, pickUpId, returnId, carChosenId);
-        
-        //transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(record, employee.getId());
+        System.out.print("Select Dispatch Record To Assign Transit Driver To> ");
+        for( TransitDriverDispatchRecord  transitDriverDispatchRecord : allTransitDriverRecords){
+            System.out.println(transitDriverDispatchRecord.getTransitDriverDispatchId() + ", " + transitDriverDispatchRecord.getPickUpOutlet().getAddress() + ", " + transitDriverDispatchRecord.getReturnOutlet().getAddress());
+        }
+        Long response = scanner.nextLong();
+        TransitDriverDispatchRecord record = transitDriverDispatchRecordSessionBeanRemote.retrieveTransitRecordById(response);
+
+       transitDriverDispatchRecordSessionBeanRemote.assignTransitDriver(record, employee.getId());
         
     }
     

@@ -74,7 +74,11 @@ public class ReservationWebService {
         return outletEntitySessionBean.retrieveAllOutlets();
     }
     
-
+    @WebMethod(operationName = "cancelReservation")
+     public double cancelReservation(Reservation reservation, Date currDate) throws ReservationNotFoundException
+     {
+         return reservationSessionBean.cancelReservation(reservation, currDate);
+     }
     
     
 
