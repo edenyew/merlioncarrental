@@ -187,14 +187,16 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             }
             else 
             {
+                em.remove(carToDelete);
                 carToDelete.getOutletEntity().getCars().remove(carToDelete);
                 long modelId = carToDelete.getModel().getModelId();
                 Model modelToUpdate = modelSessionBeanLocal.retrieveModelById(modelId);
+                modelToUpdate.getCars().remove(carToDelete);
                 if(modelToUpdate.getCars().isEmpty()){
                     modelToUpdate.setInUse(false);
                     modelSessionBeanLocal.updateModel(modelToUpdate);
                 }
-                em.remove(carToDelete);
+                
             }
     }
     
