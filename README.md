@@ -1,4 +1,4 @@
-# merlioncarrental
+# Merlion Car Rental Management System
 IS2103 Car Rental Management System (Backend Module)
 
 Tech Stack: Java EE, Glassfish
